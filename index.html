@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MBS Court Scope Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1a6dcc;
+    --blue-dark: #0f4a91;
+    --blue-light: #e8f1fb;
+    --gray: #4a5568;
+    --gray-light: #f4f6f9;
+    --border: #d1dbe8;
+    --text: #1a202c;
+    --accent: #f0a500;
+    --danger: #e53e3e;
+    --success: #38a169;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: #0d1f3c;
+    min-height: 100vh;
+    color: var(--text);
+  }
+
+  /* HEADER */
+  .app-header {
+    background: linear-gradient(135deg, #0a1628 0%, #0d2147 60%, #0f3070 100%);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    border-bottom: 3px solid var(--accent);
+  }
+
+  .logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--white);
+    line-height: 1.1;
+  }
+  .logo-text span { color: var(--accent); }
+  .logo-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    color: #94b3d8;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .header-title {
+    margin-left: auto;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #94b3d8;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* MAIN LAYOUT */
+  .app-body {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin-bottom: 28px;
+  }
+  .progress-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #94b3d8;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-bar-bg {
+    background: rgba(255,255,255,0.1);
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--accent));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .step-dots {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .step-dot {
+    height: 6px;
+    flex: 1;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.1);
+    transition: background 0.3s;
+    min-width: 20px;
+  }
+  .step-dot.done { background: var(--blue); }
+  .step-dot.active { background: var(--accent); }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    animation: slideUp 0.35s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blue);
+    background: var(--blue-light);
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  .card h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .card-desc {
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin-bottom: 26px;
+    line-height: 1.6;
+  }
+
+  /* FORM ELEMENTS */
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .field-grid.single { grid-template-columns: 1fr; }
+  .field-grid.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gray);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  input[type="text"], input[type="number"], input[type="date"], select, textarea {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    font-family: 'Barlow', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(26,109,204,0.12);
+  }
+  textarea { resize: vertical; min-height: 70px; }
+
+  /* OPTION CARDS (court type etc) */
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  .option-card {
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--gray-light);
+  }
+  .option-card:hover { border-color: var(--blue); background: var(--blue-light); }
+  .option-card.selected { border-color: var(--blue); background: var(--blue-light); }
+  .option-card.selected .opt-icon { color: var(--blue); }
+  .option-card.selected .opt-label { color: var(--blue-dark); font-weight: 700; }
+  .option-card input[type="radio"], .option-card input[type="checkbox"] { display: none; }
+  .opt-icon { font-size: 1.8rem; display: block; margin-bottom: 6px; }
+  .opt-label { font-size: 0.85rem; font-weight: 600; color: var(--gray); }
+
+  /* CHECKBOX LIST */
+  .check-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--gray-light);
+  }
+  .check-item:hover { border-color: var(--blue); background: var(--blue-light); }
+  .check-item input[type="checkbox"] { accent-color: var(--blue); width: 16px; height: 16px; }
+  .check-item-label { font-size: 0.9rem; color: var(--text); }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1.5px solid var(--border);
+    margin: 24px 0;
+  }
+
+  .sub-heading {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--blue-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+    margin-top: 4px;
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--blue);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); }
+  .btn-secondary {
+    background: var(--gray-light);
+    color: var(--gray);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-accent {
+    background: var(--accent);
+    color: #1a1a1a;
+  }
+  .btn-accent:hover { background: #d98e00; transform: translateY(-1px); }
+
+  /* INLINE TOGGLE (for yes/no etc) */
+  .toggle-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .toggle-btn {
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--gray-light);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--gray);
+    transition: all 0.15s;
+  }
+  .toggle-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .toggle-btn.active { background: var(--blue); border-color: var(--blue); color: var(--white); }
+
+  /* REPORT */
+  .report-wrap {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    overflow: hidden;
+    animation: slideUp 0.35s ease;
+  }
+
+  .report-header {
+    background: linear-gradient(135deg, #0a1628 0%, #0d2147 100%);
+    padding: 28px 36px;
+    border-bottom: 4px solid var(--accent);
+  }
+  .report-header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.8rem;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .report-header .report-meta {
+    color: #94b3d8;
+    font-size: 0.88rem;
+  }
+
+  .report-body { padding: 32px 36px; }
+
+  .report-section {
+    margin-bottom: 28px;
+  }
+  .report-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--blue);
+    background: var(--blue-light);
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
+  }
+  .report-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .report-field.full { grid-column: 1/-1; }
+  .report-field-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+  }
+  .report-field-value {
+    font-size: 0.95rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .report-field-value.empty { color: #cbd5e0; font-style: italic; }
+
+  .scope-list {
+    list-style: none;
+    padding: 0;
+  }
+  .scope-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f4f8;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+  }
+  .scope-list li::before {
+    content: '✓';
+    color: var(--success);
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .report-divider {
+    border: none;
+    border-top: 1.5px solid #e2e8f0;
+    margin: 20px 0;
+  }
+
+  .report-footer {
+    background: var(--gray-light);
+    padding: 18px 36px;
+    border-top: 1.5px solid var(--border);
+    display: flex;
+    gap: 14px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .warn-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff8e1;
+    border: 1px solid #f0c040;
+    color: #7d5a00;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 600px) {
+    .field-grid { grid-template-columns: 1fr; }
+    .report-grid { grid-template-columns: 1fr; }
+    .app-header { flex-wrap: wrap; }
+    .header-title { margin-left: 0; }
+    .card { padding: 20px; }
+    .report-body { padding: 20px; }
+  }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: #fff !important; margin: 0; padding: 0; }
+    .app-header, .progress-wrap, #stepsContainer, .report-footer { display: none !important; }
+    .app-body { max-width: 100%; padding: 0; margin: 0; }
+    #reportContainer { display: block !important; }
+    .report-wrap { box-shadow: none !important; border-radius: 0 !important; }
+    .report-header {
+      background: #0a1628 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      padding: 20px 28px !important;
+    }
+    .report-header h1 { color: #ffffff !important; font-size: 1.4rem !important; }
+    .report-header .report-meta { color: #94b3d8 !important; }
+    .report-section-title { background: #e8f1fb !important; color: #1a6dcc !important; }
+    .report-body { padding: 20px 28px !important; }
+    .report-section { page-break-inside: avoid; margin-bottom: 18px; }
+    .scope-list li::before { color: #38a169 !important; }
+    .warn-badge { background: #fff8e1 !important; border-color: #f0c040 !important; color: #7d5a00 !important; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div>
+    <div class="logo-text">MY BACKYARD <span>SPORTS</span></div>
+    <div class="logo-sub">Design &amp; Install</div>
+  </div>
+  <div class="header-title">Court Scope Builder</div>
+</div>
+
+<div class="app-body">
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-label">
+      <span id="stepLabel">Step 1</span>
+      <span id="stepCount"></span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="step-dots" id="stepDots"></div>
+  </div>
+
+  <!-- STEPS CONTAINER -->
+  <div id="stepsContainer"></div>
+
+  <!-- REPORT -->
+  <div id="reportContainer" class="hidden"></div>
+
+</div>
+
+<script>
+// ─── DATA MODEL ─────────────────────────────────────────────
+const data = {};
+
+// ─── STEP DEFINITIONS ───────────────────────────────────────
+// Steps are defined as objects with a render() and collect() function
+const STEPS = [
+  // 0: Project Info
+  {
+    section: 'Project Identification',
+    title: 'Project Information',
+    desc: 'Basic details about the client and job site.',
+    render() {
+      return `
+        <div class="field-grid">
+          <div class="field">
+            <label>Client / Project Name</label>
+            <input type="text" id="clientName" value="${data.clientName||''}" placeholder="e.g. Smith Residence">
+          </div>
+          <div class="field">
+            <label>Site Address</label>
+            <input type="text" id="siteAddress" value="${data.siteAddress||''}" placeholder="123 Main St, City, State">
+          </div>
+          <div class="field">
+            <label>Permit / Project #</label>
+            <input type="text" id="permitNum" value="${data.permitNum||''}" placeholder="Optional">
+          </div>
+          <div class="field">
+            <label>Target Completion Date</label>
+            <input type="date" id="targetDate" value="${data.targetDate||''}">
+          </div>
+        </div>`;
+    },
+    collect() {
+      data.clientName = v('clientName');
+      data.siteAddress = v('siteAddress');
+      data.permitNum = v('permitNum');
+      data.targetDate = v('targetDate');
+    },
+    valid() { return !!data.clientName && !!data.siteAddress; }
+  },
+
+  // 1: Surface Type
+  {
+    section: 'Surface Type',
+    title: 'What surface type?',
+    desc: 'Select the base surface the court will be built on.',
+    render() {
+      const sel = (val) => data.surfaceType === val ? 'selected' : '';
+      return `
+        <div class="option-grid">
+          ${[['concrete','🏗️','Concrete'],['asphalt','🛣️','Asphalt'],['gravel','🪨','Gravel / Stone']].map(([v,icon,label])=>`
+          <div class="option-card ${sel(v)}" onclick="selectOpt('surfaceType','${v}',this)">
+            <span class="opt-icon">${icon}</span>
+            <span class="opt-label">${label}</span>
+          </div>`).join('')}
+        </div>`;
+    },
+    collect() { /* collected via selectOpt */ },
+    valid() { return !!data.surfaceType; }
+  },
+
+  // 2: Court Type & Size
+  {
+    section: 'Court Details',
+    title: 'Court Type & Size',
+    desc: 'What sport(s) and what are the finished court dimensions?',
+    render() {
+      const sel = (val) => (data.courtTypes||[]).includes(val) ? 'selected' : '';
+      return `
+        <div class="sub-heading">Court Type (select all that apply)</div>
+        <div class="option-grid">
+          ${[['Basketball','🏀'],['Pickleball','🏸'],['Tennis','🎾'],['Multi-Sport','🏟️']].map(([label, icon])=>`
+          <div class="option-card ${sel(label)}" onclick="toggleOpt('courtTypes','${label}',this)">
+            <span class="opt-icon">${icon}</span>
+            <span class="opt-label">${label}</span>
+          </div>`).join('')}
+        </div>
+        <hr class="divider">
+        <div class="field-grid">
+          <div class="field">
+            <label>Length (ft)</label>
+            <input type="number" id="courtL" value="${data.courtL||''}" placeholder="e.g. 94">
+          </div>
+          <div class="field">
+            <label>Width (ft)</label>
+            <input type="number" id="courtW" value="${data.courtW||''}" placeholder="e.g. 50">
+          </div>
+          <div class="field full">
+            <label>Orientation / Landmark Reference</label>
+            <input type="text" id="orientation" value="${data.orientation||''}" placeholder="e.g. Long axis runs North-South, parallel to garage">
+          </div>
+        </div>`;
+    },
+    collect() {
+      data.courtL = v('courtL');
+      data.courtW = v('courtW');
+      data.orientation = v('orientation');
+    },
+    valid() { return !!(data.courtTypes && data.courtTypes.length) && !!data.courtL && !!data.courtW; }
+  },
+
+  // 3: Contractor Info
+  {
+    section: 'Contractor',
+    title: 'Contractor Information',
+    desc: 'Who is performing the work?',
+    render() {
+      return `
+        <div class="field-grid">
+          <div class="field full">
+            <label>Contractor Company Name</label>
+            <input type="text" id="contractorName" value="${data.contractorName||''}" placeholder="ABC Paving LLC">
+          </div>
+          <div class="field">
+            <label>Foreman / Site Lead</label>
+            <input type="text" id="foremanName" value="${data.foremanName||''}" placeholder="John Smith">
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input type="text" id="foremanPhone" value="${data.foremanPhone||''}" placeholder="(555) 555-5555">
+          </div>
+          <div class="field full">
+            <label>Email</label>
+            <input type="text" id="foremanEmail" value="${data.foremanEmail||''}" placeholder="john@abcpaving.com">
+          </div>
+        </div>`;
+    },
+    collect() {
+      data.contractorName = v('contractorName');
+      data.foremanName = v('foremanName');
+      data.foremanPhone = v('foremanPhone');
+      data.foremanEmail = v('foremanEmail');
+    },
+    valid() { return true; }
+  },
+
+  // 4: Pre-Construction
+  {
+    section: 'Pre-Construction',
+    title: 'Pre-Construction Verification',
+    desc: 'Confirm all items below have been addressed before work begins.',
+    render() {
+      const checks = [
+        ['plansReviewed','Approved plans received and reviewed'],
+        ['permitsConfirmed','Survey & Permits confirmed'],
+        ['elevationConfirmed','Finished elevation confirmed with owner'],
+        ['drainagePlanReviewed','Drainage plan reviewed'],
+        ['utilitiesMarked','Underground utilities marked (811)'],
+        ['accessConfirmed','Access & staging area confirmed'],
+        ['weatherOk','Weather window acceptable'],
+      ];
+      return `
+        <div class="check-list">
+          ${checks.map(([key,label])=>`
+          <label class="check-item">
+            <input type="checkbox" id="${key}" ${data[key]?'checked':''} onchange="data['${key}']=this.checked">
+            <span class="check-item-label">${label}</span>
+          </label>`).join('')}
+        </div>
+        <hr class="divider">
+        <div class="field">
+          <label>Pre-Construction Notes</label>
+          <textarea id="preconNotes" placeholder="Any additional notes...">${data.preconNotes||''}</textarea>
+        </div>`;
+    },
+    collect() {
+      data.preconNotes = v('preconNotes');
+    },
+    valid() { return true; }
+  },
+
+  // 5: Subgrade & Base
+  {
+    section: 'Subgrade & Base',
+    title: 'Subgrade & Base',
+    desc: 'Define the foundation requirements for this court.',
+    render() {
+      const isGravel = data.surfaceType === 'gravel';
+      const isConcrete = data.surfaceType === 'concrete';
+      return `
+        <div class="field-grid">
+          <div class="field">
+            <label>Base Material Type</label>
+            <select id="baseMaterial">
+              <option value="">Select...</option>
+              ${isGravel ? `
+              <option ${data.baseMaterial==='3/4 Clean Stone'?'selected':''}>3/4 Clean Stone</option>
+              <option ${data.baseMaterial==='2-3 Clean Stone'?'selected':''}>2-3 Clean Stone</option>
+              <option ${data.baseMaterial==='RCA'?'selected':''}>RCA (Recycled Concrete Aggregate)</option>
+              ` : `
+              <option ${data.baseMaterial==='Crushed Stone'?'selected':''}>Crushed Stone</option>
+              <option ${data.baseMaterial==='Compacted Gravel'?'selected':''}>Compacted Gravel</option>
+              <option ${data.baseMaterial==='Crushed Limestone'?'selected':''}>Crushed Limestone</option>
+              <option ${data.baseMaterial==='Road Base'?'selected':''}>Road Base</option>
+              `}
+              <option ${data.baseMaterial==='Other'?'selected':''}>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Compacted Base Thickness (inches)</label>
+            <input type="number" id="baseThickness" value="${data.baseThickness||''}" placeholder="e.g. 6">
+          </div>
+        </div>
+        ${isGravel ? `
+        <hr class="divider">
+        <div class="sub-heading">Leveling Course</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Leveling Course Material</label>
+            <select id="levelingMaterial">
+              <option value="">Select...</option>
+              <option ${data.levelingMaterial==='Stone Dust'?'selected':''}>Stone Dust</option>
+              <option ${data.levelingMaterial==='Concrete Sand'?'selected':''}>Concrete Sand</option>
+              <option ${data.levelingMaterial==='Other'?'selected':''}>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Leveling Course Thickness (inches)</label>
+            <input type="number" id="levelingThickness" value="${data.levelingThickness||''}" placeholder="e.g. 2">
+          </div>
+        </div>` : ''}
+        <hr class="divider">
+        <div class="sub-heading">Geotextile Fabric</div>
+        <div class="toggle-row">
+          <button class="toggle-btn ${data.geotextile==='Required'?'active':''}" onclick="setToggle('geotextile','Required',this)">Required</button>
+          <button class="toggle-btn ${data.geotextile==='Not Required'?'active':''}" onclick="setToggle('geotextile','Not Required',this)">Not Required</button>
+          ${isGravel ? `<button class="toggle-btn ${data.geotextile==='Both Layers'?'active':''}" onclick="setToggle('geotextile','Both Layers',this)">Both Layers</button>` : ''}
+        </div>
+        <hr class="divider">
+        <div class="field">
+          <label>Subgrade Prep Notes</label>
+          <textarea id="subgradeNotes" placeholder="Any special conditions or soil issues...">${data.subgradeNotes||''}</textarea>
+        </div>`;
+    },
+    collect() {
+      data.baseMaterial = v('baseMaterial');
+      data.baseThickness = v('baseThickness');
+      data.levelingMaterial = v('levelingMaterial')||'';
+      data.levelingThickness = v('levelingThickness')||'';
+      data.subgradeNotes = v('subgradeNotes');
+    },
+    valid() { return !!data.baseMaterial && !!data.baseThickness; }
+  },
+
+  // 6: Surface Specs (varies by type)
+  {
+    section: 'Surface Specs',
+    title: 'Surface Specifications',
+    desc: 'Specific requirements for the chosen surface material.',
+    render() {
+      if (data.surfaceType === 'asphalt') {
+        return `
+          <div class="field-grid">
+            <div class="field full">
+              <label>Asphalt Mix Per Lift</label>
+              <input type="text" id="asphaltMix" value="${data.asphaltMix||''}" placeholder="e.g. 9.5mm Type B">
+            </div>
+            <div class="field">
+              <label>Total Compacted Thickness (inches)</label>
+              <input type="number" id="totalThickness" value="${data.totalThickness||''}" placeholder="e.g. 3">
+            </div>
+            <div class="field">
+              <label>Placement Method</label>
+              <select id="placementMethod">
+                <option value="">Select...</option>
+                <option ${data.placementMethod==='Single Lift'?'selected':''}>Single Lift</option>
+                <option ${data.placementMethod==='Two Lifts'?'selected':''}>Two Lifts</option>
+              </select>
+            </div>
+            <div class="field" id="lift1Field" style="${data.placementMethod==='Two Lifts'?'':'opacity:0.4'}">
+              <label>1st Lift Thickness (in)</label>
+              <input type="number" id="lift1" value="${data.lift1||''}" placeholder="e.g. 1.5">
+            </div>
+            <div class="field" id="lift2Field" style="${data.placementMethod==='Two Lifts'?'':'opacity:0.4'}">
+              <label>2nd Lift Thickness (in)</label>
+              <input type="number" id="lift2" value="${data.lift2||''}" placeholder="e.g. 1.5">
+            </div>
+          </div>`;
+      } else if (data.surfaceType === 'concrete') {
+        return `
+          <div class="field-grid">
+            <div class="field">
+              <label>Concrete PSI</label>
+              <input type="number" id="concretePSI" value="${data.concretePSI||''}" placeholder="e.g. 4000">
+            </div>
+            <div class="field">
+              <label>Curing Compounds Allowed?</label>
+              <select id="curingAllowed">
+                <option value="">Select...</option>
+                <option ${data.curingAllowed==='Yes'?'selected':''}>Yes</option>
+                <option ${data.curingAllowed==='No'?'selected':''}>No</option>
+              </select>
+            </div>
+          </div>
+          <hr class="divider">
+          <div class="sub-heading">Vapor Barrier</div>
+          <div class="field-grid">
+            <div class="field">
+              <label>Thickness Required (mil)</label>
+              <input type="number" id="vaporMil" value="${data.vaporMil||''}" placeholder="e.g. 10">
+            </div>
+          </div>
+          <hr class="divider">
+          <div class="sub-heading">Forms & Reinforcement</div>
+          <div class="field-grid">
+            <div class="field">
+              <label>Perimeter Turn Down</label>
+              <select id="turnDown">
+                <option value="">Select...</option>
+                <option ${data.turnDown==='6x6'?'selected':''} value="6x6">6" × 6"</option>
+                <option ${data.turnDown==='None'?'selected':''}>None</option>
+                <option ${data.turnDown==='Other'?'selected':''}>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Reinforcement</label>
+              <select id="reinforcement">
+                <option value="">Select...</option>
+                <option ${data.reinforcement==='Rebar'?'selected':''}>Rebar</option>
+                <option ${data.reinforcement==='Wire Mesh'?'selected':''}>Wire Mesh</option>
+                <option ${data.reinforcement==='Both'?'selected':''}>Both</option>
+              </select>
+            </div>
+          </div>
+          <hr class="divider">
+          <div class="sub-heading">Finish & Control Joints</div>
+          <div class="field-grid">
+            <div class="field">
+              <label>Surface Finish</label>
+              <select id="finishType">
+                <option value="">Select...</option>
+                <option ${data.finishType==='Trowel'?'selected':''}>Trowel</option>
+                <option ${data.finishType==='Broom'?'selected':''}>Broom</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Control Joints</label>
+              <select id="controlJoint">
+                <option value="">Select...</option>
+                <option ${data.controlJoint==='Saw Cut'?'selected':''}>Saw Cut</option>
+                <option ${data.controlJoint==='Tooled-In'?'selected':''}>Tooled-In</option>
+                <option ${data.controlJoint==='Expansion Joint'?'selected':''}>Expansion Joint</option>
+                <option ${data.controlJoint==='None'?'selected':''}>None</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label>Mix Notes</label>
+              <textarea id="mixNotes" placeholder="Any specific mix requirements...">${data.mixNotes||''}</textarea>
+            </div>
+          </div>`;
+      } else {
+        // gravel
+        return `
+          <div class="sub-heading">Framing Material</div>
+          <div class="toggle-row">
+            ${[['2x6 Pressure Treated','2x6 PT'],['Paver Edge','Paver Edge'],['Other','Other']].map(([val,label])=>`
+            <button class="toggle-btn ${data.framingMaterial===val?'active':''}" onclick="setToggle('framingMaterial','${val}',this)">${label}</button>`).join('')}
+          </div>
+          <hr class="divider">
+          <div class="field">
+            <label>Additional Notes</label>
+            <textarea id="gravelNotes" placeholder="Any special requirements...">${data.gravelNotes||''}</textarea>
+          </div>`;
+      }
+    },
+    collect() {
+      data.asphaltMix = v('asphaltMix')||'';
+      data.totalThickness = v('totalThickness')||'';
+      data.placementMethod = v('placementMethod')||'';
+      data.lift1 = v('lift1')||'';
+      data.lift2 = v('lift2')||'';
+      data.concretePSI = v('concretePSI')||'';
+      data.curingAllowed = v('curingAllowed')||'';
+      data.vaporMil = v('vaporMil')||'';
+      data.turnDown = v('turnDown')||'';
+      data.reinforcement = v('reinforcement')||'';
+      data.finishType = v('finishType')||'';
+      data.controlJoint = v('controlJoint')||'';
+      data.mixNotes = v('mixNotes')||'';
+      data.gravelNotes = v('gravelNotes')||'';
+    },
+    valid() { return true; }
+  },
+
+  // 7: Slope & Drainage
+  {
+    section: 'Slope & Drainage',
+    title: 'Slope & Drainage',
+    desc: 'Define how water will be managed on and around the court.',
+    render() {
+      return `
+        <div class="field-grid">
+          <div class="field">
+            <label>Finished Slope (%)</label>
+            <input type="number" id="slope" value="${data.slope||''}" placeholder="e.g. 1">
+          </div>
+          <div class="field">
+            <label>Slope Direction</label>
+            <input type="text" id="slopeDir" value="${data.slopeDir||''}" placeholder="e.g. North, away from house">
+          </div>
+        </div>
+        <hr class="divider">
+        <div class="sub-heading">French Drain</div>
+        <div class="toggle-row">
+          ${[['None','None'],['Uphill','Uphill'],['Downhill','Downhill']].map(([val,label])=>`
+          <button class="toggle-btn ${data.frenchDrain===val?'active':''}" onclick="setToggle('frenchDrain','${val}',this)">${label}</button>`).join('')}
+        </div>
+        <div class="field-grid" style="margin-top:14px">
+          <div class="field">
+            <label>French Drain Length (ft) — if applicable</label>
+            <input type="number" id="drainLength" value="${data.drainLength||''}" placeholder="e.g. 40">
+          </div>
+          <div class="field">
+            <label>Drain Discharge Location</label>
+            <input type="text" id="drainDischarge" value="${data.drainDischarge||''}" placeholder="e.g. Street, yard swale">
+          </div>
+        </div>
+        <hr class="divider">
+        <div class="sub-heading">Retaining Wall</div>
+        <div class="toggle-row">
+          <button class="toggle-btn ${data.retainingWall==='No'?'active':''}" onclick="setToggle('retainingWall','No',this);document.getElementById('wallDetails').style.display='none'">No</button>
+          <button class="toggle-btn ${data.retainingWall==='Yes'?'active':''}" onclick="setToggle('retainingWall','Yes',this);document.getElementById('wallDetails').style.display='grid'">Yes</button>
+        </div>
+        <div id="wallDetails" class="field-grid" style="margin-top:14px; display:${data.retainingWall==='Yes'?'grid':'none'}">
+          <div class="field">
+            <label>Wall Height (ft)</label>
+            <input type="number" id="wallH" value="${data.wallH||''}" placeholder="e.g. 2">
+          </div>
+          <div class="field">
+            <label>Wall Length (ft)</label>
+            <input type="number" id="wallL" value="${data.wallL||''}" placeholder="e.g. 30">
+          </div>
+          <div class="field">
+            <label>Wall Material</label>
+            <select id="wallMaterial">
+              <option value="">Select...</option>
+              ${['Block','Stacked Stone','Timber','Boulder','Other'].map(m=>`<option ${data.wallMaterial===m?'selected':''}>${m}</option>`).join('')}
+            </select>
+          </div>
+        </div>`;
+    },
+    collect() {
+      data.slope = v('slope');
+      data.slopeDir = v('slopeDir');
+      data.drainLength = v('drainLength');
+      data.drainDischarge = v('drainDischarge');
+      data.wallH = v('wallH');
+      data.wallL = v('wallL');
+      data.wallMaterial = v('wallMaterial');
+    },
+    valid() { return !!data.slope; }
+  },
+
+  // 8: Edges & Backfill
+  {
+    section: 'Edges & Backfill',
+    title: 'Edges & Backfill',
+    desc: 'How will perimeter edges be finished and backfilled?',
+    render() {
+      const isConcrete = data.surfaceType === 'concrete';
+      const isGravel = data.surfaceType === 'gravel';
+      return `
+        <div class="sub-heading">Backfill Handling</div>
+        <div class="toggle-row">
+          ${[['Removal Needed','Remove'],['Spread Onsite','Spread Onsite'],['Stockpile Onsite','Stockpile']].map(([val,label])=>`
+          <button class="toggle-btn ${data.backfillMethod===val?'active':''}" onclick="setToggle('backfillMethod','${val}',this)">${label}</button>`).join('')}
+        </div>
+        ${isConcrete ? `
+        <hr class="divider">
+        <div class="sub-heading">Backfill After Pour</div>
+        <div class="field">
+          <label>Post-Pour Backfill / Notes</label>
+          <textarea id="backfillNotes" placeholder="e.g. Backfill against exposed edges once forms removed...">${data.backfillNotes||''}</textarea>
+        </div>` : ''}
+        ${isGravel ? `
+        <hr class="divider">
+        <div class="field">
+          <label>Additional fill needed for smooth transition?</label>
+          <textarea id="backfillNotes" placeholder="Note if extra fill material is required...">${data.backfillNotes||''}</textarea>
+        </div>` : ''}
+        <hr class="divider">
+        <div class="field">
+          <label>Straightedge / Tolerance Notes</label>
+          <textarea id="toleranceNotes" placeholder="Any specific edge or tolerance requirements...">${data.toleranceNotes||''}</textarea>
+        </div>`;
+    },
+    collect() {
+      data.backfillNotes = v('backfillNotes')||'';
+      data.toleranceNotes = v('toleranceNotes')||'';
+    },
+    valid() { return true; }
+  },
+
+  // 9: Fencing
+  {
+    section: 'Fencing',
+    title: 'Fencing Requirements',
+    desc: 'Does this project require fencing? Fill in the details or skip.',
+    render() {
+      return `
+        <div class="sub-heading">Is Fencing Required?</div>
+        <div class="toggle-row">
+          <button class="toggle-btn ${data.fencingRequired==='No'?'active':''}" onclick="setToggle('fencingRequired','No',this);document.getElementById('fencingDetails').style.display='none'">No Fencing</button>
+          <button class="toggle-btn ${data.fencingRequired==='Yes'?'active':''}" onclick="setToggle('fencingRequired','Yes',this);document.getElementById('fencingDetails').style.display='block'">Yes — Include Fencing</button>
+        </div>
+
+        <div id="fencingDetails" style="display:${data.fencingRequired==='Yes'?'block':'none'}">
+          <hr class="divider">
+          <div class="field-grid">
+            <div class="field">
+              <label>Main Purpose</label>
+              <select id="fencePurpose">
+                <option value="">Select...</option>
+                <option ${data.fencePurpose==='Sports Containment'?'selected':''}>Sports Containment</option>
+                <option ${data.fencePurpose==='Security'?'selected':''}>Security</option>
+                <option ${data.fencePurpose==='Both'?'selected':''}>Both</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Fence Height (ft)</label>
+              <input type="number" id="fenceHeight" value="${data.fenceHeight||''}" placeholder="e.g. 10">
+            </div>
+            <div class="field">
+              <label>Fence Type</label>
+              <select id="fenceType">
+                <option value="">Select...</option>
+                ${['Chain Link','Aluminum Panel','PVC Panel','Other'].map(t=>`<option ${data.fenceType===t?'selected':''}>${t}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field">
+              <label>Finish</label>
+              <select id="fenceFinish">
+                <option value="">Select...</option>
+                ${['Galvanized','Vinyl','Powder Coated'].map(f=>`<option ${data.fenceFinish===f?'selected':''}>${f}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field">
+              <label>Color / HOA Requirements</label>
+              <input type="text" id="fenceColor" value="${data.fenceColor||''}" placeholder="e.g. Black, HOA requires green">
+            </div>
+            <div class="field">
+              <label>Distance From Play Area (ft)</label>
+              <input type="number" id="fenceDist" value="${data.fenceDist||''}" placeholder="e.g. 3">
+            </div>
+            <div class="field">
+              <label>Windscreen / Privacy Slats</label>
+              <select id="windscreen">
+                <option value="">Select...</option>
+                ${['None','Total Coverage','Partial','Specific Sides Only'].map(w=>`<option ${data.windscreen===w?'selected':''}>${w}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field">
+              <label>Post Spacing (ft)</label>
+              <input type="number" id="postSpacing" value="${data.postSpacing||''}" placeholder="e.g. 10">
+            </div>
+            <div class="field">
+              <label>New Install or Replacement?</label>
+              <select id="fenceInstallType">
+                <option value="">Select...</option>
+                <option ${data.fenceInstallType==='New Install'?'selected':''}>New Install</option>
+                <option ${data.fenceInstallType==='Replacement - Remove Old'?'selected':''}>Replacement - Remove Old</option>
+                <option ${data.fenceInstallType==='Replacement - Leave Old'?'selected':''}>Replacement - Leave Old</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Ground / Post Type</label>
+              <select id="groundType">
+                <option value="">Select...</option>
+                ${['Soil','Concrete - Core Drill','Asphalt - Core Drill','Other'].map(g=>`<option ${data.groundType===g?'selected':''}>${g}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <hr class="divider">
+          <div class="sub-heading">Gates</div>
+          <div class="field-grid">
+            <div class="field">
+              <label>Number of Gates</label>
+              <input type="number" id="gateCount" value="${data.gateCount||''}" placeholder="e.g. 2">
+            </div>
+            <div class="field">
+              <label>Gate Width (ft)</label>
+              <input type="text" id="gateWidth" value="${data.gateWidth||''}" placeholder="e.g. 4ft single, 10ft double">
+            </div>
+            <div class="field">
+              <label>Gate Swing</label>
+              <select id="gateSwing">
+                <option value="">Select...</option>
+                ${['Inward','Outward','Double Swing'].map(g=>`<option ${data.gateSwing===g?'selected':''}>${g}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field">
+              <label>Gate Hardware</label>
+              <select id="gateHardware">
+                <option value="">Select...</option>
+                ${['Self-Closing','Locking','Both','Standard'].map(g=>`<option ${data.gateHardware===g?'selected':''}>${g}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+        </div>`;
+    },
+    collect() {
+      data.fencePurpose = v('fencePurpose')||'';
+      data.fenceHeight = v('fenceHeight')||'';
+      data.fenceType = v('fenceType')||'';
+      data.fenceFinish = v('fenceFinish')||'';
+      data.fenceColor = v('fenceColor')||'';
+      data.fenceDist = v('fenceDist')||'';
+      data.windscreen = v('windscreen')||'';
+      data.postSpacing = v('postSpacing')||'';
+      data.fenceInstallType = v('fenceInstallType')||'';
+      data.groundType = v('groundType')||'';
+      data.gateCount = v('gateCount')||'';
+      data.gateWidth = v('gateWidth')||'';
+      data.gateSwing = v('gateSwing')||'';
+      data.gateHardware = v('gateHardware')||'';
+    },
+    valid() { return true; }
+  },
+
+  // 10: Erosion Control
+  {
+    section: 'Site Conditions',
+    title: 'Soil Erosion & Site Conditions',
+    desc: 'Identify any site-specific requirements for permits or erosion control.',
+    render() {
+      const erosionItems = [
+        ['siltFence','Silt Fence Needed'],
+        ['accessRoad','Access Road Needed'],
+        ['drainageNeeded','Drainage Needed'],
+        ['stormwaterPermit','Stormwater Permit Needed'],
+        ['soilConsNotif','Soil Conservation Notification Needed'],
+      ];
+      return `
+        <div class="sub-heading">Check All That Apply</div>
+        <div class="check-list">
+          ${erosionItems.map(([key,label])=>`
+          <label class="check-item">
+            <input type="checkbox" id="${key}" ${data[key]?'checked':''} onchange="data['${key}']=this.checked">
+            <span class="check-item-label">${label}</span>
+          </label>`).join('')}
+        </div>
+        <hr class="divider">
+        <div class="sub-heading">Access & Site Details</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Minimum Access Width (ft)</label>
+            <input type="number" id="accessWidth" value="${data.accessWidth||''}" placeholder="e.g. 10">
+          </div>
+          <div class="field">
+            <label>Elevation Changes Along Site</label>
+            <input type="text" id="elevationChanges" value="${data.elevationChanges||''}" placeholder="e.g. 2ft drop on north side">
+          </div>
+          <div class="field full">
+            <label>Additional Slope or Access Challenges</label>
+            <textarea id="accessChallenges" placeholder="Describe any obstacles, steep grades, narrow gates, etc.">${data.accessChallenges||''}</textarea>
+          </div>
+        </div>`;
+    },
+    collect() {
+      data.accessWidth = v('accessWidth');
+      data.elevationChanges = v('elevationChanges');
+      data.accessChallenges = v('accessChallenges');
+    },
+    valid() { return true; }
+  },
+
+  // 11: Attachments & Notes
+  {
+    section: 'Final Notes',
+    title: 'Attachments & Notes',
+    desc: 'Document any attachments and add final project notes.',
+    render() {
+      const attachItems = [
+        ['attSurvey','Survey'],
+        ['attPlan','Plan Sketch'],
+        ['attPhotos','Site Photos'],
+        ['attElevation','Elevation Reference'],
+      ];
+      return `
+        <div class="sub-heading">Included Attachments</div>
+        <div class="check-list">
+          ${attachItems.map(([key,label])=>`
+          <label class="check-item">
+            <input type="checkbox" id="${key}" ${data[key]?'checked':''} onchange="data['${key}']=this.checked">
+            <span class="check-item-label">${label}</span>
+          </label>`).join('')}
+        </div>
+        <hr class="divider">
+        <div class="field">
+          <label>Additional Notes / Special Instructions</label>
+          <textarea id="finalNotes" placeholder="Any other scope details, owner preferences, or conditions..." style="min-height:100px">${data.finalNotes||''}</textarea>
+        </div>`;
+    },
+    collect() {
+      data.finalNotes = v('finalNotes');
+    },
+    valid() { return true; }
+  }
+];
+
+// ─── HELPERS ────────────────────────────────────────────────
+let currentStep = 0;
+
+function v(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function selectOpt(key, val, el) {
+  data[key] = val;
+  el.closest('.option-grid').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleOpt(key, val, el, event) {
+  if (event) event.preventDefault();
+  if (!data[key]) data[key] = [];
+  const idx = data[key].indexOf(val);
+  if (idx > -1) {
+    data[key].splice(idx, 1);
+    el.classList.remove('selected');
+  } else {
+    data[key].push(val);
+    el.classList.add('selected');
+  }
+}
+
+function setToggle(key, val, el) {
+  data[key] = val;
+  el.closest('.toggle-row').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ─── RENDER STEP ────────────────────────────────────────────
+function renderStep() {
+  const total = STEPS.length;
+  const pct = Math.round((currentStep / total) * 100);
+
+  document.getElementById('stepLabel').textContent = `Step ${currentStep + 1} of ${total}`;
+  document.getElementById('stepCount').textContent = STEPS[currentStep].section;
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  // dots
+  const dots = document.getElementById('stepDots');
+  dots.innerHTML = STEPS.map((_, i) => `<div class="step-dot ${i < currentStep ? 'done' : i === currentStep ? 'active' : ''}"></div>`).join('');
+
+  const step = STEPS[currentStep];
+  const container = document.getElementById('stepsContainer');
+  container.innerHTML = `
+    <div class="card">
+      <div class="section-tag">${step.section}</div>
+      <h2>${step.title}</h2>
+      <p class="card-desc">${step.desc}</p>
+      ${step.render()}
+      <div class="btn-row">
+        ${currentStep > 0 ? `<button class="btn btn-secondary" onclick="goBack()">← Back</button>` : ''}
+        <button class="btn btn-primary" onclick="goNext()">
+          ${currentStep < STEPS.length - 1 ? 'Continue →' : 'Generate Report ✓'}
+        </button>
+      </div>
+    </div>`;
+}
+
+function goNext() {
+  STEPS[currentStep].collect();
+  if (STEPS[currentStep].valid && !STEPS[currentStep].valid()) {
+    alert('Please fill in the required fields before continuing.');
+    return;
+  }
+  if (currentStep < STEPS.length - 1) {
+    currentStep++;
+    renderStep();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    generateReport();
+  }
+}
+
+function goBack() {
+  STEPS[currentStep].collect();
+  currentStep--;
+  renderStep();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── REPORT ─────────────────────────────────────────────────
+function generateReport() {
+  document.getElementById('stepsContainer').classList.add('hidden');
+  document.getElementById('progressWrap').classList.add('hidden');
+
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const surfaceLabel = { concrete: 'Concrete', asphalt: 'Asphalt', gravel: 'Gravel / Stone' }[data.surfaceType] || data.surfaceType;
+
+  const preconChecks = [
+    ['plansReviewed','Approved plans received and reviewed'],
+    ['permitsConfirmed','Survey & Permits confirmed'],
+    ['elevationConfirmed','Finished elevation confirmed with owner'],
+    ['drainagePlanReviewed','Drainage plan reviewed'],
+    ['utilitiesMarked','Underground utilities marked (811)'],
+    ['accessConfirmed','Access & staging area confirmed'],
+    ['weatherOk','Weather window acceptable'],
+  ];
+
+  const attachments = [
+    ['attSurvey','Survey'],
+    ['attPlan','Plan Sketch'],
+    ['attPhotos','Site Photos'],
+    ['attElevation','Elevation Reference'],
+  ].filter(([k]) => data[k]).map(([,l]) => l);
+
+  const erosionFlags = [
+    ['siltFence','Silt Fence'],
+    ['accessRoad','Access Road'],
+    ['drainageNeeded','Drainage'],
+    ['stormwaterPermit','Stormwater Permit'],
+    ['soilConsNotif','Soil Conservation Notification'],
+  ].filter(([k]) => data[k]).map(([,l]) => l);
+
+  function field(label, val, empty = '—') {
+    const display = val ? val : `<span class="report-field-value empty">${empty}</span>`;
+    return `<div class="report-field"><div class="report-field-label">${label}</div><div class="report-field-value">${val || `<span class="report-field-value empty">${empty}</span>`}</div></div>`;
+  }
+
+  function fieldFull(label, val, empty='—') {
+    return `<div class="report-field full"><div class="report-field-label">${label}</div><div class="report-field-value">${val || `<span class="report-field-value empty">${empty}</span>`}</div></div>`;
+  }
+
+  let surfaceSection = '';
+  if (data.surfaceType === 'asphalt') {
+    surfaceSection = `
+      <div class="report-section">
+        <div class="report-section-title">Asphalt Specifications</div>
+        <div class="report-grid">
+          ${field('Asphalt Mix', data.asphaltMix)}
+          ${field('Total Compacted Thickness', data.totalThickness ? data.totalThickness + ' in' : '')}
+          ${field('Placement Method', data.placementMethod)}
+          ${data.placementMethod === 'Two Lifts' ? field('Lift Thicknesses', [data.lift1, data.lift2].filter(Boolean).join(' / ') + ' in') : ''}
+        </div>
+      </div>`;
+  } else if (data.surfaceType === 'concrete') {
+    surfaceSection = `
+      <div class="report-section">
+        <div class="report-section-title">Concrete Specifications</div>
+        <div class="report-grid">
+          ${field('Concrete PSI', data.concretePSI)}
+          ${field('Curing Compounds Allowed', data.curingAllowed)}
+          ${field('Vapor Barrier Thickness', data.vaporMil ? data.vaporMil + ' mil' : '')}
+          ${field('Perimeter Turn Down', data.turnDown)}
+          ${field('Reinforcement', data.reinforcement)}
+          ${field('Surface Finish', data.finishType)}
+          ${field('Control Joints', data.controlJoint)}
+          ${data.mixNotes ? fieldFull('Mix Notes', data.mixNotes) : ''}
+        </div>
+      </div>`;
+  } else {
+    surfaceSection = `
+      <div class="report-section">
+        <div class="report-section-title">Gravel/Stone Details</div>
+        <div class="report-grid">
+          ${field('Leveling Course Material', data.levelingMaterial)}
+          ${field('Leveling Course Thickness', data.levelingThickness ? data.levelingThickness + ' in' : '')}
+          ${field('Framing Material', data.framingMaterial)}
+          ${data.gravelNotes ? fieldFull('Notes', data.gravelNotes) : ''}
+        </div>
+      </div>`;
+  }
+
+  let fencingSection = '';
+  if (data.fencingRequired === 'Yes') {
+    fencingSection = `
+      <div class="report-section">
+        <div class="report-section-title">Fencing</div>
+        <div class="report-grid">
+          ${field('Purpose', data.fencePurpose)}
+          ${field('Height', data.fenceHeight ? data.fenceHeight + ' ft' : '')}
+          ${field('Type', data.fenceType)}
+          ${field('Finish', data.fenceFinish)}
+          ${field('Color / HOA', data.fenceColor)}
+          ${field('Distance From Play Area', data.fenceDist ? data.fenceDist + ' ft' : '')}
+          ${field('Windscreen', data.windscreen)}
+          ${field('Post Spacing', data.postSpacing ? data.postSpacing + ' ft' : '')}
+          ${field('Install Type', data.fenceInstallType)}
+          ${field('Ground / Post Type', data.groundType)}
+          ${field('Gates', data.gateCount ? data.gateCount + ' gate(s), ' + (data.gateWidth||'') + ' wide' : '')}
+          ${field('Gate Swing', data.gateSwing)}
+          ${field('Gate Hardware', data.gateHardware)}
+        </div>
+      </div>`;
+  }
+
+  const scopeItems = {
+    concrete: ['Excavate Area','Prepare and compact subgrade and base','Forms well supported & straight','Install Vapor Barrier & Rebar','Pour Concrete & Finish Uniformly','Sawcut & Remove Forms','Backfill Against Exposed Concrete Edges'],
+    asphalt: ['Excavate Area','Prepare subgrade and base','Install asphalt pavement','Deliver surface suitable for sports court coating or game tile'],
+    gravel: ['Excavate Area','Prepare and compact subgrade and base','Install permanent pressure treated forms','Leveling Course Uniform & Well Compacted','Backfill Against Exposed Frame Edges'],
+  }[data.surfaceType] || [];
+
+  const html = `
+    <div class="report-wrap">
+      <div class="report-header">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#f0a500; margin-bottom:6px;">My Backyard Sports · Scope Report</div>
+        <h1>${data.clientName || 'Untitled Project'}</h1>
+        <div class="report-meta">${data.siteAddress || ''} &nbsp;·&nbsp; ${surfaceLabel} Court &nbsp;·&nbsp; Generated ${date}</div>
+      </div>
+
+      <div class="report-body">
+
+        <!-- PROJECT ID -->
+        <div class="report-section">
+          <div class="report-section-title">Project Identification</div>
+          <div class="report-grid">
+            ${field('Client / Project Name', data.clientName)}
+            ${field('Site Address', data.siteAddress)}
+            ${field('Permit / Project #', data.permitNum)}
+            ${field('Target Completion', data.targetDate)}
+            ${field('Surface Type', surfaceLabel)}
+            ${field('Court Type(s)', (data.courtTypes||[]).join(', '))}
+            ${field('Court Size (L × W)', data.courtL && data.courtW ? data.courtL + ' × ' + data.courtW + ' ft' : '')}
+            ${field('Orientation', data.orientation)}
+          </div>
+        </div>
+
+        <hr class="report-divider">
+
+        <!-- CONTRACTOR -->
+        <div class="report-section">
+          <div class="report-section-title">Contractor</div>
+          <div class="report-grid">
+            ${field('Company', data.contractorName)}
+            ${field('Foreman', data.foremanName)}
+            ${field('Phone', data.foremanPhone)}
+            ${field('Email', data.foremanEmail)}
+          </div>
+        </div>
+
+        <hr class="report-divider">
+
+        <!-- PRE-CON -->
+        <div class="report-section">
+          <div class="report-section-title">Pre-Construction Verification</div>
+          <ul class="scope-list">
+            ${preconChecks.filter(([k])=>data[k]).map(([,l])=>`<li>${l}</li>`).join('')}
+            ${preconChecks.filter(([k])=>!data[k]).map(([,l])=>`<li style="opacity:0.35; text-decoration:line-through">${l}</li>`).join('')}
+          </ul>
+          ${data.preconNotes ? `<div style="margin-top:10px; font-size:0.88rem; color:#718096;"><strong>Notes:</strong> ${data.preconNotes}</div>` : ''}
+        </div>
+
+        <hr class="report-divider">
+
+        <!-- SCOPE -->
+        <div class="report-section">
+          <div class="report-section-title">Scope of Work</div>
+          <ul class="scope-list">
+            ${scopeItems.map(i=>`<li>${i}</li>`).join('')}
+          </ul>
+          <div style="margin-top:12px; font-size:0.82rem; color:#718096; font-style:italic;">Contractor shall not modify scope without written approval.</div>
+        </div>
+
+        <hr class="report-divider">
+
+        <!-- SUBGRADE -->
+        <div class="report-section">
+          <div class="report-section-title">Subgrade & Base</div>
+          <div class="report-grid">
+            ${field('Base Material', data.baseMaterial)}
+            ${field('Compacted Thickness', data.baseThickness ? data.baseThickness + ' in' : '')}
+            ${field('Geotextile Fabric', data.geotextile)}
+            ${data.subgradeNotes ? fieldFull('Prep Notes', data.subgradeNotes) : ''}
+          </div>
+        </div>
+
+        <hr class="report-divider">
+
+        ${surfaceSection}
+
+        <hr class="report-divider">
+
+        <!-- SLOPE -->
+        <div class="report-section">
+          <div class="report-section-title">Slope & Drainage</div>
+          <div class="report-grid">
+            ${field('Finished Slope', data.slope ? data.slope + '%' : '')}
+            ${field('Slope Direction', data.slopeDir)}
+            ${field('French Drain', data.frenchDrain)}
+            ${data.frenchDrain && data.frenchDrain !== 'None' ? field('Drain Length', data.drainLength ? data.drainLength + ' ft' : '') : ''}
+            ${field('Drain Discharge', data.drainDischarge)}
+            ${field('Retaining Wall', data.retainingWall)}
+            ${data.retainingWall === 'Yes' ? field('Wall Dimensions', data.wallH && data.wallL ? data.wallH + ' × ' + data.wallL + ' ft' : '') : ''}
+            ${data.retainingWall === 'Yes' ? field('Wall Material', data.wallMaterial) : ''}
+          </div>
+          <div style="margin-top:10px; font-size:0.82rem; color:#718096; font-style:italic;">No standing water greater than 1/16" after 1hr direct sunlight or 2hrs overcast. Contractor responsible for correcting birdbaths prior to acceptance.</div>
+        </div>
+
+        <hr class="report-divider">
+
+        <!-- EDGES -->
+        <div class="report-section">
+          <div class="report-section-title">Edges & Backfill</div>
+          <div class="report-grid">
+            ${field('Backfill Method', data.backfillMethod)}
+            ${data.backfillNotes ? fieldFull('Backfill Notes', data.backfillNotes) : ''}
+            ${data.toleranceNotes ? fieldFull('Tolerance Notes', data.toleranceNotes) : ''}
+          </div>
+        </div>
+
+        ${fencingSection ? `<hr class="report-divider">${fencingSection}` : ''}
+
+        <hr class="report-divider">
+
+        <!-- EROSION -->
+        <div class="report-section">
+          <div class="report-section-title">Site Conditions & Erosion Control</div>
+          ${erosionFlags.length ? `<ul class="scope-list">${erosionFlags.map(f=>`<li>${f}</li>`).join('')}</ul>` : '<div style="font-size:0.88rem; color:#94a3b8;">No erosion control items flagged.</div>'}
+          <div class="report-grid" style="margin-top:14px">
+            ${field('Min Access Width', data.accessWidth ? data.accessWidth + ' ft' : '')}
+            ${data.elevationChanges ? field('Elevation Changes', data.elevationChanges) : ''}
+            ${data.accessChallenges ? fieldFull('Access Challenges', data.accessChallenges) : ''}
+          </div>
+          ${erosionFlags.length ? '<div class="warn-badge">⚠️ Survey required with flagged items</div>' : ''}
+        </div>
+
+        <hr class="report-divider">
+
+        <!-- ATTACHMENTS & NOTES -->
+        <div class="report-section">
+          <div class="report-section-title">Attachments & Notes</div>
+          ${attachments.length ? `<ul class="scope-list">${attachments.map(a=>`<li>${a}</li>`).join('')}</ul>` : '<div style="font-size:0.88rem; color:#94a3b8;">No attachments noted.</div>'}
+          ${data.finalNotes ? `<div style="margin-top:14px; padding:14px; background:#f8fafc; border-radius:8px; border-left:3px solid var(--blue); font-size:0.92rem; color:var(--text)"><strong>Special Instructions:</strong><br>${data.finalNotes}</div>` : ''}
+        </div>
+
+      </div>
+
+      <div class="report-footer">
+        <button class="btn btn-secondary" onclick="restart()">← Start New Quote</button>
+        <button class="btn btn-accent" onclick="printReport()">🖨 Print / Save PDF</button>
+      </div>
+    </div>`;
+
+  document.getElementById('reportContainer').innerHTML = html;
+  document.getElementById('reportContainer').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+function printReport() {
+  const reportHTML = document.getElementById('reportContainer').innerHTML;
+  const win = window.open('', '_blank', 'width=900,height=700');
+  win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MBS Scope Report - ${data.clientName || 'Project'}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { font-family: 'Barlow', sans-serif; background: #fff; color: #1a202c; }
+    .report-wrap { max-width: 860px; margin: 0 auto; }
+    .report-header { background: #0a1628 !important; padding: 24px 32px; border-bottom: 4px solid #f0a500; }
+    .report-header h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.6rem; color: #ffffff; margin-bottom: 4px; }
+    .report-meta { color: #94b3d8; font-size: 0.88rem; }
+    .report-body { padding: 28px 32px; }
+    .report-section { margin-bottom: 22px; page-break-inside: avoid; }
+    .report-section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #1a6dcc; background: #e8f1fb !important; padding: 3px 10px; border-radius: 4px; display: inline-block; margin-bottom: 12px; }
+    .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; }
+    .report-field { display: flex; flex-direction: column; gap: 2px; }
+    .report-field.full { grid-column: 1/-1; }
+    .report-field-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; }
+    .report-field-value { font-size: 0.92rem; color: #1a202c; font-weight: 500; }
+    .report-field-value.empty { color: #cbd5e0; font-style: italic; }
+    .report-divider { border: none; border-top: 1.5px solid #e2e8f0; margin: 18px 0; }
+    .scope-list { list-style: none; padding: 0; }
+    .scope-list li { padding: 5px 0; border-bottom: 1px solid #f0f4f8; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+    .scope-list li::before { content: '✓'; color: #38a169 !important; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+    .warn-badge { display: inline-flex; align-items: center; gap: 6px; background: #fff8e1 !important; border: 1px solid #f0c040; color: #7d5a00; border-radius: 6px; padding: 4px 10px; font-size: 0.82rem; font-weight: 600; margin-top: 4px; }
+    .report-footer { display: none; }
+    @media print {
+      body { margin: 0; }
+      .report-wrap { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="report-wrap">${reportHTML}</div>
+  <script>
+    window.onload = function() {
+      // Give fonts a moment to load then print
+      setTimeout(function() { window.print(); }, 600);
+    };
+  <\/script>
+</body>
+</html>`);
+  win.document.close();
+}
+
+function restart() {
+  // Clear data
+  Object.keys(data).forEach(k => delete data[k]);
+  currentStep = 0;
+  document.getElementById('reportContainer').classList.add('hidden');
+  document.getElementById('reportContainer').innerHTML = '';
+  document.getElementById('stepsContainer').classList.remove('hidden');
+  document.getElementById('progressWrap').classList.remove('hidden');
+  renderStep();
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+renderStep();
+</script>
+</body>
+</html>
+```
