@@ -478,6 +478,192 @@
     .warn-badge { background: #fff8e1 !important; border-color: #f0c040 !important; color: #7d5a00 !important; }
   }
 
+  /* PRODUCT CARDS */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .product-card {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--white);
+    position: relative;
+  }
+  .product-card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(26,109,204,0.12); }
+  .product-card.selected { border-color: var(--blue); box-shadow: 0 4px 16px rgba(26,109,204,0.2); }
+  .product-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--blue);
+    color: white;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .product-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    background: #f0f4f8;
+    display: block;
+  }
+  .product-img-placeholder {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, #e8f1fb, #f4f6f9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+  }
+  .product-info {
+    padding: 12px;
+  }
+  .product-name {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .product-desc {
+    font-size: 0.78rem;
+    color: var(--gray);
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .product-price {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--blue-dark);
+  }
+  .product-shipping {
+    font-size: 0.72rem;
+    color: var(--gray);
+    margin-top: 2px;
+  }
+  .qty-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .qty-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--gray-light);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    color: var(--text);
+  }
+  .qty-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .qty-display {
+    font-weight: 700;
+    font-size: 0.95rem;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  /* PRICE SUMMARY BAR */
+  .price-bar {
+    background: linear-gradient(135deg, #0a1628, #0d2147);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .price-bar-label {
+    color: #94b3d8;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .price-bar-amount {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--accent);
+  }
+  .price-breakdown {
+    font-size: 0.78rem;
+    color: #94b3d8;
+    margin-top: 2px;
+  }
+
+  /* REPORT ACCESSORY TABLE */
+  .acc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .acc-table th {
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    padding: 6px 8px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  .acc-table td {
+    padding: 8px 8px;
+    border-bottom: 1px solid #f0f4f8;
+    color: var(--text);
+    vertical-align: middle;
+  }
+  .acc-table tr:last-child td { border-bottom: none; }
+  .acc-total-row td {
+    font-weight: 700;
+    border-top: 2px solid #e2e8f0;
+    padding-top: 10px;
+  }
+
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; margin-bottom: 8px; }
+  .product-card { border: 2px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.2s; background: var(--white); position: relative; }
+  .product-card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(26,109,204,0.12); }
+  .product-card.selected { border-color: var(--blue); box-shadow: 0 4px 16px rgba(26,109,204,0.2); }
+  .product-card.selected .pc-check { display: flex !important; }
+  .pc-check { display: none; position: absolute; top: 8px; right: 8px; background: var(--blue); color: white; width: 22px; height: 22px; border-radius: 50%; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+  .product-img { width: 100%; height: 150px; object-fit: cover; background: #f0f4f8; display: block; }
+  .product-info { padding: 11px; }
+  .product-name { font-weight: 700; font-size: 0.85rem; color: var(--text); margin-bottom: 3px; line-height: 1.3; }
+  .product-desc { font-size: 0.75rem; color: var(--gray); line-height: 1.4; margin-bottom: 7px; }
+  .product-price { font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--blue-dark); }
+  .product-ship { font-size: 0.7rem; color: var(--gray); margin-top: 2px; }
+  .qty-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .qty-btn { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--gray-light); font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); transition: all 0.15s; }
+  .qty-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .qty-num { font-weight: 700; font-size: 0.95rem; min-width: 18px; text-align: center; }
+  .price-bar { background: linear-gradient(135deg, #0a1628, #0d2147); border-radius: 10px; padding: 14px 18px; margin-top: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .price-bar-label { color: #94b3d8; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+  .price-bar-amount { font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--accent); }
+  .price-breakdown { font-size: 0.75rem; color: #94b3d8; margin-top: 2px; }
+  .tax-toggle { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .tax-toggle-label { font-size: 0.8rem; color: #94b3d8; font-weight: 600; }
+  .acc-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .acc-table th { text-align: left; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; padding: 5px 8px; border-bottom: 2px solid #e2e8f0; }
+  .acc-table td { padding: 7px 8px; border-bottom: 1px solid #f0f4f8; color: var(--text); }
+  .acc-total-row td { font-weight: 700; border-top: 2px solid #e2e8f0; padding-top: 10px; }
+
 </style>
 </head>
 <body>
@@ -612,6 +798,45 @@ const STEPS = [
       data.orientation = v('orientation');
     },
     valid() { return !!(data.courtTypes && data.courtTypes.length) && !!data.courtL && !!data.courtW; }
+  },
+
+
+  // 2b: Accessories
+  {
+    section: 'Accessories',
+    title: 'Court Accessories',
+    desc: 'Select equipment for your court. Prices shown are Tier 1 Wholesale. Shipping is a flat $299 for any order containing hoops or lighting.',
+    render() {
+      var types = data.courtTypes || [];
+      var needsHoops = types.indexOf('Basketball') > -1;
+      var needsPB = types.indexOf('Pickleball') > -1;
+      var needsTennis = types.indexOf('Tennis') > -1;
+      if (!data.accessories) data.accessories = {};
+
+      var html = '';
+
+      if (needsHoops) {
+        html += '<div class="sub-heading">&#127936; Basketball Hoops</div><div class="product-grid">';
+        CATALOG.hoops.forEach(function(p) { html += renderProductCard(p); });
+        html += '</div><hr class="divider">';
+      }
+      if (needsPB) {
+        html += '<div class="sub-heading">&#127955; Pickleball Nets</div><div class="product-grid">';
+        CATALOG.pickleball.forEach(function(p) { html += renderProductCard(p); });
+        html += '</div><hr class="divider">';
+      }
+      if (needsTennis) {
+        html += '<div class="sub-heading">&#127934; Tennis</div><div style="padding:14px;background:var(--gray-light);border-radius:8px;color:var(--gray);font-size:0.9rem;margin-bottom:16px">Tennis net pricing — add manually in notes.</div><hr class="divider">';
+      }
+
+      html += '<div class="sub-heading">&#128161; Court Lighting (Optional)</div><div class="product-grid">';
+      CATALOG.lighting.forEach(function(p) { html += renderProductCard(p); });
+      html += '</div>';
+      html += renderPriceBar();
+      return html;
+    },
+    collect() {},
+    valid() { return true; }
   },
 
   // 3: Contractor Info
@@ -1535,7 +1760,30 @@ function generateReport() {
 
         <hr class="report-divider">
 
-        <!-- ATTACHMENTS & NOTES -->
+                (function(){
+          var accs = Object.entries(data.accessories||{}).filter(function(e){ return e[1].selected; });
+          if (!accs.length) return '';
+          var nameMap = {};
+          [].concat(CATALOG.hoops, CATALOG.pickleball, CATALOG.lighting).forEach(function(p){ nameMap[p.id]=p.name; });
+          var t = getAccSubtotal();
+          var rows = accs.map(function(e){
+            var id=e[0], acc=e[1];
+            return '<tr><td>'+( nameMap[id]||id )+'</td><td style="text-align:center">'+acc.qty+'</td><td style="text-align:right">$'+acc.price.toLocaleString()+'</td><td style="text-align:right">$'+(acc.price*acc.qty).toLocaleString()+'</td></tr>';
+          }).join('');
+          return '<div class="report-section"><div class="report-section-title">Accessories &amp; Equipment</div>' +
+            '<table class="acc-table"><thead><tr><th>Item</th><th style="text-align:center">Qty</th><th style="text-align:right">Unit</th><th style="text-align:right">Total</th></tr></thead><tbody>' +
+            rows +
+            '<tr class="acc-total-row"><td colspan="3" style="text-align:right;color:#94a3b8;font-size:0.78rem">Subtotal</td><td style="text-align:right">$'+t.subtotal.toLocaleString()+'</td></tr>' +
+            '<tr><td colspan="3" style="text-align:right;color:#94a3b8;font-size:0.78rem">Shipping</td><td style="text-align:right">$'+t.shipping+'</td></tr>' +
+            (data.taxExempt ? '<tr><td colspan="3" style="text-align:right;color:#38a169;font-size:0.78rem">Tax</td><td style="text-align:right;color:#38a169">Exempt</td></tr>' :
+              '<tr><td colspan="3" style="text-align:right;color:#94a3b8;font-size:0.78rem">Est. Tax (7%)</td><td style="text-align:right">$'+Math.round(t.tax).toLocaleString()+'</td></tr>') +
+            '<tr style="background:#f8fafc"><td colspan="3" style="text-align:right;font-weight:800;font-size:1rem">Total</td><td style="text-align:right;font-weight:800;font-size:1rem;color:#0f4a91">$'+Math.round(t.total).toLocaleString()+'</td></tr>' +
+            '</tbody></table>' +
+            '<div style="margin-top:8px;font-size:0.73rem;color:#94a3b8">Tier 1 Wholesale · Flat $299 shipping (waived on pickleball nets) · '+(data.taxExempt?'Tax exempt order':'Tax estimate only')+'</div>' +
+            '</div><hr class="report-divider">';
+        })() +
+
+        /* ATTACHMENTS & NOTES */
         <div class="report-section">
           <div class="report-section-title">Attachments & Notes</div>
           ${attachments.length ? `<ul class="scope-list">${attachments.map(a=>`<li>${a}</li>`).join('')}</ul>` : '<div style="font-size:0.88rem; color:#94a3b8;">No attachments noted.</div>'}
@@ -1587,6 +1835,10 @@ function printReport() {
     .scope-list li::before { content: '✓'; color: #38a169 !important; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
     .warn-badge { display: inline-flex; align-items: center; gap: 6px; background: #fff8e1 !important; border: 1px solid #f0c040; color: #7d5a00; border-radius: 6px; padding: 4px 10px; font-size: 0.82rem; font-weight: 600; margin-top: 4px; }
     .report-footer { display: none; }
+    .acc-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .acc-table th { text-align: left; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; padding: 5px 8px; border-bottom: 2px solid #e2e8f0; }
+    .acc-table td { padding: 7px 8px; border-bottom: 1px solid #f0f4f8; color: #1a202c; vertical-align: middle; }
+    .acc-total-row td { font-weight: 700; border-top: 2px solid #e2e8f0; }
     @media print {
       body { margin: 0; }
       .report-wrap { max-width: 100%; }
@@ -1604,6 +1856,143 @@ function printReport() {
 </body>
 </html>`);
   win.document.close();
+}
+
+
+
+const CATALOG = {
+  hoops: [
+    { id:'h1', name:'72" Glass Backboard Hoop', sku:'724-AA', price:2000, shipping:299, desc:'Professional 72" tempered glass backboard, adjustable height. Brushed aluminum.', img:'https://dominatorhoop.com/cdn/shop/files/Dominator72inchBrushedAluminum_720x.jpg' },
+    { id:'h2', name:'72" Glass Backboard Hoop - Black', sku:'724-AA-B', price:2050, shipping:299, desc:'Professional 72" tempered glass backboard, adjustable height. Black finish.', img:'https://dominatorhoop.com/cdn/shop/files/Dominator72inchBlack_720x.jpg' },
+    { id:'h3', name:'60" Glass Backboard Hoop', sku:'603-AA', price:1950, shipping:299, desc:'60" tempered glass backboard, smooth height adjustment. Brushed aluminum.', img:'https://dominatorhoop.com/cdn/shop/files/Dominator60inchBrushedAluminum_720x.jpg' },
+    { id:'h4', name:'60" Glass Backboard Hoop - Black', sku:'603-AA-B', price:2000, shipping:299, desc:'60" tempered glass backboard, smooth height adjustment. Black finish.', img:'https://dominatorhoop.com/cdn/shop/files/Dominator60inchBlack_720x.jpg' },
+    { id:'h5', name:'72" Aluminum Shatter-Proof Hoop', sku:'724-APA', price:2150, shipping:299, desc:'72" shatter-proof aluminum backboard. Ideal for high-traffic courts. Brushed aluminum.', img:'https://dominatorhoop.com/cdn/shop/files/Dominator72inchAluminumBrushed_720x.jpg' },
+    { id:'h6', name:'72" Aluminum Shatter-Proof Hoop - Black', sku:'724-APA-B', price:2200, shipping:299, desc:'72" shatter-proof aluminum backboard. Maximum durability. Black finish.', img:'https://dominatorhoop.com/cdn/shop/files/Dominator72inchAluminumBlack_720x.jpg' },
+    { id:'h7', name:'54" Glass Backboard Hoop', sku:'542-AA', price:1600, shipping:299, desc:'54" tempered glass backboard, height adjustable. Compact option. Brushed aluminum.', img:'https://dominatorhoop.com/cdn/shop/files/Dominator54inchBrushedAluminum_720x.jpg' },
+    { id:'h8', name:'54" Glass Backboard Hoop - Black', sku:'542-AA-B', price:1650, shipping:299, desc:'54" tempered glass backboard, height adjustable. Black finish.', img:'https://dominatorhoop.com/cdn/shop/files/Dominator54inchBlack_720x.jpg' },
+    { id:'h9', name:'40" Acrylic Poolside Hoop', sku:'PSH-1', price:800, shipping:299, desc:'40" acrylic backboard for poolside installation. Corrosion-resistant hardware.', img:'https://dominatorhoop.com/cdn/shop/files/DominatorPoolsideHoop_720x.jpg' },
+  ],
+  pickleball: [
+    { id:'p1', name:'Standard Portable Pickleball Net', sku:'pb-frame', price:330, shipping:0, desc:'Durable portable net system with easy setup. Great entry-level option.', img:'https://dominatorhoop.com/cdn/shop/files/StandardPickleballNet_720x.jpg' },
+    { id:'p2', name:'Pro Portable Pickleball Net', sku:'pb-pro', price:1000, shipping:0, desc:'Pro-grade portable net, tournament-spec dimensions, premium mesh. Silver.', img:'https://dominatorhoop.com/cdn/shop/files/ProPickleballNetSilver_720x.jpg' },
+    { id:'p3', name:'Pro Portable Pickleball Net - Black', sku:'pb-pro-b', price:1000, shipping:0, desc:'Pro-grade portable net, tournament-spec dimensions, premium mesh. Black.', img:'https://dominatorhoop.com/cdn/shop/files/ProPickleballNetBlack_720x.jpg' },
+    { id:'p4', name:'Pro Max Portable Pickleball Net', sku:'pb-max', price:1100, shipping:0, desc:'Top-of-line portable net. Maximum stability, competition-ready. Silver.', img:'https://dominatorhoop.com/cdn/shop/files/ProMaxPickleballNetSilver_720x.jpg' },
+    { id:'p5', name:'Pro Max Portable Pickleball Net - Black', sku:'pb-max-b', price:1100, shipping:0, desc:'Top-of-line portable net. Maximum stability, competition-ready. Black.', img:'https://dominatorhoop.com/cdn/shop/files/ProMaxPickleballNetBlack_720x.jpg' },
+    { id:'p6', name:'Square Inground Pickleball Net', sku:'spb-ig2', price:500, shipping:0, desc:'Permanent square post inground net system for dedicated courts.', img:'https://dominatorhoop.com/cdn/shop/files/SquareIngroundPickleballNet_720x.jpg' },
+    { id:'p7', name:'Round Inground Pickleball Net', sku:'rpb-ig2', price:500, shipping:0, desc:'Permanent round post inground net. Clean look for dedicated courts.', img:'https://dominatorhoop.com/cdn/shop/files/RoundIngroundPickleballNet_720x.jpg' },
+    { id:'p8', name:'Square Surface Mount Pickleball Net', sku:'spb-sm2', price:500, shipping:0, desc:'Surface-mount net — anchors to existing concrete or asphalt. No excavation.', img:'https://dominatorhoop.com/cdn/shop/files/SquareSurfaceMountPickleballNet_720x.jpg' },
+    { id:'p9', name:'Square Inground Net - Black', sku:'spb-ig2-b', price:500, shipping:0, desc:'Permanent square post inground net system. Black finish.', img:'https://dominatorhoop.com/cdn/shop/files/SquareIngroundPickleballNetBlack_720x.jpg' },
+    { id:'p10', name:'Round Inground Net - Black', sku:'rpb-ig2-b', price:500, shipping:0, desc:'Permanent round post inground net. Black finish.', img:'https://dominatorhoop.com/cdn/shop/files/RoundIngroundPickleballNetBlack_720x.jpg' },
+    { id:'p11', name:'Square Surface Mount Net - Black', sku:'spb-sm2-b', price:500, shipping:0, desc:'Surface-mount pickleball net system. Black finish.', img:'https://dominatorhoop.com/cdn/shop/files/SquareSurfaceMountPickleballNetBlack_720x.jpg' },
+  ],
+  lighting: [
+    { id:'l1', name:'16ft Pole + 1x 150W LED', sku:'1lp-16-150', price:1000, shipping:300, desc:'16ft light pole with one 150W LED fixture. Great for smaller courts. Brushed aluminum.', img:'https://dominatorhoop.com/cdn/shop/files/1Light150W_720x.jpg' },
+    { id:'l2', name:'16ft Pole + 2x 150W LED', sku:'2lp-16-150', price:1300, shipping:300, desc:'16ft light pole with two 150W LED fixtures. Ideal for half-court setups.', img:'https://dominatorhoop.com/cdn/shop/files/2Light150W_720x.jpg' },
+    { id:'l3', name:'16ft Pole + 3x 150W LED', sku:'3lp-16-150', price:1600, shipping:300, desc:'16ft light pole with three 150W LED fixtures. Full court illumination.', img:'https://dominatorhoop.com/cdn/shop/files/3Light150W_720x.jpg' },
+    { id:'l4', name:'16ft Pole + 1x 150W LED - Black', sku:'1lp-16-150-b', price:1100, shipping:300, desc:'16ft black pole with one 150W LED fixture.', img:'https://dominatorhoop.com/cdn/shop/files/1Light150WBlack_720x.jpg' },
+    { id:'l5', name:'16ft Pole + 2x 150W LED - Black', sku:'2lp-16-150-b', price:1400, shipping:300, desc:'16ft black pole with two 150W LED fixtures.', img:'https://dominatorhoop.com/cdn/shop/files/2Light150WBlack_720x.jpg' },
+    { id:'l6', name:'16ft Pole + 3x 150W LED - Black', sku:'3lp-16-150-b', price:1700, shipping:300, desc:'16ft black pole with three 150W LED fixtures. Premium full-court lighting.', img:'https://dominatorhoop.com/cdn/shop/files/3Light150WBlack_720x.jpg' },
+  ]
+};
+
+function getAccSubtotal() {
+  let subtotal = 0;
+  let hasShipping = false;
+  Object.values(data.accessories || {}).forEach(function(acc) {
+    if (acc.selected) {
+      subtotal += acc.price * acc.qty;
+      if (acc.shipping > 0) hasShipping = true;
+    }
+  });
+  var shipping = hasShipping ? 299 : 0;
+  var taxRate = data.taxExempt ? 0 : 0.07;
+  var tax = (subtotal + shipping) * taxRate;
+  return { subtotal: subtotal, shipping: shipping, tax: tax, total: subtotal + shipping + tax };
+}
+
+function renderProductCard(p) {
+  if (!data.accessories) data.accessories = {};
+  var acc = data.accessories[p.id] || { selected: false, qty: 1 };
+  var selClass = acc.selected ? ' selected' : '';
+  var qtyHtml = '';
+  if (acc.selected) {
+    qtyHtml = '<div class="qty-row" onclick="event.stopPropagation()">' +
+      '<button class="qty-btn" onclick="changeQty(\''+p.id+'\', -1)">&#8722;</button>' +
+      '<span class="qty-num" id="qty-'+p.id+'">'+(acc.qty||1)+'</span>' +
+      '<button class="qty-btn" onclick="changeQty(\''+p.id+'\', 1)">&#43;</button>' +
+      '<span style="font-size:0.72rem;color:var(--gray)">qty</span></div>';
+  }
+  return '<div class="product-card'+selClass+'" id="pc-'+p.id+'" onclick="toggleAccessory(\''+p.id+'\','+p.price+','+p.shipping+')">' +
+    '<div class="pc-check">&#10003;</div>' +
+    '<img class="product-img" src="'+p.img+'" alt="'+p.name+'">' +
+    '<div class="product-info">' +
+      '<div class="product-name">'+p.name+'</div>' +
+      '<div class="product-desc">'+p.desc+'</div>' +
+      '<div class="product-price">$'+p.price.toLocaleString()+'</div>' +
+      '<div class="product-ship">'+(p.shipping > 0 ? 'Shipping: $'+p.shipping : 'Free shipping')+'</div>' +
+      qtyHtml +
+    '</div></div>';
+}
+
+function renderPriceBar() {
+  var t = getAccSubtotal();
+  var taxLabel = data.taxExempt ? 'Tax Exempt' : 'Est. Tax (7%): $'+Math.round(t.tax).toLocaleString();
+  return '<div class="price-bar" id="priceBar">' +
+    '<div>' +
+      '<div class="price-bar-label">Accessories Total</div>' +
+      '<div class="price-breakdown">Subtotal $'+t.subtotal.toLocaleString()+' &nbsp;+&nbsp; Shipping $'+t.shipping+' &nbsp;+&nbsp; '+taxLabel+'</div>' +
+      '<div class="tax-toggle">' +
+        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer">' +
+          '<input type="checkbox" id="taxExemptCheck" '+(data.taxExempt?'checked':'')+' onchange="data.taxExempt=this.checked;refreshPriceBar()" style="width:15px;height:15px;accent-color:var(--accent)">' +
+          '<span class="tax-toggle-label">Tax Exempt Order</span>' +
+        '</label>' +
+      '</div>' +
+    '</div>' +
+    '<div class="price-bar-amount">$'+Math.round(t.total).toLocaleString()+'</div>' +
+  '</div>';
+}
+
+function refreshPriceBar() {
+  var bar = document.getElementById('priceBar');
+  if (bar) bar.outerHTML = renderPriceBar();
+  // re-attach after replacement
+  var newBar = document.getElementById('priceBar');
+  // already rendered
+}
+
+function toggleAccessory(id, price, shipping) {
+  if (!data.accessories) data.accessories = {};
+  var existing = data.accessories[id];
+  if (existing && existing.selected) {
+    data.accessories[id].selected = false;
+    var card = document.getElementById('pc-'+id);
+    if (card) { card.classList.remove('selected'); card.querySelector('.qty-row') && card.querySelector('.qty-row').remove(); }
+  } else {
+    data.accessories[id] = { selected: true, qty: 1, price: price, shipping: shipping };
+    var card = document.getElementById('pc-'+id);
+    if (card) {
+      card.classList.add('selected');
+      var info = card.querySelector('.product-info');
+      if (info && !card.querySelector('.qty-row')) {
+        var qtyDiv = document.createElement('div');
+        qtyDiv.className = 'qty-row';
+        qtyDiv.setAttribute('onclick','event.stopPropagation()');
+        qtyDiv.innerHTML = '<button class="qty-btn" onclick="changeQty(\''+id+'\', -1)">&#8722;</button><span class="qty-num" id="qty-'+id+'">1</span><button class="qty-btn" onclick="changeQty(\''+id+'\', 1)">&#43;</button><span style="font-size:0.72rem;color:var(--gray)">qty</span>';
+        info.appendChild(qtyDiv);
+      }
+    }
+  }
+  refreshPriceBar();
+}
+
+function changeQty(id, delta) {
+  if (!data.accessories || !data.accessories[id]) return;
+  var qty = (data.accessories[id].qty || 1) + delta;
+  if (qty < 1) qty = 1;
+  data.accessories[id].qty = qty;
+  var el = document.getElementById('qty-'+id);
+  if (el) el.textContent = qty;
+  refreshPriceBar();
 }
 
 function restart() {
