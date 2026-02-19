@@ -643,7 +643,7 @@
   .product-card.selected { border-color: var(--blue); box-shadow: 0 4px 16px rgba(26,109,204,0.2); }
   .product-card.selected .pc-check { display: flex !important; }
   .pc-check { display: none; position: absolute; top: 8px; right: 8px; background: var(--blue); color: white; width: 22px; height: 22px; border-radius: 50%; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
-  .product-img { width: 100%; height: 150px; object-fit: cover; background: #f0f4f8; display: block; }
+  .product-img { width: 100%; height: 150px; object-fit: cover; object-position: center 30%; background: #f0f4f8; display: block; }
   .product-info { padding: 11px; }
   .product-name { font-weight: 700; font-size: 0.85rem; color: var(--text); margin-bottom: 3px; line-height: 1.3; }
   .product-desc { font-size: 0.75rem; color: var(--gray); line-height: 1.4; margin-bottom: 7px; }
@@ -821,8 +821,11 @@ const STEPS = [
         html += '</div><hr class="divider">';
       }
       if (needsPB) {
-        html += '<div class="sub-heading">&#127955; Pickleball Nets</div><div class="product-grid">';
-        CATALOG.pickleball.forEach(function(p) { html += renderProductCard(p); });
+        html += '<div class="sub-heading">&#127955; Portable Pickleball Nets</div><div class="product-grid">';
+        CATALOG.pickleball_portable.forEach(function(p) { html += renderProductCard(p); });
+        html += '</div>';
+        html += '<div class="sub-heading" style="margin-top:18px">&#9968; Inground & Surface Mount Nets</div><div class="product-grid">';
+        CATALOG.pickleball_inground.forEach(function(p) { html += renderProductCard(p); });
         html += '</div><hr class="divider">';
       }
       if (needsTennis) {
@@ -1764,7 +1767,7 @@ function generateReport() {
           var accs = Object.entries(data.accessories||{}).filter(function(e){ return e[1].selected; });
           if (!accs.length) return '';
           var nameMap = {};
-          [].concat(CATALOG.hoops, CATALOG.pickleball, CATALOG.lighting).forEach(function(p){ nameMap[p.id]=p.name; });
+          [].concat(CATALOG.hoops, CATALOG.pickleball_portable, CATALOG.pickleball_inground, CATALOG.lighting).forEach(function(p){ nameMap[p.id]=p.name; });
           var t = getAccSubtotal();
           var rows = accs.map(function(e){
             var id=e[0], acc=e[1];
@@ -1862,28 +1865,73 @@ function printReport() {
 
 const CATALOG = {
   hoops: [
-    { id:'h1', name:'72" Glass Backboard Hoop', sku:'724-AA', price:2000, shipping:299, icon:'🏀', desc:'Professional 72" tempered glass backboard, adjustable height. Brushed aluminum.', img:'https://dominatorhoop.com/wp-content/uploads/2021/09/Untitled-Design-21.png' },
-    { id:'h2', name:'72" Glass Backboard Hoop - Black', sku:'724-AA-B', price:2050, shipping:299, icon:'🏀', desc:'Professional 72" tempered glass backboard, adjustable height. Black finish.', img:'https://dominatorhoop.com/wp-content/uploads/2021/09/Untitled-Design-22.png' },
-    { id:'h3', name:'60" Glass Backboard Hoop', sku:'603-AA', price:1950, shipping:299, icon:'🏀', desc:'60" tempered glass backboard, smooth height adjustment. Brushed aluminum.', img:'https://dominatorhoop.com/wp-content/uploads/2021/09/Untitled-Design-23.png' },
-    { id:'h4', name:'60" Glass Backboard Hoop - Black', sku:'603-AA-B', price:2000, shipping:299, icon:'🏀', desc:'60" tempered glass backboard, smooth height adjustment. Black finish.', img:'https://dominatorhoop.com/wp-content/uploads/2021/09/Untitled-Design-24.png' },
-    { id:'h5', name:'72" Aluminum Shatter-Proof Hoop', sku:'724-APA', price:2150, shipping:299, icon:'🏀', desc:'72" shatter-proof aluminum backboard. Ideal for high-traffic courts. Brushed aluminum.', img:'https://dominatorhoop.com/wp-content/uploads/2021/09/Untitled-Design-26.png' },
-    { id:'h6', name:'72" Aluminum Shatter-Proof Hoop - Black', sku:'724-APA-B', price:2200, shipping:299, icon:'🏀', desc:'72" shatter-proof aluminum backboard. Maximum durability. Black finish.', img:'https://dominatorhoop.com/wp-content/uploads/2022/01/Pro-Alum-Black-2.png' },
-    { id:'h7', name:'54" Glass Backboard Hoop', sku:'542-AA', price:1600, shipping:299, icon:'🏀', desc:'54" tempered glass backboard, height adjustable. Compact option. Brushed aluminum.', img:'https://dominatorhoop.com/wp-content/uploads/2021/09/54-Inch-Dominator-Hoop.png' },
-    { id:'h8', name:'54" Glass Backboard Hoop - Black', sku:'542-AA-B', price:1650, shipping:299, icon:'🏀', desc:'54" tempered glass backboard, height adjustable. Black finish.', img:'https://dominatorhoop.com/wp-content/uploads/2022/01/54-Black.png' },
-    { id:'h9', name:'40" Acrylic Poolside Hoop', sku:'PSH-1', price:800, shipping:299, icon:'🏊', desc:'40" acrylic backboard for poolside installation. Corrosion-resistant hardware.', img:'https://dominatorhoop.com/wp-content/uploads/2022/09/Poolside-Hoop.png' },
+    { id:'h7', name:'54" Glass Backboard Hoop', sku:'542-AA', price:1600, shipping:299, icon:'🏀',
+      desc:'Premier outdoor basketball goal with compact overhang, built for smaller driveways, backyards, or limited spaces. Tempered glass backboard with true rebound action and rust-resistant aluminum frame. Fully adjustable height for all ages.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2022/10/542-AA-Front-600x600.png' },
+    { id:'h8', name:'54" Glass Backboard Hoop - Black', sku:'542-AA-B', price:1650, shipping:299, icon:'🏀',
+      desc:'Premier outdoor basketball goal with compact overhang, built for smaller driveways, backyards, or limited spaces. Tempered glass backboard with true rebound action and rust-resistant aluminum frame. Black finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2026/02/Black-54-1-180x180.jpg' },
+    { id:'h3', name:'60" Glass Backboard Hoop', sku:'603-AA', price:1950, shipping:299, icon:'🏀',
+      desc:'Premier outdoor basketball hoop with modified tempered glass backboard and smaller overhang. Designed for those with limited playing space who still want unmatched quality.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2021/02/60xl-Glorify-1-1.png' },
+    { id:'h4', name:'60" Glass Backboard Hoop - Black', sku:'603-AA-B', price:2000, shipping:299, icon:'🏀',
+      desc:'Premier outdoor basketball hoop with modified tempered glass backboard and smaller overhang. Perfect for limited playing space. Black finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2026/02/Black-60-180x180.jpg' },
+    { id:'h1', name:'72" Glass Backboard Hoop', sku:'724-AA', price:2000, shipping:299, icon:'🏀',
+      desc:'Full-sized, easy-to-adjust 72" hoop built with unmatched durability. Gym-level equipment for your driveway or backyard. Smooth height adjustments, stability, and rust-proof materials that hold up season after season.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2021/02/Untitled-Design-24.png' },
+    { id:'h2', name:'72" Glass Backboard Hoop - Black', sku:'724-AA-B', price:2050, shipping:299, icon:'🏀',
+      desc:'Full-sized, easy-to-adjust 72" hoop. Smooth height adjustments, stability, and rust-proof materials. Black finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2025/09/Black-Hoop-Listing-Tall-180x180.jpg' },
+    { id:'h5', name:'72" Aluminum Shatter-Proof Hoop', sku:'724-APA', price:2150, shipping:299, icon:'🏀',
+      desc:'Full-size gym-level performance with a bulletproof 72" perforated aluminum backboard. Same consistent rebound as glass, built to withstand anything. Rust-proof, easily adjustable, perfect for high-traffic courts.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2021/11/Untitled-Design-38.png' },
+    { id:'h6', name:'72" Aluminum Shatter-Proof Hoop - Black', sku:'724-APA-B', price:2200, shipping:299, icon:'🏀',
+      desc:'Full-size gym-level performance with a bulletproof 72" perforated aluminum backboard. Built to withstand anything. Premium rust-proof materials. Black finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2026/02/Perf-Woo-black-180x180.jpg' },
+    { id:'h9', name:'40" Acrylic Poolside Hoop', sku:'PSH-1', price:800, shipping:299, icon:'🏊',
+      desc:'6061 T6 aluminum construction with acrylic backboard and heavy-duty waterproof vinyl-coated rim. All the features of the flagship Dominator Hoop brought to your pool for the best pool basketball experience.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/02/psh-1-2.jpeg' },
   ],
-  pickleball: [
-    { id:'p1', icon:'🏸', name:'Standard Portable Pickleball Net', sku:'pb-frame', price:330, shipping:0, desc:'Durable portable net system with easy setup. Great entry-level option.', img:'https://dominatorhoop.com/wp-content/uploads/2023/01/Standard-Net.png' },
-    { id:'p2', icon:'🏸', name:'Pro Portable Pickleball Net', sku:'pb-pro', price:1000, shipping:0, desc:'Pro-grade portable net, tournament-spec dimensions, premium mesh. Silver.', img:'https://dominatorhoop.com/wp-content/uploads/2023/01/Pro-Net-Silver.png' },
-    { id:'p3', icon:'🏸', name:'Pro Portable Pickleball Net - Black', sku:'pb-pro-b', price:1000, shipping:0, desc:'Pro-grade portable net, tournament-spec dimensions, premium mesh. Black.', img:'https://dominatorhoop.com/wp-content/uploads/2023/01/Pro-Net-Black.png' },
-    { id:'p4', icon:'🏸', name:'Pro Max Portable Pickleball Net', sku:'pb-max', price:1100, shipping:0, desc:'Top-of-line portable net. Maximum stability, competition-ready. Silver.', img:'https://dominatorhoop.com/wp-content/uploads/2023/01/Pro-Max-Silver.png' },
-    { id:'p5', icon:'🏸', name:'Pro Max Portable Pickleball Net - Black', sku:'pb-max-b', price:1100, shipping:0, desc:'Top-of-line portable net. Maximum stability, competition-ready. Black.', img:'https://dominatorhoop.com/wp-content/uploads/2023/01/Pro-Max-Black.png' },
-    { id:'p6', icon:'🏸', name:'Square Inground Pickleball Net', sku:'spb-ig2', price:500, shipping:0, desc:'Permanent square post inground net system for dedicated courts.', img:'https://dominatorhoop.com/cdn/shop/files/SquareIngroundPickleballNet_720x.jpg' },
-    { id:'p7', icon:'🏸', name:'Round Inground Pickleball Net', sku:'rpb-ig2', price:500, shipping:0, desc:'Permanent round post inground net. Clean look for dedicated courts.', img:'https://dominatorhoop.com/cdn/shop/files/RoundIngroundPickleballNet_720x.jpg' },
-    { id:'p8', icon:'🏸', name:'Square Surface Mount Pickleball Net', sku:'spb-sm2', price:500, shipping:0, desc:'Surface-mount net — anchors to existing concrete or asphalt. No excavation.', img:'https://dominatorhoop.com/cdn/shop/files/SquareSurfaceMountPickleballNet_720x.jpg' },
-    { id:'p9', icon:'🏸', name:'Square Inground Net - Black', sku:'spb-ig2-b', price:500, shipping:0, desc:'Permanent square post inground net system. Black finish.', img:'https://dominatorhoop.com/cdn/shop/files/SquareIngroundPickleballNetBlack_720x.jpg' },
-    { id:'p10', icon:'🏸', name:'Round Inground Net - Black', sku:'rpb-ig2-b', price:500, shipping:0, desc:'Permanent round post inground net. Black finish.', img:'https://dominatorhoop.com/cdn/shop/files/RoundIngroundPickleballNetBlack_720x.jpg' },
-    { id:'p11', icon:'🏸', name:'Square Surface Mount Net - Black', sku:'spb-sm2-b', price:500, shipping:0, desc:'Surface-mount pickleball net system. Black finish.', img:'https://dominatorhoop.com/cdn/shop/files/SquareSurfaceMountPickleballNetBlack_720x.jpg' },
+  pickleball_portable: [
+    { id:'p4', name:'Pro Max Portable Net - Silver', sku:'pb-max', price:1100, shipping:0, icon:'🏸',
+      desc:'Top-of-the-line portable pickleball net. Maximum stability, premium materials, competition-ready. Silver finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/10/pb-max-white-4-180x180.jpeg' },
+    { id:'p4b', name:'Pro Max Portable Net - Black', sku:'pb-max-b', price:1100, shipping:0, icon:'🏸',
+      desc:'Top-of-the-line portable pickleball net. Maximum stability, premium materials, competition-ready. Black finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/10/Black-Pro-Max-4-180x180.png' },
+    { id:'p2', name:'Pro Portable Net - Silver', sku:'pb-pro', price:1000, shipping:0, icon:'🏸',
+      desc:'Pro-grade portable net with heavy-duty frame, tournament-spec dimensions, and premium mesh. Silver finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/10/pb-pro-primary-180x180.jpeg' },
+    { id:'p2b', name:'Pro Portable Net - Black', sku:'pb-pro-b', price:1000, shipping:0, icon:'🏸',
+      desc:'Pro-grade portable net with heavy-duty frame, tournament-spec dimensions, and premium mesh. Black finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/09/Pro-7-180x180.jpg' },
+    { id:'p1', name:'Standard Portable Net', sku:'pb-frame', price:330, shipping:0, icon:'🏸',
+      desc:'Durable portable net system with easy setup. Great entry-level option for recreational play.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2021/04/0001-11-180x180.png' },
+    { id:'ph2l', name:'Hoop-to-Light Pickleball Net', sku:'h2l-net', price:250, shipping:20, icon:'🏸',
+      desc:'Mounts directly between your Dominator hoop pole and light pole — no extra posts needed. The ultimate space-saving pickleball net solution for courts that already have a Dominator system.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/01/canvas-1-64e789d751185a56b96b576c-180x180.jpeg' },
+  ],
+  pickleball_inground: [
+    { id:'p6', name:'Square Inground Net', sku:'spb-ig2', price:500, shipping:0, icon:'🏸',
+      desc:'Permanent square post inground net system. Ideal for dedicated pickleball courts.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/01/Inground-Square.png' },
+    { id:'p7', name:'Round Inground Net', sku:'rpb-ig2', price:500, shipping:0, icon:'🏸',
+      desc:'Permanent round post inground net. Clean look for dedicated courts.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/01/Inground-Round.png' },
+    { id:'p8', name:'Square Surface Mount Net', sku:'spb-sm2', price:500, shipping:0, icon:'🏸',
+      desc:'Surface-mount net system. Anchors to existing concrete or asphalt — no excavation needed.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/01/Surface-Mount.png' },
+    { id:'p9', name:'Square Inground Net - Black', sku:'spb-ig2-b', price:500, shipping:0, icon:'🏸',
+      desc:'Permanent square post inground net system. Black finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/01/Inground-Square-Black.png' },
+    { id:'p10', name:'Round Inground Net - Black', sku:'rpb-ig2-b', price:500, shipping:0, icon:'🏸',
+      desc:'Permanent round post inground net. Black finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/01/Inground-Round-Black.png' },
+    { id:'p11', name:'Square Surface Mount Net - Black', sku:'spb-sm2-b', price:500, shipping:0, icon:'🏸',
+      desc:'Surface-mount pickleball net system. Black finish.',
+      img:'https://www.dominatorhoop.com/wp-content/uploads/2023/01/Surface-Mount-Black.png' },
   ],
   lighting: [
     { id:'l1', icon:'💡', name:'16ft Pole + 1x 150W LED', sku:'1lp-16-150', price:1000, shipping:300, desc:'16ft light pole with one 150W LED fixture. Great for smaller courts. Brushed aluminum.', img:'https://dominatorhoop.com/wp-content/uploads/2021/09/1-Light.png' },
