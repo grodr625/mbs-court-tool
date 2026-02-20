@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- saved from url=(0045)file:///C:/Users/Owner/Downloads/index_9.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MBS Court Scope Builder</title>
-<link href="./index_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --blue: #1a6dcc;
@@ -454,9 +454,43 @@
     .report-body { padding: 20px; }
   }
 
+  /* MATERIAL EDITOR */
+  .btn-modify-mat {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.82rem; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 7px 16px; border-radius: 6px;
+    border: 1.5px solid var(--blue); background: transparent;
+    color: var(--blue); cursor: pointer; transition: all 0.15s;
+  }
+  .btn-modify-mat:hover { background: var(--blue); color: white; }
+  .mat-editor { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 12px; font-size: 0.85rem; }
+  .mat-row { display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-bottom: 1px solid #f0f4f8; }
+  .mat-row:last-child { border-bottom: none; }
+  .mat-header { background: #f0f4f8; font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray); padding: 7px 8px; }
+  .mat-add-row { background: #f8fafc; }
+  .mc { flex-shrink: 0; }
+  .mc-name  { flex: 2; min-width: 120px; }
+  .mc-num   { flex: 0.8; text-align: center; min-width: 72px; }
+  .mc-scale { flex: 0.6; text-align: center; min-width: 60px; }
+  .mc-total { flex: 0.8; text-align: right; min-width: 72px; font-weight: 600; color: var(--text); }
+  .mc-del   { flex: 0; min-width: 54px; text-align: center; }
+  .mat-input { border: 1px solid var(--border); border-radius: 5px; padding: 4px 6px; font-size: 0.85rem; font-family: 'Barlow', sans-serif; color: var(--text); background: white; width: 100%; }
+  .mat-input:focus { outline: none; border-color: var(--blue); }
+  .mat-scale-btn { font-size: 0.75rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--gray-light); color: var(--gray); cursor: pointer; white-space: nowrap; width: 100%; transition: all 0.15s; }
+  .mat-scale-btn.active { background: var(--blue); border-color: var(--blue); color: white; }
+  .mat-del-btn { background: none; border: none; color: #e53e3e; cursor: pointer; font-size: 0.8rem; padding: 2px 4px; border-radius: 3px; line-height: 1; }
+  .mat-del-btn:hover { background: #fff0f0; }
+  .mat-add-btn { background: var(--blue); color: white; border: none; border-radius: 5px; padding: 4px 10px; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .mat-add-btn:hover { background: var(--blue-dark); }
+  .mat-editor-footer { display: flex; align-items: center; gap: 14px; padding: 8px 10px; background: #f8fafc; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .mat-reset-btn { font-size: 0.8rem; font-weight: 700; padding: 5px 12px; border-radius: 5px; border: 1px solid var(--border); background: white; color: var(--gray); cursor: pointer; white-space: nowrap; }
+  .mat-reset-btn:hover { border-color: var(--danger); color: var(--danger); }
+  .mat-footer-note { font-size: 0.78rem; color: #94a3b8; font-style: italic; }
+
   /* HIDDEN */
   .hidden { display: none !important; }
   @media print {
+  .report-body > div[style*="grid"] { display:grid !important; break-inside:avoid; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     body { background: #fff !important; margin: 0; padding: 0; }
     .app-header, .progress-wrap, #stepsContainer, .report-footer { display: none !important; }
@@ -700,47 +734,17 @@
   <!-- PROGRESS -->
   <div class="progress-wrap" id="progressWrap">
     <div class="progress-label">
-      <span id="stepLabel">Step 1 of 14</span>
-      <span id="stepCount">Project Identification</span>
+      <span id="stepLabel">Step 1</span>
+      <span id="stepCount"></span>
     </div>
     <div class="progress-bar-bg">
       <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
     </div>
-    <div class="step-dots" id="stepDots"><div class="step-dot active"></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div></div>
+    <div class="step-dots" id="stepDots"></div>
   </div>
 
   <!-- STEPS CONTAINER -->
-  <div id="stepsContainer">
-    <div class="card">
-      <div class="section-tag">Project Identification</div>
-      <h2>Project Information</h2>
-      <p class="card-desc">Basic details about the client and job site.</p>
-      
-        <div class="field-grid">
-          <div class="field">
-            <label>Client / Project Name</label>
-            <input type="text" id="clientName" value="" placeholder="e.g. Smith Residence">
-          </div>
-          <div class="field">
-            <label>Site Address</label>
-            <input type="text" id="siteAddress" value="" placeholder="123 Main St, City, State">
-          </div>
-          <div class="field">
-            <label>Permit / Project #</label>
-            <input type="text" id="permitNum" value="" placeholder="Optional">
-          </div>
-          <div class="field">
-            <label>Target Completion Date</label>
-            <input type="date" id="targetDate" value="">
-          </div>
-        </div>
-      <div class="btn-row">
-        
-        <button class="btn btn-primary" onclick="goNext()">
-          Continue →
-        </button>
-      </div>
-    </div></div>
+  <div id="stepsContainer"></div>
 
   <!-- REPORT -->
   <div id="reportContainer" class="hidden"></div>
@@ -754,13 +758,17 @@ const data = {};
 // ─── STEP DEFINITIONS ───────────────────────────────────────
 // Steps are defined as objects with a render() and collect() function
 const STEPS = [
-  // 0: Project Info
+
+  // STEP 1: Project Info + Surface + Court + Contractor
   {
-    section: 'Project Identification',
-    title: 'Project Information',
-    desc: 'Basic details about the client and job site.',
+    section: 'Project Setup',
+    title: 'Project Setup',
+    desc: 'Client, site, court configuration, and contractor — all in one place.',
     render() {
+      const ssel = v => data.surfaceType === v ? 'selected' : '';
+      const csel = v => (data.courtTypes||[]).includes(v) ? 'selected' : '';
       return `
+        <div class="sub-heading">Client & Site</div>
         <div class="field-grid">
           <div class="field">
             <label>Client / Project Name</label>
@@ -768,71 +776,36 @@ const STEPS = [
           </div>
           <div class="field">
             <label>Site Address</label>
-            <input type="text" id="siteAddress" value="${data.siteAddress||''}" placeholder="123 Main St, City, State">
+            <input type="text" id="siteAddress" value="${data.siteAddress||''}" placeholder="123 Main St, City, State" onblur="lookupTravelTime(this.value)">
           </div>
           <div class="field">
             <label>Permit / Project #</label>
             <input type="text" id="permitNum" value="${data.permitNum||''}" placeholder="Optional">
           </div>
           <div class="field">
-            <label>Target Completion Date</label>
+            <label>Target Completion</label>
             <input type="date" id="targetDate" value="${data.targetDate||''}">
           </div>
-        </div>`;
-    },
-    collect() {
-      data.clientName = v('clientName');
-      var newAddr = v('siteAddress');
-      if (newAddr && newAddr !== data.siteAddress) {
-        data.siteAddress = newAddr;
-        lookupTravelTime(newAddr);
-      } else {
-        data.siteAddress = newAddr;
-      }
-      data.permitNum = v('permitNum');
-      data.targetDate = v('targetDate');
-    },
-    valid() { return !!data.clientName && !!data.siteAddress; }
-  },
-
-  // 1: Surface Type
-  {
-    section: 'Surface Type',
-    title: 'What surface type?',
-    desc: 'Select the base surface the court will be built on.',
-    render() {
-      const sel = (val) => data.surfaceType === val ? 'selected' : '';
-      return `
-        <div class="option-grid">
-          ${[['concrete','🏗️','Concrete'],['asphalt','🛣️','Asphalt'],['gravel','🪨','Gravel / Stone']].map(([v,icon,label])=>`
-          <div class="option-card ${sel(v)}" onclick="selectOpt('surfaceType','${v}',this)">
-            <span class="opt-icon">${icon}</span>
-            <span class="opt-label">${label}</span>
-          </div>`).join('')}
-        </div>`;
-    },
-    collect() { /* collected via selectOpt */ },
-    valid() { return !!data.surfaceType; }
-  },
-
-  // 2: Court Type & Size
-  {
-    section: 'Court Details',
-    title: 'Court Type & Size',
-    desc: 'What sport(s) and what are the finished court dimensions?',
-    render() {
-      const sel = (val) => (data.courtTypes||[]).includes(val) ? 'selected' : '';
-      return `
-        <div class="sub-heading">Court Type (select all that apply)</div>
-        <div class="option-grid">
-          ${[['Basketball','🏀'],['Pickleball','🏸'],['Tennis','🎾'],['Multi-Sport','🏟️']].map(([label, icon])=>`
-          <div class="option-card ${sel(label)}" onclick="toggleOpt('courtTypes','${label}',this)">
-            <span class="opt-icon">${icon}</span>
-            <span class="opt-label">${label}</span>
-          </div>`).join('')}
         </div>
+
         <hr class="divider">
-        <div class="field-grid">
+        <div class="sub-heading">Surface Type</div>
+        <div class="option-grid">
+          ${[['concrete','🏗️','Concrete'],['asphalt','🔲','Asphalt'],['gravel','🪨','Gravel / Stone']].map(([val,icon,label])=>`
+            <div class="option-card ${ssel(val)}" onclick="data.surfaceType='${val}';this.closest('.option-grid').querySelectorAll('.option-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
+              <span class="opt-icon">${icon}</span><span class="opt-label">${label}</span>
+            </div>`).join('')}
+        </div>
+
+        <hr class="divider">
+        <div class="sub-heading">Court Type & Size</div>
+        <div class="option-grid">
+          ${[['Basketball','🏀'],['Pickleball','🏸'],['Tennis','🎾'],['Multi-Sport','⚽']].map(([val,icon])=>`
+            <div class="option-card ${csel(val)}" onclick="toggleCourtType('${val}',this)">
+              <span class="opt-icon">${icon}</span><span class="opt-label">${val}</span>
+            </div>`).join('')}
+        </div>
+        <div class="field-grid" style="margin-top:14px">
           <div class="field">
             <label>Length (ft)</label>
             <input type="number" id="courtL" value="${data.courtL||''}" placeholder="e.g. 94">
@@ -841,54 +814,76 @@ const STEPS = [
             <label>Width (ft)</label>
             <input type="number" id="courtW" value="${data.courtW||''}" placeholder="e.g. 50">
           </div>
+          <div class="field">
+            <label>Orientation</label>
+            <input type="text" id="orientation" value="${data.orientation||''}" placeholder="e.g. Long axis toward house">
+          </div>
+        </div>
+
+        <hr class="divider">
+        <div class="sub-heading">Contractor</div>
+        <div class="field-grid">
           <div class="field full">
-            <label>Orientation / Landmark Reference</label>
-            <input type="text" id="orientation" value="${data.orientation||''}" placeholder="e.g. Long axis runs North-South, parallel to garage">
+            <label>Company Name</label>
+            <input type="text" id="contractorName" value="${data.contractorName||''}">
+          </div>
+          <div class="field">
+            <label>Foreman</label>
+            <input type="text" id="foremanName" value="${data.foremanName||''}">
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input type="text" id="foremanPhone" value="${data.foremanPhone||''}">
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input type="text" id="foremanEmail" value="${data.foremanEmail||''}">
           </div>
         </div>`;
     },
     collect() {
-      data.courtL = v('courtL');
-      data.courtW = v('courtW');
-      data.orientation = v('orientation');
+      data.clientName = v('clientName');
+      const newAddr = v('siteAddress');
+      if (newAddr && newAddr !== data.siteAddress) lookupTravelTime(newAddr);
+      data.siteAddress = newAddr;
+      data.permitNum  = v('permitNum');
+      data.targetDate = v('targetDate');
+      data.courtL     = v('courtL');
+      data.courtW     = v('courtW');
+      data.orientation= v('orientation');
+      data.contractorName = v('contractorName');
+      data.foremanName    = v('foremanName');
+      data.foremanPhone   = v('foremanPhone');
+      data.foremanEmail   = v('foremanEmail');
     },
-    valid() { return !!(data.courtTypes && data.courtTypes.length) && !!data.courtL && !!data.courtW; }
+    valid() { return !!(data.clientName && data.siteAddress && data.surfaceType && (data.courtTypes||[]).length); }
   },
 
-
-  // 2b: Accessories
+  // STEP 2: Accessories
   {
     section: 'Accessories',
     title: 'Court Accessories',
-    desc: 'Select equipment for your court. Prices shown are Tier 1 Wholesale. Shipping is a flat $299 for any order containing hoops or lighting.',
+    desc: 'Select equipment. Tier 1 Wholesale pricing. Flat $299 shipping on hoops and lighting.',
     render() {
       var types = data.courtTypes || [];
       var needsHoops = types.indexOf('Basketball') > -1;
-      var needsPB = types.indexOf('Pickleball') > -1;
-      var needsTennis = types.indexOf('Tennis') > -1;
+      var needsPB    = types.indexOf('Pickleball') > -1;
       if (!data.accessories) data.accessories = {};
-
       var html = '';
-
       if (needsHoops) {
         html += '<div class="sub-heading">&#127936; Basketball Hoops</div><div class="product-grid">';
-        CATALOG.hoops.forEach(function(p) { html += renderProductCard(p); });
+        CATALOG.hoops.forEach(function(p){ html += renderProductCard(p); });
         html += '</div><hr class="divider">';
       }
       if (needsPB) {
         html += '<div class="sub-heading">&#127955; Portable Pickleball Nets</div><div class="product-grid">';
-        CATALOG.pickleball_portable.forEach(function(p) { html += renderProductCard(p); });
-        html += '</div>';
-        html += '<div class="sub-heading" style="margin-top:18px">&#9968; Inground & Surface Mount Nets</div><div class="product-grid">';
-        CATALOG.pickleball_inground.forEach(function(p) { html += renderProductCard(p); });
+        CATALOG.pickleball_portable.forEach(function(p){ html += renderProductCard(p); });
+        html += '</div><div class="sub-heading" style="margin-top:18px">&#9968; Inground &amp; Surface Mount</div><div class="product-grid">';
+        CATALOG.pickleball_inground.forEach(function(p){ html += renderProductCard(p); });
         html += '</div><hr class="divider">';
       }
-      if (needsTennis) {
-        html += '<div class="sub-heading">&#127934; Tennis</div><div style="padding:14px;background:var(--gray-light);border-radius:8px;color:var(--gray);font-size:0.9rem;margin-bottom:16px">Tennis net pricing — add manually in notes.</div><hr class="divider">';
-      }
-
-      html += '<div class="sub-heading">&#128161; Court Lighting (Optional)</div><div class="product-grid">';
-      CATALOG.lighting.forEach(function(p) { html += renderProductCard(p); });
+      html += '<div class="sub-heading">&#128161; Court Lighting</div><div class="product-grid">';
+      CATALOG.lighting.forEach(function(p){ html += renderProductCard(p); });
       html += '</div>';
       html += renderPriceBar();
       return html;
@@ -897,668 +892,257 @@ const STEPS = [
     valid() { return true; }
   },
 
-  // 2c: Court Finish
+  // STEP 3: Court Finish
   {
     section: 'Court Finish',
     title: 'Court Painting & Finish',
-    desc: 'Choose a surface finish type. Acrylic paint estimates are calculated automatically from your court dimensions and travel distance.',
+    desc: 'Choose a surface finish. Acrylic paint estimates calculate from your dimensions and travel time.',
     render() {
-      var pt = data.paintType || '';
-      var lr = data.laborRate !== undefined ? data.laborRate : 30;
-      var otr = data.otRate !== undefined ? data.otRate : 45;
-      var mk = data.markupPct !== undefined ? data.markupPct : 30;
-      var trav = data.travelHours !== undefined ? data.travelHours : 1;
-      var courtL = parseFloat(data.courtL) || 60;
-      var courtW = parseFloat(data.courtW) || 120;
-
+      var pt  = data.paintType || '';
+      var lr  = data.laborRate  !== undefined ? data.laborRate  : 30;
+      var otr = data.otRate     !== undefined ? data.otRate     : 45;
+      var mk  = data.markupPct  !== undefined ? data.markupPct  : 30;
+      var tr  = data.travelHours!== undefined ? data.travelHours: 1;
+      var L   = parseFloat(data.courtL) || 60;
+      var W   = parseFloat(data.courtW) || 120;
       var html = '<div class="paint-option-grid">';
-      html += '<div class="paint-option' + (pt==='acrylic'?' selected':'') + '" onclick="setPaintType(\'acrylic\')">';
-      html += '<div class="paint-option-title">&#127912; Acrylic Sports Paint</div>';
-      html += '<div class="paint-option-desc">Multi-coat acrylic resurfacing system with color, lines &amp; resurfacer. Cost calculated from dimensions.</div></div>';
-      html += '<div class="paint-option' + (pt==='tiles'?' selected':'') + '" onclick="setPaintType(\'tiles\')">';
-      html += '<div class="paint-option-title">&#9632; Game Tiles</div>';
-      html += '<div class="paint-option-desc">Modular interlocking sport tiles. Custom quote added manually to final scope.</div></div>';
-      html += '<div class="paint-option' + (pt==='none'?' selected':'') + '" onclick="setPaintType(\'none\')">';
-      html += '<div class="paint-option-title">&#9744; No Finish / TBD</div>';
-      html += '<div class="paint-option-desc">Surface finish to be determined or handled separately.</div></div>';
+      html += '<div class="paint-option'+(pt==='acrylic'?' selected':'')+'" onclick="setPaintType(\'acrylic\')"><div class="paint-option-title">&#127912; Acrylic Sports Paint</div><div class="paint-option-desc">Multi-coat system with color, lines &amp; resurfacer.</div></div>';
+      html += '<div class="paint-option'+(pt==='tiles'?' selected':'')+'" onclick="setPaintType(\'tiles\')"><div class="paint-option-title">&#9632; Game Tiles</div><div class="paint-option-desc">Modular interlocking sport tiles. Quote added manually.</div></div>';
+      html += '<div class="paint-option'+(pt==='none'?' selected':'')+'" onclick="setPaintType(\'none\')"><div class="paint-option-title">&#9744; No Finish / TBD</div><div class="paint-option-desc">To be determined or handled separately.</div></div>';
       html += '</div>';
-
       if (pt === 'acrylic') {
-        html += '<hr class="divider"><div class="sub-heading">Estimate Settings</div>';
-        html += '<div class="field-grid">';
-        html += '<div class="field"><label>Court Length (ft)</label><input type="number" id="pe-L" value="' + courtL + '" oninput="refreshPaintEst()" min="1"></div>';
-        html += '<div class="field"><label>Court Width (ft)</label><input type="number" id="pe-W" value="' + courtW + '" oninput="refreshPaintEst()" min="1"></div>';
-        html += '<div class="field"><label>Labor Rate ($/hr)</label><input type="number" id="pe-lr" value="' + lr + '" oninput="refreshPaintEst()" min="1"></div>';
-        html += '<div class="field"><label>OT Rate ($/hr)</label><input type="number" id="pe-ot" value="' + otr + '" oninput="refreshPaintEst()" min="1"></div>';
-        html += '<div class="field"><label>Markup (%)</label><input type="number" id="pe-mk" value="' + mk + '" oninput="refreshPaintEst()" min="0"></div>';
-        html += '<div class="field"><label>Travel Time One Way (hrs)</label>';
-        if (data.travelHours) {
-          html += '<div class="travel-badge ok">&#10003; ' + data.travelHours.toFixed(1) + ' hrs — auto-calculated from address</div>';
-        } else {
-          html += '<div class="travel-badge pending">&#9888; Enter project address in Step 1 to auto-calculate</div>';
-        }
-        html += '<input type="number" id="pe-trav" value="' + trav + '" oninput="refreshPaintEst()" min="0.1" step="0.1" style="margin-top:6px"></div>';
-        html += '</div>';
-        html += '<div id="paintEstBox">' + buildPaintEst(courtL, courtW, lr, otr, mk, trav) + '</div>';
+        html += '<hr class="divider"><div class="sub-heading">Estimate Settings</div><div class="field-grid">';
+        html += '<div class="field"><label>Court Length (ft)</label><input type="number" id="pe-L" value="'+L+'" oninput="refreshPaintEst()" min="1"></div>';
+        html += '<div class="field"><label>Court Width (ft)</label><input type="number" id="pe-W" value="'+W+'" oninput="refreshPaintEst()" min="1"></div>';
+        html += '<div class="field"><label>Labor Rate ($/hr)</label><input type="number" id="pe-lr" value="'+lr+'" oninput="refreshPaintEst()" min="1"></div>';
+        html += '<div class="field"><label>OT Rate ($/hr)</label><input type="number" id="pe-ot" value="'+otr+'" oninput="refreshPaintEst()" min="1"></div>';
+        html += '<div class="field"><label>Markup (%)</label><input type="number" id="pe-mk" value="'+mk+'" oninput="refreshPaintEst()" min="0"></div>';
+        html += '<div class="field"><label>Travel One Way (hrs)</label>'+(data.travelHours?'<div class="travel-badge ok">&#10003; '+data.travelHours.toFixed(1)+' hrs from address</div>':'<div class="travel-badge pending">&#9888; Auto-calculated from address</div>')+'<input type="number" id="pe-trav" value="'+tr+'" oninput="refreshPaintEst()" min="0.1" step="0.1" style="margin-top:6px"></div>';
+        html += '</div><div id="paintEstBox">'+buildPaintEst(L,W,lr,otr,mk,tr)+'</div>';
       }
-
-      if (pt === 'tiles') {
-        html += '<div style="padding:14px;background:var(--gray-light);border-radius:8px;color:var(--gray);font-size:0.9rem;margin-top:8px">Game tile pricing will be added manually. Use the special instructions field on the final step to note tile color, layout, and any specs.</div>';
-      }
-
+      if (pt === 'tiles') html += '<div style="padding:14px;background:var(--gray-light);border-radius:8px;color:var(--gray);font-size:0.9rem;margin-top:8px">Add tile pricing manually in final notes.</div>';
       return html;
     },
     collect() {
       if (data.paintType === 'acrylic') {
-        var L = parseFloat(document.getElementById('pe-L').value) || 60;
-        var W = parseFloat(document.getElementById('pe-W').value) || 120;
-        data.laborRate = parseFloat(document.getElementById('pe-lr').value) || 30;
-        data.otRate = parseFloat(document.getElementById('pe-ot').value) || 45;
-        data.markupPct = parseFloat(document.getElementById('pe-mk').value) || 30;
-        data.travelHours = parseFloat(document.getElementById('pe-trav').value) || 1;
-        data.paintEst = calcPaint(L, W, data.laborRate, data.otRate, data.markupPct, data.travelHours);
+        var L = parseFloat(document.getElementById('pe-L').value)||60;
+        var W = parseFloat(document.getElementById('pe-W').value)||120;
+        data.laborRate  = parseFloat(document.getElementById('pe-lr').value)||30;
+        data.otRate     = parseFloat(document.getElementById('pe-ot').value)||45;
+        data.markupPct  = parseFloat(document.getElementById('pe-mk').value)||30;
+        data.travelHours= parseFloat(document.getElementById('pe-trav').value)||1;
+        data.paintEst   = calcPaint(L,W,data.laborRate,data.otRate,data.markupPct,data.travelHours);
       }
     },
     valid() { return !!data.paintType; }
   },
 
-  // 3: Contractor Info
-  {
-    section: 'Contractor',
-    title: 'Contractor Information',
-    desc: 'Who is performing the work?',
-    render() {
-      return `
-        <div class="field-grid">
-          <div class="field full">
-            <label>Contractor Company Name</label>
-            <input type="text" id="contractorName" value="${data.contractorName||''}" placeholder="ABC Paving LLC">
-          </div>
-          <div class="field">
-            <label>Foreman / Site Lead</label>
-            <input type="text" id="foremanName" value="${data.foremanName||''}" placeholder="John Smith">
-          </div>
-          <div class="field">
-            <label>Phone</label>
-            <input type="text" id="foremanPhone" value="${data.foremanPhone||''}" placeholder="(555) 555-5555">
-          </div>
-          <div class="field full">
-            <label>Email</label>
-            <input type="text" id="foremanEmail" value="${data.foremanEmail||''}" placeholder="john@abcpaving.com">
-          </div>
-        </div>`;
-    },
-    collect() {
-      data.contractorName = v('contractorName');
-      data.foremanName = v('foremanName');
-      data.foremanPhone = v('foremanPhone');
-      data.foremanEmail = v('foremanEmail');
-    },
-    valid() { return true; }
-  },
-
-  // 4: Pre-Construction
+  // STEP 4: Pre-Construction + Subgrade
   {
     section: 'Pre-Construction',
-    title: 'Pre-Construction Verification',
-    desc: 'Confirm all items below have been addressed before work begins.',
+    title: 'Pre-Construction & Subgrade',
+    desc: 'Verify pre-construction checklist and define foundation requirements.',
     render() {
       const checks = [
         ['plansReviewed','Approved plans received and reviewed'],
-        ['permitsConfirmed','Survey & Permits confirmed'],
-        ['elevationConfirmed','Finished elevation confirmed with owner'],
-        ['drainagePlanReviewed','Drainage plan reviewed'],
-        ['utilitiesMarked','Underground utilities marked (811)'],
-        ['accessConfirmed','Access & staging area confirmed'],
-        ['weatherOk','Weather window acceptable'],
+        ['permitsConfirmed','Survey & permits confirmed'],
+        ['utilitiesLocated','Underground utilities located'],
+        ['accessConfirmed','Equipment access confirmed'],
+        ['existingConditions','Existing site conditions documented'],
+        ['ownerNotified','Owner notified of start date'],
+        ['materialsOrdered','Materials ordered & delivery scheduled'],
       ];
       return `
+        <div class="sub-heading">Pre-Construction Checklist</div>
         <div class="check-list">
-          ${checks.map(([key,label])=>`
-          <label class="check-item">
-            <input type="checkbox" id="${key}" ${data[key]?'checked':''} onchange="data['${key}']=this.checked">
-            <span class="check-item-label">${label}</span>
-          </label>`).join('')}
+          ${checks.map(([k,l])=>`<label class="check-item"><input type="checkbox" id="${k}" ${data[k]?'checked':''}><span class="check-item-label">${l}</span></label>`).join('')}
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label>Pre-Construction Notes</label>
+          <textarea id="preconNotes" placeholder="Notes or exceptions...">${data.preconNotes||''}</textarea>
         </div>
         <hr class="divider">
-        <div class="field">
-          <label>Pre-Construction Notes</label>
-          <textarea id="preconNotes" placeholder="Any additional notes...">${data.preconNotes||''}</textarea>
-        </div>`;
-    },
-    collect() {
-      data.preconNotes = v('preconNotes');
-    },
-    valid() { return true; }
-  },
-
-  // 5: Subgrade & Base
-  {
-    section: 'Subgrade & Base',
-    title: 'Subgrade & Base',
-    desc: 'Define the foundation requirements for this court.',
-    render() {
-      const isGravel = data.surfaceType === 'gravel';
-      const isConcrete = data.surfaceType === 'concrete';
-      return `
+        <div class="sub-heading">Subgrade & Base</div>
         <div class="field-grid">
           <div class="field">
-            <label>Base Material Type</label>
+            <label>Base Material</label>
             <select id="baseMaterial">
-              <option value="">Select...</option>
-              ${isGravel ? `
-              <option ${data.baseMaterial==='3/4 Clean Stone'?'selected':''}>3/4 Clean Stone</option>
-              <option ${data.baseMaterial==='2-3 Clean Stone'?'selected':''}>2-3 Clean Stone</option>
-              <option ${data.baseMaterial==='RCA'?'selected':''}>RCA (Recycled Concrete Aggregate)</option>
-              ` : `
-              <option ${data.baseMaterial==='Crushed Stone'?'selected':''}>Crushed Stone</option>
-              <option ${data.baseMaterial==='Compacted Gravel'?'selected':''}>Compacted Gravel</option>
-              <option ${data.baseMaterial==='Crushed Limestone'?'selected':''}>Crushed Limestone</option>
-              <option ${data.baseMaterial==='Road Base'?'selected':''}>Road Base</option>
-              `}
-              <option ${data.baseMaterial==='Other'?'selected':''}>Other</option>
+              <option value="">— Select —</option>
+              ${['Compacted Gravel','Crushed Stone','Processed Stone','Existing Subgrade','Other'].map(o=>`<option ${data.baseMaterial===o?'selected':''}>${o}</option>`).join('')}
             </select>
           </div>
           <div class="field">
-            <label>Compacted Base Thickness (inches)</label>
+            <label>Compacted Thickness (in)</label>
             <input type="number" id="baseThickness" value="${data.baseThickness||''}" placeholder="e.g. 6">
           </div>
-        </div>
-        ${isGravel ? `
-        <hr class="divider">
-        <div class="sub-heading">Leveling Course</div>
-        <div class="field-grid">
           <div class="field">
-            <label>Leveling Course Material</label>
-            <select id="levelingMaterial">
-              <option value="">Select...</option>
-              <option ${data.levelingMaterial==='Stone Dust'?'selected':''}>Stone Dust</option>
-              <option ${data.levelingMaterial==='Concrete Sand'?'selected':''}>Concrete Sand</option>
-              <option ${data.levelingMaterial==='Other'?'selected':''}>Other</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Leveling Course Thickness (inches)</label>
-            <input type="number" id="levelingThickness" value="${data.levelingThickness||''}" placeholder="e.g. 2">
-          </div>
-        </div>` : ''}
-        <hr class="divider">
-        <div class="sub-heading">Geotextile Fabric</div>
-        <div class="toggle-row">
-          <button class="toggle-btn ${data.geotextile==='Required'?'active':''}" onclick="setToggle('geotextile','Required',this)">Required</button>
-          <button class="toggle-btn ${data.geotextile==='Not Required'?'active':''}" onclick="setToggle('geotextile','Not Required',this)">Not Required</button>
-          ${isGravel ? `<button class="toggle-btn ${data.geotextile==='Both Layers'?'active':''}" onclick="setToggle('geotextile','Both Layers',this)">Both Layers</button>` : ''}
-        </div>
-        <hr class="divider">
-        <div class="field">
-          <label>Subgrade Prep Notes</label>
-          <textarea id="subgradeNotes" placeholder="Any special conditions or soil issues...">${data.subgradeNotes||''}</textarea>
-        </div>`;
-    },
-    collect() {
-      data.baseMaterial = v('baseMaterial');
-      data.baseThickness = v('baseThickness');
-      data.levelingMaterial = v('levelingMaterial')||'';
-      data.levelingThickness = v('levelingThickness')||'';
-      data.subgradeNotes = v('subgradeNotes');
-    },
-    valid() { return !!data.baseMaterial && !!data.baseThickness; }
-  },
-
-  // 6: Surface Specs (varies by type)
-  {
-    section: 'Surface Specs',
-    title: 'Surface Specifications',
-    desc: 'Specific requirements for the chosen surface material.',
-    render() {
-      if (data.surfaceType === 'asphalt') {
-        return `
-          <div class="field-grid">
-            <div class="field full">
-              <label>Asphalt Mix Per Lift</label>
-              <input type="text" id="asphaltMix" value="${data.asphaltMix||''}" placeholder="e.g. 9.5mm Type B">
+            <label>Geotextile Fabric</label>
+            <div class="toggle-row">
+              ${['Yes','No'].map(o=>`<button class="toggle-btn ${data.geotextile===o?'active':''}" onclick="setToggle('geotextile','${o}',this)">${o}</button>`).join('')}
             </div>
-            <div class="field">
-              <label>Total Compacted Thickness (inches)</label>
-              <input type="number" id="totalThickness" value="${data.totalThickness||''}" placeholder="e.g. 3">
-            </div>
-            <div class="field">
-              <label>Placement Method</label>
-              <select id="placementMethod">
-                <option value="">Select...</option>
-                <option ${data.placementMethod==='Single Lift'?'selected':''}>Single Lift</option>
-                <option ${data.placementMethod==='Two Lifts'?'selected':''}>Two Lifts</option>
-              </select>
-            </div>
-            <div class="field" id="lift1Field" style="${data.placementMethod==='Two Lifts'?'':'opacity:0.4'}">
-              <label>1st Lift Thickness (in)</label>
-              <input type="number" id="lift1" value="${data.lift1||''}" placeholder="e.g. 1.5">
-            </div>
-            <div class="field" id="lift2Field" style="${data.placementMethod==='Two Lifts'?'':'opacity:0.4'}">
-              <label>2nd Lift Thickness (in)</label>
-              <input type="number" id="lift2" value="${data.lift2||''}" placeholder="e.g. 1.5">
-            </div>
-          </div>`;
-      } else if (data.surfaceType === 'concrete') {
-        return `
-          <div class="field-grid">
-            <div class="field">
-              <label>Concrete PSI</label>
-              <input type="number" id="concretePSI" value="${data.concretePSI||''}" placeholder="e.g. 4000">
-            </div>
-            <div class="field">
-              <label>Curing Compounds Allowed?</label>
-              <select id="curingAllowed">
-                <option value="">Select...</option>
-                <option ${data.curingAllowed==='Yes'?'selected':''}>Yes</option>
-                <option ${data.curingAllowed==='No'?'selected':''}>No</option>
-              </select>
-            </div>
-          </div>
-          <hr class="divider">
-          <div class="sub-heading">Vapor Barrier</div>
-          <div class="field-grid">
-            <div class="field">
-              <label>Thickness Required (mil)</label>
-              <input type="number" id="vaporMil" value="${data.vaporMil||''}" placeholder="e.g. 10">
-            </div>
-          </div>
-          <hr class="divider">
-          <div class="sub-heading">Forms & Reinforcement</div>
-          <div class="field-grid">
-            <div class="field">
-              <label>Perimeter Turn Down</label>
-              <select id="turnDown">
-                <option value="">Select...</option>
-                <option ${data.turnDown==='6x6'?'selected':''} value="6x6">6" × 6"</option>
-                <option ${data.turnDown==='None'?'selected':''}>None</option>
-                <option ${data.turnDown==='Other'?'selected':''}>Other</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Reinforcement</label>
-              <select id="reinforcement">
-                <option value="">Select...</option>
-                <option ${data.reinforcement==='Rebar'?'selected':''}>Rebar</option>
-                <option ${data.reinforcement==='Wire Mesh'?'selected':''}>Wire Mesh</option>
-                <option ${data.reinforcement==='Both'?'selected':''}>Both</option>
-              </select>
-            </div>
-          </div>
-          <hr class="divider">
-          <div class="sub-heading">Finish & Control Joints</div>
-          <div class="field-grid">
-            <div class="field">
-              <label>Surface Finish</label>
-              <select id="finishType">
-                <option value="">Select...</option>
-                <option ${data.finishType==='Trowel'?'selected':''}>Trowel</option>
-                <option ${data.finishType==='Broom'?'selected':''}>Broom</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Control Joints</label>
-              <select id="controlJoint">
-                <option value="">Select...</option>
-                <option ${data.controlJoint==='Saw Cut'?'selected':''}>Saw Cut</option>
-                <option ${data.controlJoint==='Tooled-In'?'selected':''}>Tooled-In</option>
-                <option ${data.controlJoint==='Expansion Joint'?'selected':''}>Expansion Joint</option>
-                <option ${data.controlJoint==='None'?'selected':''}>None</option>
-              </select>
-            </div>
-            <div class="field full">
-              <label>Mix Notes</label>
-              <textarea id="mixNotes" placeholder="Any specific mix requirements...">${data.mixNotes||''}</textarea>
-            </div>
-          </div>`;
-      } else {
-        // gravel
-        return `
-          <div class="sub-heading">Framing Material</div>
-          <div class="toggle-row">
-            ${[['2x6 Pressure Treated','2x6 PT'],['Paver Edge','Paver Edge'],['Other','Other']].map(([val,label])=>`
-            <button class="toggle-btn ${data.framingMaterial===val?'active':''}" onclick="setToggle('framingMaterial','${val}',this)">${label}</button>`).join('')}
-          </div>
-          <hr class="divider">
-          <div class="field">
-            <label>Additional Notes</label>
-            <textarea id="gravelNotes" placeholder="Any special requirements...">${data.gravelNotes||''}</textarea>
-          </div>`;
-      }
-    },
-    collect() {
-      data.asphaltMix = v('asphaltMix')||'';
-      data.totalThickness = v('totalThickness')||'';
-      data.placementMethod = v('placementMethod')||'';
-      data.lift1 = v('lift1')||'';
-      data.lift2 = v('lift2')||'';
-      data.concretePSI = v('concretePSI')||'';
-      data.curingAllowed = v('curingAllowed')||'';
-      data.vaporMil = v('vaporMil')||'';
-      data.turnDown = v('turnDown')||'';
-      data.reinforcement = v('reinforcement')||'';
-      data.finishType = v('finishType')||'';
-      data.controlJoint = v('controlJoint')||'';
-      data.mixNotes = v('mixNotes')||'';
-      data.gravelNotes = v('gravelNotes')||'';
-    },
-    valid() { return true; }
-  },
-
-  // 7: Slope & Drainage
-  {
-    section: 'Slope & Drainage',
-    title: 'Slope & Drainage',
-    desc: 'Define how water will be managed on and around the court.',
-    render() {
-      return `
-        <div class="field-grid">
-          <div class="field">
-            <label>Finished Slope (%)</label>
-            <input type="number" id="slope" value="${data.slope||''}" placeholder="e.g. 1">
-          </div>
-          <div class="field">
-            <label>Slope Direction</label>
-            <input type="text" id="slopeDir" value="${data.slopeDir||''}" placeholder="e.g. North, away from house">
-          </div>
-        </div>
-        <hr class="divider">
-        <div class="sub-heading">French Drain</div>
-        <div class="toggle-row">
-          ${[['None','None'],['Uphill','Uphill'],['Downhill','Downhill']].map(([val,label])=>`
-          <button class="toggle-btn ${data.frenchDrain===val?'active':''}" onclick="setToggle('frenchDrain','${val}',this)">${label}</button>`).join('')}
-        </div>
-        <div class="field-grid" style="margin-top:14px">
-          <div class="field">
-            <label>French Drain Length (ft) — if applicable</label>
-            <input type="number" id="drainLength" value="${data.drainLength||''}" placeholder="e.g. 40">
-          </div>
-          <div class="field">
-            <label>Drain Discharge Location</label>
-            <input type="text" id="drainDischarge" value="${data.drainDischarge||''}" placeholder="e.g. Street, yard swale">
-          </div>
-        </div>
-        <hr class="divider">
-        <div class="sub-heading">Retaining Wall</div>
-        <div class="toggle-row">
-          <button class="toggle-btn ${data.retainingWall==='No'?'active':''}" onclick="setToggle('retainingWall','No',this);document.getElementById('wallDetails').style.display='none'">No</button>
-          <button class="toggle-btn ${data.retainingWall==='Yes'?'active':''}" onclick="setToggle('retainingWall','Yes',this);document.getElementById('wallDetails').style.display='grid'">Yes</button>
-        </div>
-        <div id="wallDetails" class="field-grid" style="margin-top:14px; display:${data.retainingWall==='Yes'?'grid':'none'}">
-          <div class="field">
-            <label>Wall Height (ft)</label>
-            <input type="number" id="wallH" value="${data.wallH||''}" placeholder="e.g. 2">
-          </div>
-          <div class="field">
-            <label>Wall Length (ft)</label>
-            <input type="number" id="wallL" value="${data.wallL||''}" placeholder="e.g. 30">
-          </div>
-          <div class="field">
-            <label>Wall Material</label>
-            <select id="wallMaterial">
-              <option value="">Select...</option>
-              ${['Block','Stacked Stone','Timber','Boulder','Other'].map(m=>`<option ${data.wallMaterial===m?'selected':''}>${m}</option>`).join('')}
-            </select>
-          </div>
-        </div>`;
-    },
-    collect() {
-      data.slope = v('slope');
-      data.slopeDir = v('slopeDir');
-      data.drainLength = v('drainLength');
-      data.drainDischarge = v('drainDischarge');
-      data.wallH = v('wallH');
-      data.wallL = v('wallL');
-      data.wallMaterial = v('wallMaterial');
-    },
-    valid() { return !!data.slope; }
-  },
-
-  // 8: Edges & Backfill
-  {
-    section: 'Edges & Backfill',
-    title: 'Edges & Backfill',
-    desc: 'How will perimeter edges be finished and backfilled?',
-    render() {
-      const isConcrete = data.surfaceType === 'concrete';
-      const isGravel = data.surfaceType === 'gravel';
-      return `
-        <div class="sub-heading">Backfill Handling</div>
-        <div class="toggle-row">
-          ${[['Removal Needed','Remove'],['Spread Onsite','Spread Onsite'],['Stockpile Onsite','Stockpile']].map(([val,label])=>`
-          <button class="toggle-btn ${data.backfillMethod===val?'active':''}" onclick="setToggle('backfillMethod','${val}',this)">${label}</button>`).join('')}
-        </div>
-        ${isConcrete ? `
-        <hr class="divider">
-        <div class="sub-heading">Backfill After Pour</div>
-        <div class="field">
-          <label>Post-Pour Backfill / Notes</label>
-          <textarea id="backfillNotes" placeholder="e.g. Backfill against exposed edges once forms removed...">${data.backfillNotes||''}</textarea>
-        </div>` : ''}
-        ${isGravel ? `
-        <hr class="divider">
-        <div class="field">
-          <label>Additional fill needed for smooth transition?</label>
-          <textarea id="backfillNotes" placeholder="Note if extra fill material is required...">${data.backfillNotes||''}</textarea>
-        </div>` : ''}
-        <hr class="divider">
-        <div class="field">
-          <label>Straightedge / Tolerance Notes</label>
-          <textarea id="toleranceNotes" placeholder="Any specific edge or tolerance requirements...">${data.toleranceNotes||''}</textarea>
-        </div>`;
-    },
-    collect() {
-      data.backfillNotes = v('backfillNotes')||'';
-      data.toleranceNotes = v('toleranceNotes')||'';
-    },
-    valid() { return true; }
-  },
-
-  // 9: Fencing
-  {
-    section: 'Fencing',
-    title: 'Fencing Requirements',
-    desc: 'Does this project require fencing? Fill in the details or skip.',
-    render() {
-      return `
-        <div class="sub-heading">Is Fencing Required?</div>
-        <div class="toggle-row">
-          <button class="toggle-btn ${data.fencingRequired==='No'?'active':''}" onclick="setToggle('fencingRequired','No',this);document.getElementById('fencingDetails').style.display='none'">No Fencing</button>
-          <button class="toggle-btn ${data.fencingRequired==='Yes'?'active':''}" onclick="setToggle('fencingRequired','Yes',this);document.getElementById('fencingDetails').style.display='block'">Yes — Include Fencing</button>
-        </div>
-
-        <div id="fencingDetails" style="display:${data.fencingRequired==='Yes'?'block':'none'}">
-          <hr class="divider">
-          <div class="field-grid">
-            <div class="field">
-              <label>Main Purpose</label>
-              <select id="fencePurpose">
-                <option value="">Select...</option>
-                <option ${data.fencePurpose==='Sports Containment'?'selected':''}>Sports Containment</option>
-                <option ${data.fencePurpose==='Security'?'selected':''}>Security</option>
-                <option ${data.fencePurpose==='Both'?'selected':''}>Both</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Fence Height (ft)</label>
-              <input type="number" id="fenceHeight" value="${data.fenceHeight||''}" placeholder="e.g. 10">
-            </div>
-            <div class="field">
-              <label>Fence Type</label>
-              <select id="fenceType">
-                <option value="">Select...</option>
-                ${['Chain Link','Aluminum Panel','PVC Panel','Other'].map(t=>`<option ${data.fenceType===t?'selected':''}>${t}</option>`).join('')}
-              </select>
-            </div>
-            <div class="field">
-              <label>Finish</label>
-              <select id="fenceFinish">
-                <option value="">Select...</option>
-                ${['Galvanized','Vinyl','Powder Coated'].map(f=>`<option ${data.fenceFinish===f?'selected':''}>${f}</option>`).join('')}
-              </select>
-            </div>
-            <div class="field">
-              <label>Color / HOA Requirements</label>
-              <input type="text" id="fenceColor" value="${data.fenceColor||''}" placeholder="e.g. Black, HOA requires green">
-            </div>
-            <div class="field">
-              <label>Distance From Play Area (ft)</label>
-              <input type="number" id="fenceDist" value="${data.fenceDist||''}" placeholder="e.g. 3">
-            </div>
-            <div class="field">
-              <label>Windscreen / Privacy Slats</label>
-              <select id="windscreen">
-                <option value="">Select...</option>
-                ${['None','Total Coverage','Partial','Specific Sides Only'].map(w=>`<option ${data.windscreen===w?'selected':''}>${w}</option>`).join('')}
-              </select>
-            </div>
-            <div class="field">
-              <label>Post Spacing (ft)</label>
-              <input type="number" id="postSpacing" value="${data.postSpacing||''}" placeholder="e.g. 10">
-            </div>
-            <div class="field">
-              <label>New Install or Replacement?</label>
-              <select id="fenceInstallType">
-                <option value="">Select...</option>
-                <option ${data.fenceInstallType==='New Install'?'selected':''}>New Install</option>
-                <option ${data.fenceInstallType==='Replacement - Remove Old'?'selected':''}>Replacement - Remove Old</option>
-                <option ${data.fenceInstallType==='Replacement - Leave Old'?'selected':''}>Replacement - Leave Old</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Ground / Post Type</label>
-              <select id="groundType">
-                <option value="">Select...</option>
-                ${['Soil','Concrete - Core Drill','Asphalt - Core Drill','Other'].map(g=>`<option ${data.groundType===g?'selected':''}>${g}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-          <hr class="divider">
-          <div class="sub-heading">Gates</div>
-          <div class="field-grid">
-            <div class="field">
-              <label>Number of Gates</label>
-              <input type="number" id="gateCount" value="${data.gateCount||''}" placeholder="e.g. 2">
-            </div>
-            <div class="field">
-              <label>Gate Width (ft)</label>
-              <input type="text" id="gateWidth" value="${data.gateWidth||''}" placeholder="e.g. 4ft single, 10ft double">
-            </div>
-            <div class="field">
-              <label>Gate Swing</label>
-              <select id="gateSwing">
-                <option value="">Select...</option>
-                ${['Inward','Outward','Double Swing'].map(g=>`<option ${data.gateSwing===g?'selected':''}>${g}</option>`).join('')}
-              </select>
-            </div>
-            <div class="field">
-              <label>Gate Hardware</label>
-              <select id="gateHardware">
-                <option value="">Select...</option>
-                ${['Self-Closing','Locking','Both','Standard'].map(g=>`<option ${data.gateHardware===g?'selected':''}>${g}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-        </div>`;
-    },
-    collect() {
-      data.fencePurpose = v('fencePurpose')||'';
-      data.fenceHeight = v('fenceHeight')||'';
-      data.fenceType = v('fenceType')||'';
-      data.fenceFinish = v('fenceFinish')||'';
-      data.fenceColor = v('fenceColor')||'';
-      data.fenceDist = v('fenceDist')||'';
-      data.windscreen = v('windscreen')||'';
-      data.postSpacing = v('postSpacing')||'';
-      data.fenceInstallType = v('fenceInstallType')||'';
-      data.groundType = v('groundType')||'';
-      data.gateCount = v('gateCount')||'';
-      data.gateWidth = v('gateWidth')||'';
-      data.gateSwing = v('gateSwing')||'';
-      data.gateHardware = v('gateHardware')||'';
-    },
-    valid() { return true; }
-  },
-
-  // 10: Erosion Control
-  {
-    section: 'Site Conditions',
-    title: 'Soil Erosion & Site Conditions',
-    desc: 'Identify any site-specific requirements for permits or erosion control.',
-    render() {
-      const erosionItems = [
-        ['siltFence','Silt Fence Needed'],
-        ['accessRoad','Access Road Needed'],
-        ['drainageNeeded','Drainage Needed'],
-        ['stormwaterPermit','Stormwater Permit Needed'],
-        ['soilConsNotif','Soil Conservation Notification Needed'],
-      ];
-      return `
-        <div class="sub-heading">Check All That Apply</div>
-        <div class="check-list">
-          ${erosionItems.map(([key,label])=>`
-          <label class="check-item">
-            <input type="checkbox" id="${key}" ${data[key]?'checked':''} onchange="data['${key}']=this.checked">
-            <span class="check-item-label">${label}</span>
-          </label>`).join('')}
-        </div>
-        <hr class="divider">
-        <div class="sub-heading">Access & Site Details</div>
-        <div class="field-grid">
-          <div class="field">
-            <label>Minimum Access Width (ft)</label>
-            <input type="number" id="accessWidth" value="${data.accessWidth||''}" placeholder="e.g. 10">
-          </div>
-          <div class="field">
-            <label>Elevation Changes Along Site</label>
-            <input type="text" id="elevationChanges" value="${data.elevationChanges||''}" placeholder="e.g. 2ft drop on north side">
           </div>
           <div class="field full">
-            <label>Additional Slope or Access Challenges</label>
-            <textarea id="accessChallenges" placeholder="Describe any obstacles, steep grades, narrow gates, etc.">${data.accessChallenges||''}</textarea>
+            <label>Subgrade Notes</label>
+            <textarea id="subgradeNotes" placeholder="Prep conditions, concerns...">${data.subgradeNotes||''}</textarea>
           </div>
         </div>`;
     },
     collect() {
-      data.accessWidth = v('accessWidth');
-      data.elevationChanges = v('elevationChanges');
+      ['plansReviewed','permitsConfirmed','utilitiesLocated','accessConfirmed','existingConditions','ownerNotified','materialsOrdered'].forEach(k=>data[k]=document.getElementById(k)?.checked);
+      data.preconNotes   = v('preconNotes');
+      data.baseMaterial  = v('baseMaterial');
+      data.baseThickness = v('baseThickness');
+      data.subgradeNotes = v('subgradeNotes');
+    },
+    valid() { return true; }
+  },
+
+  // STEP 5: Surface Specs + Slope & Drainage
+  {
+    section: 'Surface & Drainage',
+    title: 'Surface Specs & Drainage',
+    desc: 'Surface material specifications and site drainage.',
+    render() {
+      const s = data.surfaceType;
+      let sf = '';
+      if (s === 'asphalt') {
+        sf = `
+          <div class="field">
+            <label>Asphalt Mix</label>
+            <select id="asphaltMix"><option value="">— Select —</option>${['9.5mm Fine','12.5mm Medium','19mm Base','Dense Graded'].map(o=>`<option ${data.asphaltMix===o?'selected':''}>${o}</option>`).join('')}</select>
+          </div>
+          <div class="field">
+            <label>Lifts</label>
+            <div class="toggle-row">${['1','2'].map(o=>`<button class="toggle-btn ${data.asphaltLifts===o?'active':''}" onclick="setToggle('asphaltLifts','${o}',this);renderStep()">${o} Lift${o==='2'?'s':''}</button>`).join('')}</div>
+          </div>
+          ${data.asphaltLifts==='2'?`<div class="field"><label>Binder Thickness (in)</label><input type="number" id="binderThick" value="${data.binderThick||''}"></div>`:''}
+          <div class="field">
+            <label>Surface Lift (in)</label>
+            <input type="number" id="surfaceThick" value="${data.surfaceThick||''}" placeholder="e.g. 1.5">
+          </div>`;
+      } else if (s === 'concrete') {
+        sf = `
+          <div class="field"><label>PSI</label><select id="concretePSI"><option value="">— Select —</option>${['3000 PSI','3500 PSI','4000 PSI','4500 PSI','5000 PSI'].map(o=>`<option ${data.concretePSI===o?'selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="field"><label>Thickness (in)</label><input type="number" id="concreteThick" value="${data.concreteThick||''}"></div>
+          <div class="field"><label>Perimeter Turn Down</label><div class="toggle-row">${[['6x6','6&quot; × 6&quot;'],['None','None'],['Other','Other']].map(([val,label])=>`<button class="toggle-btn ${data.turnDown===val?'active':''}" onclick="setToggle('turnDown','${val}',this)">${label}</button>`).join('')}</div></div>
+          <div class="field"><label>Fiber Reinforce</label><div class="toggle-row">${['Yes','No'].map(o=>`<button class="toggle-btn ${data.fiberReinforce===o?'active':''}" onclick="setToggle('fiberReinforce','${o}',this)">${o}</button>`).join('')}</div></div>
+          <div class="field"><label>Vapor Barrier</label><div class="toggle-row">${['Yes','No'].map(o=>`<button class="toggle-btn ${data.vaporBarrier===o?'active':''}" onclick="setToggle('vaporBarrier','${o}',this)">${o}</button>`).join('')}</div></div>
+          <div class="field"><label>Surface Finish</label><select id="concreteFinish"><option value="">— Select —</option>${['Broom Finish','Smooth Trowel','Exposed Aggregate','Brushed'].map(o=>`<option ${data.concreteFinish===o?'selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="field"><label>Control Joint Spacing (ft)</label><input type="number" id="jointSpacing" value="${data.jointSpacing||''}"></div>`;
+      } else if (s === 'gravel') {
+        sf = `
+          <div class="field full"><label>Gravel Type</label><select id="gravelType"><option value="">— Select —</option>${['Crushed Stone #57','Crushed Stone #21A','Decomposed Granite','Pea Gravel','Limestone Screenings'].map(o=>`<option ${data.gravelType===o?'selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="field"><label>Top Layer (in)</label><input type="number" id="gravelThick" value="${data.gravelThick||''}"></div>
+          <div class="field"><label>Framing</label><div class="toggle-row">${['PT Lumber','Steel Edging','None'].map(o=>`<button class="toggle-btn ${data.gravelFraming===o?'active':''}" onclick="setToggle('gravelFraming','${o}',this)">${o}</button>`).join('')}</div></div>`;
+      }
+      return `
+        <div class="sub-heading">Surface Specifications — ${s||'(select surface in Step 1)'}</div>
+        <div class="field-grid">${sf}</div>
+        <div class="field" style="margin-top:4px"><label>Surface Notes</label><textarea id="surfaceNotes" placeholder="Additional specs...">${data.surfaceNotes||''}</textarea></div>
+        <hr class="divider">
+        <div class="sub-heading">Slope & Drainage</div>
+        <div class="field-grid">
+          <div class="field"><label>Finished Slope (%)</label><input type="number" id="slope" value="${data.slope||''}" step="0.1" placeholder="e.g. 1.0"></div>
+          <div class="field"><label>Slope Direction</label><select id="slopeDir"><option value="">— Select —</option>${['Single Plane','Crown','Toward Drain','Side to Side','End to End'].map(o=>`<option ${data.slopeDir===o?'selected':''}>${o}</option>`).join('')}</select></div>
+          <div class="field"><label>French Drain</label><div class="toggle-row">${['None','Perimeter','One Side','Two Sides'].map(o=>`<button class="toggle-btn ${data.frenchDrain===o?'active':''}" onclick="setToggle('frenchDrain','${o}',this)">${o}</button>`).join('')}</div></div>
+          ${data.frenchDrain&&data.frenchDrain!=='None'?`<div class="field"><label>Drain Length (ft)</label><input type="number" id="drainLength" value="${data.drainLength||''}"></div><div class="field"><label>Discharge Point</label><input type="text" id="drainDischarge" value="${data.drainDischarge||''}" placeholder="e.g. Daylight, Dry Well"></div>`:''}
+          <div class="field"><label>Retaining Wall</label><div class="toggle-row">${['Yes','No'].map(o=>`<button class="toggle-btn ${data.retainingWall===o?'active':''}" onclick="setToggle('retainingWall','${o}',this);renderStep()">${o}</button>`).join('')}</div></div>
+        </div>
+        ${data.retainingWall==='Yes'?`<div class="field-grid" style="margin-top:12px"><div class="field"><label>Wall Height (ft)</label><input type="number" id="wallH" value="${data.wallH||''}"></div><div class="field"><label>Wall Length (ft)</label><input type="number" id="wallL" value="${data.wallL||''}"></div><div class="field"><label>Wall Material</label><select id="wallMaterial"><option value="">— Select —</option>${['Concrete Block','Natural Stone','Timber','Poured Concrete','Segmental Block'].map(o=>`<option ${data.wallMaterial===o?'selected':''}>${o}</option>`).join('')}</select></div></div>`:''}`;
+    },
+    collect() {
+      data.asphaltMix=v('asphaltMix'); data.surfaceThick=v('surfaceThick'); data.binderThick=v('binderThick');
+      data.concretePSI=v('concretePSI'); data.concreteThick=v('concreteThick');
+      data.concreteFinish=v('concreteFinish'); data.jointSpacing=v('jointSpacing');
+      data.gravelType=v('gravelType'); data.gravelThick=v('gravelThick');
+      data.surfaceNotes=v('surfaceNotes');
+      data.slope=v('slope'); data.slopeDir=v('slopeDir');
+      data.drainLength=v('drainLength'); data.drainDischarge=v('drainDischarge');
+      data.wallH=v('wallH'); data.wallL=v('wallL'); data.wallMaterial=v('wallMaterial');
+    },
+    valid() { return true; }
+  },
+
+  // STEP 6: Edges, Fencing & Site
+  {
+    section: 'Edges, Fencing & Site',
+    title: 'Edges, Backfill, Fencing & Site Conditions',
+    desc: 'Perimeter edge treatment, fencing requirements, erosion control, and site access.',
+    render() {
+      return `
+        <div class="sub-heading">Edges & Backfill</div>
+        <div class="field-grid">
+          <div class="field full"><label>Edge Finishing</label><div class="toggle-row">${['Spread Excavated Fill','Spread Fill & Seed','Topsoil & Seed','Topsoil & Sod','Gravel','Other'].map(o=>`<button class="toggle-btn ${data.backfillMethod===o?'active':''}" onclick="setToggle('backfillMethod','${o}',this);document.getElementById('backfillOther').style.display=this.textContent==='Other'?'block':'none'">${o}</button>`).join('')}</div>
+            <input type="text" id="backfillOther" placeholder="Describe edge finishing method..." value="${data.backfillOtherText||''}" style="display:${data.backfillMethod==='Other'?'block':'none'};margin-top:8px" oninput="data.backfillOtherText=this.value">
+          </div>
+          <div class="field full"><label>Excavated Material</label><div class="toggle-row">${['Stockpile On Site','Spread On Site','Haul Away'].map(o=>`<button class="toggle-btn ${data.excavatedMaterial===o?'active':''}" onclick="setToggle('excavatedMaterial','${o}',this)">${o}</button>`).join('')}</div></div>
+          <div class="field"><label>Backfill Notes</label><textarea id="backfillNotes" placeholder="Edge treatment details...">${data.backfillNotes||''}</textarea></div>
+          <div class="field"><label>Tolerance Notes</label><textarea id="toleranceNotes" placeholder="e.g. 3/16 in 10ft tolerance...">${data.toleranceNotes||''}</textarea></div>
+        </div>
+        <hr class="divider">
+        <div class="sub-heading">Fencing</div>
+        <div class="toggle-row" style="margin-bottom:16px">
+          <button class="toggle-btn ${data.fencingRequired==='Yes'?'active':''}" onclick="setToggle('fencingRequired','Yes',this);renderStep()">Required</button>
+          <button class="toggle-btn ${data.fencingRequired==='No'?'active':''}" onclick="setToggle('fencingRequired','No',this);renderStep()">Not Required</button>
+        </div>
+        ${data.fencingRequired==='Yes'?`
+        <div class="field-grid">
+          <div class="field"><label>Height (ft)</label><input type="number" id="fenceHeight" value="${data.fenceHeight||''}"></div>
+          <div class="field"><label>Type</label><div class="toggle-row">${['Chain Link','Welded Wire','Wood','Vinyl','Aluminum'].map(o=>`<button class="toggle-btn ${data.fenceType===o?'active':''}" onclick="setToggle('fenceType','${o}',this)">${o}</button>`).join('')}</div></div>
+          <div class="field"><label>Finish</label><div class="toggle-row">${['Galvanized','Black Vinyl','Green Vinyl','Powder Coated'].map(o=>`<button class="toggle-btn ${data.fenceFinish===o?'active':''}" onclick="setToggle('fenceFinish','${o}',this)">${o}</button>`).join('')}</div></div>
+          <div class="field"><label>Linear Feet</label><input type="number" id="fenceLength" value="${data.fenceLength||''}"></div>
+          <div class="field"><label>Gates</label><input type="text" id="fenceGates" value="${data.fenceGates||''}" placeholder="e.g. 2x 4ft walk gates"></div>
+          <div class="field"><label>Windscreen</label><div class="toggle-row">${['Yes','No'].map(o=>`<button class="toggle-btn ${data.windscreen===o?'active':''}" onclick="setToggle('windscreen','${o}',this)">${o}</button>`).join('')}</div></div>
+          <div class="field"><label>Purpose</label><div class="toggle-row">${['Ball Containment','Security','Privacy','Decorative'].map(o=>`<button class="toggle-btn ${data.fencePurpose===o?'active':''}" onclick="setToggle('fencePurpose','${o}',this)">${o}</button>`).join('')}</div></div>
+        </div>`:''}
+        <hr class="divider">
+        <div class="sub-heading">Erosion Control & Site Access</div>
+        <div class="check-list">
+          ${[['siltFence','Silt Fence'],['accessRoad','Access Road / Stone Pad'],['stoneWashout','Stone Washout Area'],['inletProtection','Storm Inlet Protection'],['seedingRequired','Seeding / Stabilization'],['surveyRequired','Survey Required']].map(([k,l])=>`<label class="check-item"><input type="checkbox" id="${k}" ${data[k]?'checked':''}><span class="check-item-label">${l}</span></label>`).join('')}
+        </div>
+        <div class="field-grid" style="margin-top:14px">
+          <div class="field"><label>Min Access Width (ft)</label><input type="number" id="accessWidth" value="${data.accessWidth||''}"></div>
+          <div class="field"><label>Elevation Changes</label><div class="toggle-row">${['Minimal','Moderate','Significant'].map(o=>`<button class="toggle-btn ${data.elevationChanges===o?'active':''}" onclick="setToggle('elevationChanges','${o}',this)">${o}</button>`).join('')}</div></div>
+          <div class="field full"><label>Access Challenges</label><textarea id="accessChallenges" placeholder="Gates, overhead wires, soft ground, etc.">${data.accessChallenges||''}</textarea></div>
+        </div>`;
+    },
+    collect() {
+      data.backfillNotes      = v('backfillNotes');
+      data.toleranceNotes     = v('toleranceNotes');
+      data.backfillOtherText  = v('backfillOther');
+      data.fenceHeight    = v('fenceHeight');
+      data.fenceLength    = v('fenceLength');
+      data.fenceGates     = v('fenceGates');
+      ['siltFence','accessRoad','stoneWashout','inletProtection','seedingRequired','surveyRequired'].forEach(k=>data[k]=document.getElementById(k)?.checked);
+      data.accessWidth      = v('accessWidth');
       data.accessChallenges = v('accessChallenges');
     },
     valid() { return true; }
   },
 
-  // 11: Attachments & Notes
+  // STEP 7: Attachments & Notes
   {
     section: 'Final Notes',
     title: 'Attachments & Notes',
-    desc: 'Document any attachments and add final project notes.',
+    desc: 'Document attachments and final project instructions.',
     render() {
-      const attachItems = [
-        ['attSurvey','Survey'],
-        ['attPlan','Plan Sketch'],
-        ['attPhotos','Site Photos'],
-        ['attElevation','Elevation Reference'],
-      ];
+      const atts = [['attSurvey','Survey'],['attPlan','Plan Sketch'],['attPhotos','Site Photos'],['attElevation','Elevation Drawing'],['attSoils','Soils Report'],['attPermit','Permit Copy']];
       return `
-        <div class="sub-heading">Included Attachments</div>
+        <div class="sub-heading">Attachments Included</div>
         <div class="check-list">
-          ${attachItems.map(([key,label])=>`
-          <label class="check-item">
-            <input type="checkbox" id="${key}" ${data[key]?'checked':''} onchange="data['${key}']=this.checked">
-            <span class="check-item-label">${label}</span>
-          </label>`).join('')}
+          ${atts.map(([k,l])=>`<label class="check-item"><input type="checkbox" id="${k}" ${data[k]?'checked':''}><span class="check-item-label">${l}</span></label>`).join('')}
         </div>
-        <hr class="divider">
-        <div class="field">
-          <label>Additional Notes / Special Instructions</label>
-          <textarea id="finalNotes" placeholder="Any other scope details, owner preferences, or conditions..." style="min-height:100px">${data.finalNotes||''}</textarea>
+        <div class="field" style="margin-top:20px">
+          <label>Special Instructions / Final Notes</label>
+          <textarea id="finalNotes" style="min-height:100px" placeholder="Additional scope, special requirements, or contractor notes...">${data.finalNotes||''}</textarea>
         </div>`;
     },
     collect() {
+      ['attSurvey','attPlan','attPhotos','attElevation','attSoils','attPermit'].forEach(k=>data[k]=document.getElementById(k)?.checked);
       data.finalNotes = v('finalNotes');
     },
     valid() { return true; }
-  }
+  },
 ];
 
 // ─── HELPERS ────────────────────────────────────────────────
@@ -1584,6 +1168,18 @@ function toggleOpt(key, val, el, event) {
     el.classList.remove('selected');
   } else {
     data[key].push(val);
+    el.classList.add('selected');
+  }
+}
+
+function toggleCourtType(val, el) {
+  if (!data.courtTypes) data.courtTypes = [];
+  const idx = data.courtTypes.indexOf(val);
+  if (idx > -1) {
+    data.courtTypes.splice(idx, 1);
+    el.classList.remove('selected');
+  } else {
+    data.courtTypes.push(val);
     el.classList.add('selected');
   }
 }
@@ -1808,137 +1404,172 @@ function generateReport() {
   const html = `
     <div class="report-wrap">
       <div class="report-header">
-        <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#f0a500; margin-bottom:6px;">My Backyard Sports · Scope Report</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#f0a500;margin-bottom:6px;">My Backyard Sports · Scope Report</div>
         <h1>${data.clientName || 'Untitled Project'}</h1>
-        <div class="report-meta">${data.siteAddress || ''} &nbsp;·&nbsp; ${surfaceLabel} Court &nbsp;·&nbsp; Generated ${date}</div>
+        <div class="report-meta">${data.siteAddress||''} &nbsp;·&nbsp; ${surfaceLabel} Court &nbsp;·&nbsp; Generated ${date}</div>
       </div>
 
       <div class="report-body">
 
-        <!-- PROJECT ID -->
-        <div class="report-section">
-          <div class="report-section-title">Project Identification</div>
-          <div class="report-grid">
-            ${field('Client / Project Name', data.clientName)}
-            ${field('Site Address', data.siteAddress)}
-            ${field('Permit / Project #', data.permitNum)}
-            ${field('Target Completion', data.targetDate)}
-            ${field('Surface Type', surfaceLabel)}
-            ${field('Court Type(s)', (data.courtTypes||[]).join(', '))}
-            ${field('Court Size (L × W)', data.courtL && data.courtW ? data.courtL + ' × ' + data.courtW + ' ft' : '')}
-            ${field('Orientation', data.orientation)}
+        <!-- ROW 1: Project ID + Contractor -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:0">
+          <div class="report-section" style="margin-bottom:0;border-right:1px solid #e2e8f0;padding-right:20px">
+            <div class="report-section-title">Project Identification</div>
+            <div class="report-grid">
+              ${field('Client', data.clientName)}
+              ${field('Address', data.siteAddress)}
+              ${field('Permit #', data.permitNum)}
+              ${field('Target Date', data.targetDate)}
+              ${field('Surface', surfaceLabel)}
+              ${field('Court Type(s)', (data.courtTypes||[]).join(', '))}
+              ${field('Court Size', data.courtL&&data.courtW ? data.courtL+' × '+data.courtW+' ft' : '')}
+              ${field('Orientation', data.orientation)}
+            </div>
+          </div>
+          <div class="report-section" style="margin-bottom:0;padding-left:20px">
+            <div class="report-section-title">Contractor</div>
+            <div class="report-grid">
+              ${field('Company', data.contractorName)}
+              ${field('Foreman', data.foremanName)}
+              ${field('Phone', data.foremanPhone)}
+              ${field('Email', data.foremanEmail)}
+            </div>
           </div>
         </div>
 
         <hr class="report-divider">
 
-        <!-- CONTRACTOR -->
-        <div class="report-section">
-          <div class="report-section-title">Contractor</div>
-          <div class="report-grid">
-            ${field('Company', data.contractorName)}
-            ${field('Foreman', data.foremanName)}
-            ${field('Phone', data.foremanPhone)}
-            ${field('Email', data.foremanEmail)}
+        <!-- ROW 2: Pre-Construction + Scope of Work -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:0">
+          <div class="report-section" style="margin-bottom:0;border-right:1px solid #e2e8f0;padding-right:20px">
+            <div class="report-section-title">Pre-Construction Verification</div>
+            <ul class="scope-list">
+              ${preconChecks.filter(([k])=>data[k]).map(([,l])=>`<li>${l}</li>`).join('')}
+              ${preconChecks.filter(([k])=>!data[k]).map(([,l])=>`<li style="opacity:0.3;text-decoration:line-through">${l}</li>`).join('')}
+            </ul>
+            ${data.preconNotes?`<div style="margin-top:8px;font-size:0.82rem;color:#718096"><strong>Notes:</strong> ${data.preconNotes}</div>`:''}
+          </div>
+          <div class="report-section" style="margin-bottom:0;padding-left:20px">
+            <div class="report-section-title">Scope of Work</div>
+            <ul class="scope-list">
+              ${scopeItems.map(i=>`<li>${i}</li>`).join('')}
+            </ul>
+            <div style="margin-top:10px;font-size:0.78rem;color:#718096;font-style:italic">Contractor shall not modify scope without written approval.</div>
           </div>
         </div>
 
         <hr class="report-divider">
 
-        <!-- PRE-CON -->
-        <div class="report-section">
-          <div class="report-section-title">Pre-Construction Verification</div>
-          <ul class="scope-list">
-            ${preconChecks.filter(([k])=>data[k]).map(([,l])=>`<li>${l}</li>`).join('')}
-            ${preconChecks.filter(([k])=>!data[k]).map(([,l])=>`<li style="opacity:0.35; text-decoration:line-through">${l}</li>`).join('')}
-          </ul>
-          ${data.preconNotes ? `<div style="margin-top:10px; font-size:0.88rem; color:#718096;"><strong>Notes:</strong> ${data.preconNotes}</div>` : ''}
-        </div>
-
-        <hr class="report-divider">
-
-        <!-- SCOPE -->
-        <div class="report-section">
-          <div class="report-section-title">Scope of Work</div>
-          <ul class="scope-list">
-            ${scopeItems.map(i=>`<li>${i}</li>`).join('')}
-          </ul>
-          <div style="margin-top:12px; font-size:0.82rem; color:#718096; font-style:italic;">Contractor shall not modify scope without written approval.</div>
-        </div>
-
-        <hr class="report-divider">
-
-        <!-- SUBGRADE -->
-        <div class="report-section">
-          <div class="report-section-title">Subgrade & Base</div>
-          <div class="report-grid">
-            ${field('Base Material', data.baseMaterial)}
-            ${field('Compacted Thickness', data.baseThickness ? data.baseThickness + ' in' : '')}
-            ${field('Geotextile Fabric', data.geotextile)}
-            ${data.subgradeNotes ? fieldFull('Prep Notes', data.subgradeNotes) : ''}
+        <!-- ROW 3: Subgrade + Surface Specs -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:0">
+          <div class="report-section" style="margin-bottom:0;border-right:1px solid #e2e8f0;padding-right:20px">
+            <div class="report-section-title">Subgrade & Base</div>
+            <div class="report-grid">
+              ${field('Base Material', data.baseMaterial)}
+              ${field('Compacted Thickness', data.baseThickness ? data.baseThickness+' in' : '')}
+              ${field('Geotextile Fabric', data.geotextile)}
+              ${data.subgradeNotes ? fieldFull('Prep Notes', data.subgradeNotes) : ''}
+            </div>
+          </div>
+          <div class="report-section" style="margin-bottom:0;padding-left:20px">
+            <div class="report-section-title">Surface Specifications</div>
+            ${surfaceSection}
           </div>
         </div>
 
         <hr class="report-divider">
 
-        ${surfaceSection}
-
-        <hr class="report-divider">
-
-        <!-- SLOPE -->
-        <div class="report-section">
-          <div class="report-section-title">Slope & Drainage</div>
-          <div class="report-grid">
-            ${field('Finished Slope', data.slope ? data.slope + '%' : '')}
-            ${field('Slope Direction', data.slopeDir)}
-            ${field('French Drain', data.frenchDrain)}
-            ${data.frenchDrain && data.frenchDrain !== 'None' ? field('Drain Length', data.drainLength ? data.drainLength + ' ft' : '') : ''}
-            ${field('Drain Discharge', data.drainDischarge)}
-            ${field('Retaining Wall', data.retainingWall)}
-            ${data.retainingWall === 'Yes' ? field('Wall Dimensions', data.wallH && data.wallL ? data.wallH + ' × ' + data.wallL + ' ft' : '') : ''}
-            ${data.retainingWall === 'Yes' ? field('Wall Material', data.wallMaterial) : ''}
+        <!-- ROW 4: Slope & Drainage + Edges & Backfill -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:0">
+          <div class="report-section" style="margin-bottom:0;border-right:1px solid #e2e8f0;padding-right:20px">
+            <div class="report-section-title">Slope & Drainage</div>
+            <div class="report-grid">
+              ${field('Finished Slope', data.slope ? data.slope+'%' : '')}
+              ${field('Slope Direction', data.slopeDir)}
+              ${field('French Drain', data.frenchDrain)}
+              ${data.frenchDrain&&data.frenchDrain!=='None' ? field('Drain Length', data.drainLength ? data.drainLength+' ft' : '') : ''}
+              ${field('Discharge', data.drainDischarge)}
+              ${field('Retaining Wall', data.retainingWall)}
+              ${data.retainingWall==='Yes' ? field('Wall Dimensions', data.wallH&&data.wallL ? data.wallH+' × '+data.wallL+' ft' : '') : ''}
+              ${data.retainingWall==='Yes' ? field('Wall Material', data.wallMaterial) : ''}
+            </div>
+            <div style="margin-top:8px;font-size:0.75rem;color:#718096;font-style:italic">No standing water >1/16" after 1hr sun / 2hrs overcast.</div>
           </div>
-          <div style="margin-top:10px; font-size:0.82rem; color:#718096; font-style:italic;">No standing water greater than 1/16" after 1hr direct sunlight or 2hrs overcast. Contractor responsible for correcting birdbaths prior to acceptance.</div>
-        </div>
-
-        <hr class="report-divider">
-
-        <!-- EDGES -->
-        <div class="report-section">
-          <div class="report-section-title">Edges & Backfill</div>
-          <div class="report-grid">
-            ${field('Backfill Method', data.backfillMethod)}
-            ${data.backfillNotes ? fieldFull('Backfill Notes', data.backfillNotes) : ''}
-            ${data.toleranceNotes ? fieldFull('Tolerance Notes', data.toleranceNotes) : ''}
+          <div class="report-section" style="margin-bottom:0;padding-left:20px">
+            <div class="report-section-title">Edges & Backfill</div>
+            <div class="report-grid">
+              ${field('Edge Finishing', data.backfillMethod==='Other' && data.backfillOtherText ? data.backfillOtherText : data.backfillMethod)}
+              ${field('Excavated Material', data.excavatedMaterial)}
+              ${data.backfillNotes ? fieldFull('Backfill Notes', data.backfillNotes) : ''}
+              ${data.toleranceNotes ? fieldFull('Tolerance Notes', data.toleranceNotes) : ''}
+            </div>
           </div>
         </div>
 
-        ${fencingSection ? `<hr class="report-divider">${fencingSection}` : ''}
-
         <hr class="report-divider">
 
-        <!-- EROSION -->
-        <div class="report-section">
-          <div class="report-section-title">Site Conditions & Erosion Control</div>
-          ${erosionFlags.length ? `<ul class="scope-list">${erosionFlags.map(f=>`<li>${f}</li>`).join('')}</ul>` : '<div style="font-size:0.88rem; color:#94a3b8;">No erosion control items flagged.</div>'}
-          <div class="report-grid" style="margin-top:14px">
-            ${field('Min Access Width', data.accessWidth ? data.accessWidth + ' ft' : '')}
-            ${data.elevationChanges ? field('Elevation Changes', data.elevationChanges) : ''}
-            ${data.accessChallenges ? fieldFull('Access Challenges', data.accessChallenges) : ''}
+        <!-- ROW 5: Fencing + Site Conditions (fencing full-width only if required) -->
+        ${data.fencingRequired==='Yes' ? `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:0">
+          <div class="report-section" style="margin-bottom:0;border-right:1px solid #e2e8f0;padding-right:20px">
+            <div class="report-section-title">Fencing</div>
+            <div class="report-grid">
+              ${field('Purpose', data.fencePurpose)}
+              ${field('Height', data.fenceHeight ? data.fenceHeight+' ft' : '')}
+              ${field('Type', data.fenceType)}
+              ${field('Finish', data.fenceFinish)}
+              ${field('Linear Feet', data.fenceLength ? data.fenceLength+' ft' : '')}
+              ${field('Gates', data.fenceGates)}
+              ${field('Windscreen', data.windscreen)}
+            </div>
           </div>
-          ${erosionFlags.length ? '<div class="warn-badge">⚠️ Survey required with flagged items</div>' : ''}
+          <div class="report-section" style="margin-bottom:0;padding-left:20px">
+            <div class="report-section-title">Site Conditions & Erosion</div>
+            ${erosionFlags.length ? `<ul class="scope-list">${erosionFlags.map(f=>`<li>${f}</li>`).join('')}</ul>` : '<div style="font-size:0.85rem;color:#94a3b8">No erosion items flagged.</div>'}
+            <div class="report-grid" style="margin-top:10px">
+              ${field('Min Access Width', data.accessWidth ? data.accessWidth+' ft' : '')}
+              ${data.elevationChanges ? field('Elevation', data.elevationChanges) : ''}
+              ${data.accessChallenges ? fieldFull('Access Notes', data.accessChallenges) : ''}
+            </div>
+            ${erosionFlags.length ? '<div class="warn-badge">⚠️ Survey required with flagged items</div>' : ''}
+          </div>
         </div>
-
         <hr class="report-divider">
+        ` : `
+        <div class="report-section" style="margin-bottom:0">
+          <div class="report-section-title">Site Conditions & Erosion</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+            <div>
+              ${erosionFlags.length ? `<ul class="scope-list">${erosionFlags.map(f=>`<li>${f}</li>`).join('')}</ul>` : '<div style="font-size:0.85rem;color:#94a3b8">No erosion items flagged.</div>'}
+              ${erosionFlags.length ? '<div class="warn-badge">⚠️ Survey required with flagged items</div>' : ''}
+            </div>
+            <div class="report-grid">
+              ${field('Min Access Width', data.accessWidth ? data.accessWidth+' ft' : '')}
+              ${data.elevationChanges ? field('Elevation', data.elevationChanges) : ''}
+              ${data.accessChallenges ? fieldFull('Access Notes', data.accessChallenges) : ''}
+            </div>
+          </div>
+        </div>
+        <hr class="report-divider">
+        `}
 
-                ${buildAccessoriesReport()}
+        <!-- Accessories & Equipment (full width) -->
+        ${buildAccessoriesReport()}
 
+        <!-- Paint Estimate (full width) -->
         ${buildPaintReport()}
 
-        <div class="report-section">
+        <!-- Attachments & Notes (full width) -->
+        <div class="report-section" style="margin-bottom:0">
           <div class="report-section-title">Attachments & Notes</div>
-          ${attachments.length ? `<ul class="scope-list">${attachments.map(a=>`<li>${a}</li>`).join('')}</ul>` : '<div style="font-size:0.88rem; color:#94a3b8;">No attachments noted.</div>'}
-          ${data.finalNotes ? `<div style="margin-top:14px; padding:14px; background:#f8fafc; border-radius:8px; border-left:3px solid var(--blue); font-size:0.92rem; color:var(--text)"><strong>Special Instructions:</strong><br>${data.finalNotes}</div>` : ''}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div>
+              ${attachments.length ? `<ul class="scope-list">${attachments.map(a=>`<li>${a}</li>`).join('')}</ul>` : '<div style="font-size:0.85rem;color:#94a3b8">No attachments noted.</div>'}
+            </div>
+            <div>
+              ${data.finalNotes ? `<div style="padding:12px;background:#f8fafc;border-radius:6px;border-left:3px solid var(--blue);font-size:0.88rem;color:var(--text)"><strong>Special Instructions:</strong><br>${data.finalNotes}</div>` : ''}
+            </div>
+          </div>
         </div>
 
       </div>
@@ -1947,8 +1578,9 @@ function generateReport() {
         <button class="btn btn-secondary" onclick="restart()">← Start New Quote</button>
         <button class="btn btn-accent" onclick="printReport()">🖨 Print / Save PDF</button>
       </div>
-    </div>`;
+    </div>
 
+`
   document.getElementById('reportContainer').innerHTML = html;
   document.getElementById('reportContainer').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2207,37 +1839,54 @@ function changeQty(id, delta) {
 
 function lookupTravelTime(address) {
   if (!address) return;
-  // Origin: CubeSmart East Hanover NJ
-  var origin = '340+Littell+Rd,+East+Hanover,+NJ+07936';
-  var dest = encodeURIComponent(address);
-  // Use OpenRouteService geocoding + routing (free, no key needed for basic use)
-  // Fallback: use a rough distance estimate via nominatim + haversine
-  var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + dest;
-  fetch(url)
+  // Step 1: Geocode the destination address via Nominatim
+  var geocodeUrl = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address);
+  fetch(geocodeUrl, { headers: { 'Accept': 'application/json' } })
     .then(function(r) { return r.json(); })
     .then(function(results) {
       if (!results || !results.length) { data.travelHours = 1; return; }
-      var lat2 = parseFloat(results[0].lat);
-      var lon2 = parseFloat(results[0].lon);
-      // CubeSmart East Hanover NJ coords
-      var lat1 = 40.8202, lon1 = -74.3607;
-      // Haversine distance in miles
-      var R = 3958.8;
-      var dLat = (lat2-lat1) * Math.PI/180;
-      var dLon = (lon2-lon1) * Math.PI/180;
-      var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
-              Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
-              Math.sin(dLon/2)*Math.sin(dLon/2);
-      var miles = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      // Estimate: avg 40mph for mixed driving, round to nearest 0.25
-      var hrs = miles / 40;
-      hrs = Math.round(hrs * 4) / 4;
-      if (hrs < 0.25) hrs = 0.25;
-      data.travelHours = hrs;
-      data.travelMiles = Math.round(miles);
-      console.log('Travel: ' + miles.toFixed(1) + ' mi -> ' + hrs + ' hrs one way');
+      var destLat = parseFloat(results[0].lat);
+      var destLon = parseFloat(results[0].lon);
+      // CubeSmart East Hanover NJ: 340 Littell Rd
+      var origLat = 40.8202, origLon = -74.3607;
+      // Step 2: Use OSRM for real road routing (free, no API key)
+      var osrmUrl = 'https://router.project-osrm.org/route/v1/driving/'
+        + origLon + ',' + origLat + ';'
+        + destLon + ',' + destLat
+        + '?overview=false';
+      return fetch(osrmUrl)
+        .then(function(r) { return r.json(); })
+        .then(function(route) {
+          var durationSec, distMeters;
+          if (route && route.routes && route.routes.length) {
+            durationSec  = route.routes[0].duration; // seconds
+            distMeters   = route.routes[0].distance; // meters
+            var hrs  = durationSec / 3600;
+            // Round to nearest 0.25hr, minimum 0.25
+            hrs = Math.max(0.25, Math.round(hrs * 4) / 4);
+            var miles = (distMeters / 1609.34).toFixed(1);
+            data.travelHours = hrs;
+            data.travelMiles = parseFloat(miles);
+            console.log('OSRM route: ' + miles + ' mi, ' + (durationSec/60).toFixed(0) + ' min -> ' + hrs + ' hrs');
+          } else {
+            // OSRM failed — fall back to haversine with 1.4x road factor at 28mph avg
+            var R = 3958.8;
+            var dLat = (destLat-origLat)*Math.PI/180;
+            var dLon = (destLon-origLon)*Math.PI/180;
+            var a = Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(origLat*Math.PI/180)*Math.cos(destLat*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+            var straightMiles = R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+            var roadMiles = straightMiles * 1.4; // road distance typically 40% longer than straight line
+            var hrs = Math.max(0.25, Math.round((roadMiles / 28) * 4) / 4);
+            data.travelHours = hrs;
+            data.travelMiles = Math.round(roadMiles);
+            console.log('Fallback haversine: ' + roadMiles.toFixed(1) + ' road mi -> ' + hrs + ' hrs');
+          }
+        });
     })
-    .catch(function() { data.travelHours = 1; });
+    .catch(function(e) {
+      console.log('Travel lookup failed:', e);
+      data.travelHours = 1;
+    });
 }
 
 function setPaintType(type) {
@@ -2245,61 +1894,64 @@ function setPaintType(type) {
   renderStep();
 }
 
+// ─── DEFAULT MATERIAL LIST (from Tennis_Paint_New_Asphalt.xlsx) ─────────────
+var DEFAULT_PAINT_MATERIALS = [
+  { name: 'Acrylic Resurfacer',  cost: 780,  qty: 3,  freight: 800, scale: true  },
+  { name: 'Coarse Sealer Sand',  cost: 9,    qty: 39, freight: 0,   scale: true  },
+  { name: 'Neutral Concentrate', cost: 711,  qty: 2,  freight: 0,   scale: true  },
+  { name: 'Color Plus Tint',     cost: 81,   qty: 8,  freight: 0,   scale: true  },
+  { name: 'Fine Sand',           cost: 14,   qty: 16, freight: 0,   scale: true  },
+  { name: 'Patch Binder',        cost: 143,  qty: 1,  freight: 0,   scale: false },
+  { name: 'TC Line Paint',       cost: 37,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Line Primer',         cost: 23,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Squeegee',            cost: 50,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Tar Paper',           cost: 37,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Masking Tape',        cost: 25,   qty: 3,  freight: 0,   scale: false },
+  { name: 'Utility Blades',      cost: 2,    qty: 2,  freight: 0,   scale: false },
+  { name: 'String Line',         cost: 11,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Buckets',             cost: 4,    qty: 3,  freight: 0,   scale: false },
+  { name: 'Bucket Lids',         cost: 3,    qty: 2,  freight: 0,   scale: false },
+  { name: 'Roller Refills',      cost: 5,    qty: 1,  freight: 0,   scale: false },
+  { name: 'Rosin Paper',         cost: 14,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Rub Bricks',          cost: 17,   qty: 4,  freight: 0,   scale: false },
+  { name: 'Sanding Disc',        cost: 10.5, qty: 1,  freight: 0,   scale: false },
+  { name: 'Portland Cement',     cost: 20,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Power Washer Rental', cost: 150,  qty: 1,  freight: 0,   scale: false },
+  { name: 'Trash Removal',       cost: 300,  qty: 1,  freight: 0,   scale: false },
+  { name: 'Gasoline',            cost: 3.5,  qty: 5,  freight: 0,   scale: false },
+];
+
+function getPaintMaterials() {
+  return data.paintMaterials || DEFAULT_PAINT_MATERIALS.map(function(m){ return Object.assign({}, m); });
+}
+
 function calcPaint(L, W, lr, otr, mk, trav) {
   var sqFt = L * W;
   var sqYd = sqFt / 9;
   var scale = sqYd / 800;
-
-  // Materials from spreadsheet - scalable items marked
+  var mats = getPaintMaterials();
   var matTotal = 0;
-  var items = [
-    { cost: 780, qty: 3, freight: 800, scale: true },   // Acrylic Resurfacer
-    { cost: 9, qty: 39, freight: 0, scale: true },       // Coarse Sealer Sand
-    { cost: 711, qty: 2, freight: 0, scale: true },      // Neutral Concentrate
-    { cost: 81, qty: 8, freight: 0, scale: true },       // Color Plus Tint
-    { cost: 14, qty: 16, freight: 0, scale: true },      // Fine Sand
-    { cost: 143, qty: 1, freight: 0, scale: false },     // Patch Binder
-    { cost: 37, qty: 1, freight: 0, scale: false },      // TC Line Paint
-    { cost: 23, qty: 1, freight: 0, scale: false },      // Line Primer
-    { cost: 50, qty: 1, freight: 0, scale: false },      // Squeegee
-    { cost: 37, qty: 1, freight: 0, scale: false },      // Tar Paper
-    { cost: 25, qty: 3, freight: 0, scale: false },      // Masking Tape
-    { cost: 2, qty: 2, freight: 0, scale: false },       // Utility Blades
-    { cost: 11, qty: 1, freight: 0, scale: false },      // String Line
-    { cost: 4, qty: 3, freight: 0, scale: false },       // Buckets
-    { cost: 3, qty: 2, freight: 0, scale: false },       // Bucket Lids
-    { cost: 5, qty: 1, freight: 0, scale: false },       // Roller Refills
-    { cost: 14, qty: 1, freight: 0, scale: false },      // Rosin Paper
-    { cost: 17, qty: 4, freight: 0, scale: false },      // Rub Bricks
-    { cost: 10.5, qty: 1, freight: 0, scale: false },    // Sanding Disc
-    { cost: 20, qty: 1, freight: 0, scale: false },      // Portland Cement
-    { cost: 150, qty: 1, freight: 0, scale: false },     // Power Washer Rental
-    { cost: 300, qty: 1, freight: 0, scale: false },     // Trash Removal
-    { cost: 3.5, qty: 5, freight: 0, scale: false },     // Gasoline
-  ];
-  items.forEach(function(m) {
+  mats.forEach(function(m) {
     var q = m.scale ? Math.ceil(m.qty * scale) : m.qty;
     matTotal += (m.cost * q) + (m.freight || 0);
   });
-
-  // Labor - 5 days, 2 staff
-  var days = [5, 5, 6, 5, 5]; // hours per day
+  // Labor — 5 days, 2 staff (from spreadsheet)
+  var days = [5, 5, 6, 5, 5];
   var staff = 2;
-  var travelPrep = (trav * 2) + 1; // B38 = (B39*2)+1
+  var travelPrep = (trav * 2) + 1;
   var totalLaborHrs = 0, totalTravHrs = 0, totalOT = 0;
   days.forEach(function(h) {
     totalLaborHrs += staff * h;
-    totalTravHrs += travelPrep * staff;
-    totalOT += Math.max(0, travelPrep + h - 8) * staff;
+    totalTravHrs  += travelPrep * staff;
+    totalOT       += Math.max(0, travelPrep + h - 8) * staff;
   });
   var regHrs = totalLaborHrs - totalOT + totalTravHrs;
   var laborCost = (regHrs * lr) + (totalOT * otr);
   var subtotal = matTotal + laborCost;
   var markup = subtotal * (mk / 100);
   var total = subtotal + markup;
-
   return {
-    sqFt: sqFt, sqYd: Math.round(sqYd),
+    sqFt: sqFt, sqYd: Math.round(sqYd), scale: scale,
     matTotal: Math.round(matTotal),
     regHrs: Math.round(regHrs * 10) / 10,
     otHrs: Math.round(totalOT * 10) / 10,
@@ -2312,6 +1964,127 @@ function calcPaint(L, W, lr, otr, mk, trav) {
   };
 }
 
+// Material editor helpers
+var _newMatScale = false;
+
+function toggleMaterialEditor() {
+  var wrap = document.getElementById('matEditorWrap');
+  if (!wrap) return;
+  var isHidden = wrap.style.display === 'none' || wrap.style.display === '';
+  wrap.style.display = isHidden ? 'block' : 'none';
+  var btn = document.getElementById('matModBtn');
+  if (btn) btn.textContent = isHidden ? '▲ Hide Material Breakdown' : '✏ Modify Materials';
+  if (isHidden) renderMatEditor();
+}
+
+function renderMatEditor() {
+  var wrap = document.getElementById('matEditorWrap');
+  if (!wrap) return;
+  var mats = getPaintMaterials();
+  var L = parseFloat((document.getElementById('pe-L')||{}).value) || 60;
+  var W = parseFloat((document.getElementById('pe-W')||{}).value) || 120;
+  var scale = (L * W / 9) / 800;
+
+  var html = '<div class="mat-editor">';
+  // Header row
+  html += '<div class="mat-row mat-header">'
+       + '<span class="mc mc-name">Material</span>'
+       + '<span class="mc mc-num">Unit ($)</span>'
+       + '<span class="mc mc-num">Base Qty</span>'
+       + '<span class="mc mc-num">Freight ($)</span>'
+       + '<span class="mc mc-scale">Scales?</span>'
+       + '<span class="mc mc-total">Line Total</span>'
+       + '<span class="mc mc-del"></span>'
+       + '</div>';
+
+  mats.forEach(function(m, i) {
+    var effQty = m.scale ? Math.ceil(m.qty * scale) : m.qty;
+    var lineTotal = (m.cost * effQty) + (m.freight || 0);
+    html += '<div class="mat-row" id="matrow-' + i + '">'
+          + '<input class="mc mc-name mat-input" value="' + m.name.replace(/"/g,'&quot;') + '" oninput="updateMat(' + i + ',\'name\',this.value)">'
+          + '<input class="mc mc-num mat-input" type="number" min="0" step="0.01" value="' + m.cost + '" oninput="updateMat(' + i + ',\'cost\',+this.value)">'
+          + '<input class="mc mc-num mat-input" type="number" min="0" step="1" value="' + m.qty + '" oninput="updateMat(' + i + ',\'qty\',+this.value)">'
+          + '<input class="mc mc-num mat-input" type="number" min="0" step="0.01" value="' + (m.freight||0) + '" oninput="updateMat(' + i + ',\'freight\',+this.value)">'
+          + '<div class="mc mc-scale"><button class="mat-scale-btn' + (m.scale ? ' active' : '') + '" onclick="updateMat(' + i + ',\'scale\',' + (!m.scale) + ');renderMatEditor()">' + (m.scale ? '⚖ Yes' : '— No') + '</button></div>'
+          + '<span class="mc mc-total mat-line-total" id="matline-' + i + '">$' + Math.round(lineTotal).toLocaleString() + '</span>'
+          + '<button class="mc mc-del mat-del-btn" onclick="deleteMat(' + i + ')" title="Remove">✕</button>'
+          + '</div>';
+  });
+
+  // Add new row
+  html += '<div class="mat-row mat-add-row">'
+        + '<input class="mc mc-name mat-input" id="newMatName" placeholder="New item name">'
+        + '<input class="mc mc-num mat-input" id="newMatCost" type="number" min="0" step="0.01" placeholder="0.00">'
+        + '<input class="mc mc-num mat-input" id="newMatQty" type="number" min="0" step="1" placeholder="1">'
+        + '<input class="mc mc-num mat-input" id="newMatFreight" type="number" min="0" step="0.01" placeholder="0">'
+        + '<div class="mc mc-scale"><button class="mat-scale-btn" id="newMatScaleBtn" onclick="toggleNewMatScale()">— No</button></div>'
+        + '<span class="mc mc-total"></span>'
+        + '<button class="mat-add-btn mc mc-del" onclick="addNewMat()">+ Add</button>'
+        + '</div>';
+
+  html += '<div class="mat-editor-footer">'
+        + '<button class="mat-reset-btn" onclick="resetMaterials()">↺ Reset to Defaults</button>'
+        + '<span class="mat-footer-note">⚖ Scaled items multiply base qty by (court sq yds ÷ 800). Non-scaled items use base qty as-is.</span>'
+        + '</div></div>';
+
+  wrap.innerHTML = html;
+  _newMatScale = false;
+}
+
+function toggleNewMatScale() {
+  _newMatScale = !_newMatScale;
+  var btn = document.getElementById('newMatScaleBtn');
+  if (btn) { btn.textContent = _newMatScale ? '⚖ Yes' : '— No'; btn.classList.toggle('active', _newMatScale); }
+}
+
+function updateMat(i, field, val) {
+  if (!data.paintMaterials) data.paintMaterials = getPaintMaterials();
+  data.paintMaterials[i][field] = val;
+  // Refresh line total in place without full re-render
+  if (field !== 'name') {
+    var m = data.paintMaterials[i];
+    var L = parseFloat((document.getElementById('pe-L')||{}).value) || 60;
+    var W = parseFloat((document.getElementById('pe-W')||{}).value) || 120;
+    var scale = (L * W / 9) / 800;
+    var effQty = m.scale ? Math.ceil(m.qty * scale) : m.qty;
+    var lineTotal = (m.cost * effQty) + (m.freight || 0);
+    var el = document.getElementById('matline-' + i);
+    if (el) el.textContent = '$' + Math.round(lineTotal).toLocaleString();
+    if (field === 'scale') {
+      var btn = document.querySelector('#matrow-' + i + ' .mat-scale-btn');
+      if (btn) { btn.textContent = val ? '⚖ Yes' : '— No'; btn.classList.toggle('active', val); }
+    }
+    refreshPaintEst();
+  }
+}
+
+function deleteMat(i) {
+  if (!data.paintMaterials) data.paintMaterials = getPaintMaterials();
+  data.paintMaterials.splice(i, 1);
+  renderMatEditor();
+  refreshPaintEst();
+}
+
+function addNewMat() {
+  var name    = ((document.getElementById('newMatName')||{}).value||'').trim();
+  var cost    = parseFloat((document.getElementById('newMatCost')||{}).value)||0;
+  var qty     = parseFloat((document.getElementById('newMatQty')||{}).value)||1;
+  var freight = parseFloat((document.getElementById('newMatFreight')||{}).value)||0;
+  if (!name) { alert('Please enter a material name.'); return; }
+  if (!data.paintMaterials) data.paintMaterials = getPaintMaterials();
+  data.paintMaterials.push({ name: name, cost: cost, qty: qty, freight: freight, scale: _newMatScale });
+  renderMatEditor();
+  refreshPaintEst();
+}
+
+function resetMaterials() {
+  if (!confirm('Reset all materials to spreadsheet defaults? This will discard any changes.')) return;
+  data.paintMaterials = null;
+  renderMatEditor();
+  refreshPaintEst();
+}
+
+
 function buildPaintEst(L, W, lr, otr, mk, trav) {
   var e = calcPaint(L, W, lr, otr, mk, trav);
   data.paintEst = e;
@@ -2322,13 +2095,16 @@ function buildPaintEst(L, W, lr, otr, mk, trav) {
   if (e.otHrs > 0) {
     html += '<div class="estimate-row"><span class="estimate-row-label">Overtime (' + e.otHrs + ' hrs @ $' + otr + '/hr)</span><span class="estimate-row-value">$' + Math.round(e.otHrs * otr).toLocaleString() + '</span></div>';
   }
-  html += '<div class="estimate-row"><span class="estimate-row-label">Travel (' + e.trav + ' hr one way &rarr; ' + e.travHrs + ' total travel hrs)</span><span class="estimate-row-value">included in labor</span></div>';
+  html += '<div class="estimate-row"><span class="estimate-row-label">Travel (' + e.trav + ' hr one way &rarr; ' + e.travHrs + ' total hrs)</span><span class="estimate-row-value">included in labor</span></div>';
   html += '<div class="estimate-row"><span class="estimate-row-label">Subtotal</span><span class="estimate-row-value">$' + e.subtotal.toLocaleString() + '</span></div>';
   html += '<div class="estimate-row"><span class="estimate-row-label">Markup (' + mk + '%)</span><span class="estimate-row-value">$' + e.markup.toLocaleString() + '</span></div>';
   html += '<div class="estimate-total"><span class="estimate-total-label">Total Estimate</span><span class="estimate-total-value">$' + e.total.toLocaleString() + '</span></div>';
+  html += '<div style="margin-top:12px;text-align:right"><button class="btn-modify-mat" id="matModBtn" onclick="toggleMaterialEditor()">&#9998; Modify Materials</button></div>';
   html += '</div>';
+  html += '<div id="matEditorWrap" style="display:none"></div>';
   return html;
 }
+
 
 function refreshPaintEst() {
   var L = parseFloat(document.getElementById('pe-L').value) || 60;
@@ -2355,7 +2131,6 @@ function restart() {
 // ─── INIT ────────────────────────────────────────────────────
 renderStep();
 </script>
-
-
+</body>
+</html>
 ```
-</body></html>
