@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_32.html -->
+<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_37.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -487,6 +487,88 @@
   .mat-reset-btn:hover { border-color: var(--danger); color: var(--danger); }
   .mat-footer-note { font-size: 0.78rem; color: #94a3b8; font-style: italic; }
 
+  /* ── In-Ground PB Net Labor Estimator ── */
+  .pb-est-wrap { margin-top: 18px; padding: 18px 20px 20px; background: #f8fafc; border-radius: 12px; border: 1.5px solid #e2e8f0; }
+  .pb-est-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .pb-est-title  { font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text); }
+  .pb-est-tag    { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: var(--blue); color: #fff; padding: 2px 8px; border-radius: 20px; }
+  .pb-est-meta   { font-size: 0.82rem; color: #64748b; margin-bottom: 14px; }
+  .pb-section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin: 14px 0 8px; display: flex; align-items: center; gap: 10px; }
+  .pb-rule-note  { font-size: 0.72rem; font-weight: 600; color: #c0392b; background: #fff5f5; border: 1px solid #fecaca; border-radius: 4px; padding: 2px 8px; letter-spacing: 0; text-transform: none; }
+
+  .pb-table      { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-bottom: 4px; }
+  .pb-table th   { text-align: left; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; padding: 5px 8px; border-bottom: 2px solid #e2e8f0; }
+  .pb-table td   { padding: 8px 8px; border-bottom: 1px solid #f1f5f9; color: var(--text); }
+  .pb-subtotal-row td { background: #f1f5f9; border-top: 2px solid #e2e8f0; }
+  .tc { text-align: center !important; }
+  .tr { text-align: right  !important; }
+  .pb-ot-pill    { display: inline-block; background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 10px; padding: 1px 7px; font-size: 0.75rem; font-weight: 700; }
+  .pb-save-pill  { display: inline-block; background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; border-radius: 10px; padding: 1px 7px; font-size: 0.75rem; font-weight: 700; }
+
+  /* Option cards */
+  .pb-options-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 4px; }
+  .pb-card { border: 2px solid #e2e8f0; border-radius: 10px; background: #fff; cursor: pointer; transition: all 0.18s; overflow: hidden; }
+  .pb-card:hover { border-color: var(--blue); box-shadow: 0 2px 10px rgba(58,171,219,0.12); }
+  .pb-card-active { border-color: var(--blue); background: var(--blue-light); box-shadow: 0 2px 12px rgba(58,171,219,0.18); }
+  .pb-card-disabled { cursor: default; opacity: 0.6; }
+  .pb-card-disabled:hover { border-color: #e2e8f0; box-shadow: none; }
+  .pb-card-head  { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid #f1f5f9; background: #fff; }
+  .pb-card-active .pb-card-head { background: rgba(58,171,219,0.08); border-bottom-color: rgba(58,171,219,0.2); }
+  .pb-card-icon  { font-size: 1.1rem; }
+  .pb-card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; font-weight: 700; flex: 1; }
+  .pb-card-check { font-size: 0.72rem; font-weight: 700; color: var(--blue); background: rgba(58,171,219,0.15); padding: 2px 8px; border-radius: 10px; }
+  .pb-card-body  { padding: 12px 14px; }
+  .pb-card-combine-note { font-size: 0.82rem; color: #374151; margin-bottom: 10px; padding: 6px 10px; background: rgba(58,171,219,0.06); border-radius: 6px; border-left: 3px solid var(--blue); }
+  .pb-card-unavail { font-size: 0.85rem; color: #64748b; }
+  .pb-stat-row   { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 4px 0; color: #374151; }
+  .pb-stat-cost  { font-weight: 700; font-size: 0.9rem; }
+  .pb-stat-divider { height: 1px; background: #e2e8f0; margin: 6px 0; }
+  .pb-pending-note { font-size: 0.75rem; color: #7c6a00; background: #fefce8; border: 1px solid #fde047; border-radius: 4px; padding: 3px 8px; margin-bottom: 8px; }
+  .pb-green { color: #059669; font-weight: 700; }
+  .pb-red   { color: #dc2626; font-weight: 700; }
+
+  /* Summary totals */
+  .pb-total-box { margin-top: 18px; padding: 14px 16px; background: #fff; border-radius: 8px; border: 1.5px solid #e2e8f0; }
+  .pb-total-row { display: flex; justify-content: space-between; font-size: 0.88rem; padding: 5px 0; border-bottom: 1px solid #f1f5f9; color: #374151; }
+  .pb-total-row:last-child { border-bottom: none; }
+  .pb-total-grand { font-weight: 800; font-size: 1rem; color: #0f4a91; padding-top: 10px; margin-top: 4px; border-top: 2px solid #e2e8f0 !important; border-bottom: none !important; }
+
+
+  /* CATALOG BRAND HEADERS */
+  .catalog-brand-header {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+    background: #f0f4f8;
+    border-left: 3px solid var(--blue);
+    padding: 5px 12px;
+    margin: 14px 0 10px 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .catalog-brand-ironclad {
+    border-left-color: #c0392b;
+    color: #c0392b;
+    background: #fff5f5;
+  }
+
+  /* DISABLED PRODUCT CARDS */
+  .product-card-disabled {
+    opacity: 0.45;
+    cursor: not-allowed !important;
+    filter: grayscale(60%);
+    pointer-events: none;
+  }
+  .product-disabled-note {
+    font-size: 0.75rem;
+    color: #c0392b;
+    margin-top: 6px;
+    font-style: italic;
+    pointer-events: none;
+  }
+
   /* HIDDEN */
   .hidden { display: none !important; }
   @media print {
@@ -966,19 +1048,37 @@ const STEPS = [
       var types = data.courtTypes || [];
       var needsHoops = types.indexOf('Basketball') > -1;
       var needsPB    = types.indexOf('Pickleball') > -1;
+      var isAsphalt  = data.surfaceType === 'asphalt';
+      var surfaceMountIds = ['p8','p11']; // spb-sm2 and spb-sm2-b
       if (!data.accessories) data.accessories = {};
       var html = '';
       if (needsHoops) {
-        html += '<div class="sub-heading">&#127936; Basketball Hoops</div><div class="product-grid">';
-        CATALOG.hoops.forEach(function(p){ html += renderProductCard(p); });
+        // Split Dominator vs Ironclad
+        var domHoops = CATALOG.hoops.filter(function(p){ return p.id.indexOf('ic-') !== 0; });
+        var icHoops  = CATALOG.hoops.filter(function(p){ return p.id.indexOf('ic-') === 0; });
+        html += '<div class="sub-heading">&#127936; Basketball Hoops</div>';
+        html += '<div class="catalog-brand-header">Dominator Hoops</div>';
+        html += '<div class="product-grid">';
+        domHoops.forEach(function(p){ html += renderProductCard(p); });
+        html += '</div>';
+        html += '<div class="catalog-brand-header catalog-brand-ironclad">Ironclad Sports Hoops</div>';
+        html += '<div class="product-grid">';
+        icHoops.forEach(function(p){ html += renderProductCard(p); });
         html += '</div><hr class="divider">';
       }
       if (needsPB) {
         html += '<div class="sub-heading">&#127955; Portable Pickleball Nets</div><div class="product-grid">';
         CATALOG.pickleball_portable.forEach(function(p){ html += renderProductCard(p); });
         html += '</div><div class="sub-heading" style="margin-top:18px">&#9968; Inground &amp; Surface Mount</div><div class="product-grid">';
-        CATALOG.pickleball_inground.forEach(function(p){ html += renderProductCard(p); });
-        html += '</div><hr class="divider">';
+        CATALOG.pickleball_inground.forEach(function(p){
+          var isSurfaceMount = surfaceMountIds.indexOf(p.id) > -1;
+          var disabled = isAsphalt && isSurfaceMount;
+          html += renderProductCard(p, disabled ? { disabled: true, disabledNote: 'Surface mount cannot be installed into asphalt.' } : {});
+        });
+        html += '</div>';
+        // Show labor estimate if any inground net is selected
+        html += '<div id="pb-net-est-inground">' + (hasAnyInground() ? renderPBNetEstimate('inground') : '') + '</div>';
+        html += '<hr class="divider">';
       }
       html += '<div class="sub-heading">&#128161; Court Lighting</div><div class="product-grid">';
       CATALOG.lighting.forEach(function(p){ html += renderProductCard(p); });
@@ -1347,6 +1447,274 @@ function goBack() {
 
 // ─── REPORT ─────────────────────────────────────────────────
 
+
+// ─── IN-GROUND PICKLEBALL NET LABOR ──────────────────────────────────────────
+// Source: PB_InGrnd_Net_Asphalt_Form.xlsx / PB_InGrnd_Net_Concrete_Form.xlsx
+//
+// ASPHALT schedule (standalone):
+//   Day A1 — Set Anchor ×2:  2 staff, 6 work hrs → travelPrep=3, OT=max(0,3+6-8)=1/person
+//   Day A2 — Assemble Net:   2 staff, 2 work hrs → OT=0
+//   Materials: $208
+//
+// CONCRETE schedule (standalone):
+//   Day C1 — Set Anchor ×1:  2 staff, 4 work hrs → OT=0
+//   Day C2 — Set Anchor ×1:  2 staff, 4 work hrs → OT=0
+//   Day C3 — Assemble Net:   2 staff, 2 work hrs → OT=0
+//   Materials: $208
+//
+// "Combine" option: attach Assemble Net (2 hrs) to the last day of the WHOLE project
+// (paint game lines day, or last construction day). Cannot be same day as last anchor.
+// Shows tradeoff: travel saved vs OT incurred.
+
+// ─── IN-GROUND PICKLEBALL NET LABOR ──────────────────────────────────────────
+// Source: PB_InGrnd_Net_Asphalt_Form.xlsx / PB_InGrnd_Net_Concrete_Form.xlsx
+//
+// Formulas verified against spreadsheets:
+//   travelPrep = (travelOneWay × 2) + 1   hrs/person/day
+//   OT/person   = max(0, travelPrep + workHrs - 8)
+//   day cost    = (regWorkHrs × staff × lr) + (otHrs × staff × otr) + (travelPrep × staff × lr)
+//
+// ASPHALT: Day1 Set Anchor×2 (6 work hrs, 2 OT total) · Day2 Assemble Net (2 hrs, 0 OT)
+// CONCRETE: Day1 Set Anchor×1 (4 hrs) · Day2 Set Anchor×1 (4 hrs) · Day3 Assemble Net (2 hrs)
+// Materials: $208 ($192 concrete mix + $16 expansion board)
+//
+// ASSEMBLE NET SCHEDULING RULE:
+//   - CANNOT be same day as last anchor (concrete must cure)
+//   - CAN be added to last day of project = paint game lines day (last of 5 paint days)
+//   - CAN be added to last construction day ONLY if project has no paint/finish step
+//   - Default: dedicated separate trip
+
+var PB_NET_MAT_COST = 208; // $192 Sakrete concrete mix (32 bags × $6) + $16 expansion board
+
+function calcPBNetLabor(surfType, lr, otr, mk, trav, combineExistingHrs) {
+  var staff      = 2;
+  var travelPrep = (trav * 2) + 1; // hrs per person per day
+
+  function dayCalc(workHrs) {
+    var regWork = Math.min(workHrs, Math.max(0, 8 - travelPrep));
+    var otWork  = Math.max(0, workHrs - regWork);
+    return {
+      workHrs : workHrs,
+      travelHrs: travelPrep * staff,
+      laborHrs : workHrs * staff,
+      regHrs   : regWork * staff,
+      otHrs    : otWork  * staff,
+      cost     : (regWork * staff * lr) + (otWork * staff * otr) + (travelPrep * staff * lr)
+    };
+  }
+
+  // Anchor days schedule
+  var anchorDays = (surfType === 'asphalt')
+    ? [ dayCalc(6) ]           // 1 day, sets both anchors
+    : [ dayCalc(4), dayCalc(4) ]; // 2 days, one anchor each
+
+  // Assemble Net as standalone day
+  var assembleDay = dayCalc(2);
+
+  // ── OPTION A: Assemble Net = dedicated separate trip ────────────────────
+  var anchorCost   = anchorDays.reduce(function(s,d){ return s + d.cost; }, 0);
+  var anchorOT     = anchorDays.reduce(function(s,d){ return s + d.otHrs; }, 0);
+  var sepSubtotal  = PB_NET_MAT_COST + anchorCost + assembleDay.cost;
+  var sepMarkup    = sepSubtotal * (mk / 100);
+
+  // ── OPTION B: Assemble Net bolted onto project's last eligible day ───────
+  // combineExistingHrs = work hrs already on that day (e.g. 5 for paint game lines)
+  var existHrs     = combineExistingHrs || 5;
+  var origDay      = dayCalc(existHrs);
+  var combDay      = dayCalc(existHrs + 2);  // +2 hrs assemble
+  var marginalCost = combDay.cost - origDay.cost; // what assemble adds to that day
+  var otIncurred   = combDay.otHrs  - origDay.otHrs;
+  var travelSaved  = travelPrep * staff;           // one full travel trip saved
+  var travelSavedCost = travelSaved * lr;
+  var otExtraCost  = otIncurred * otr;
+  var combSubtotal = PB_NET_MAT_COST + anchorCost + marginalCost;
+  var combMarkup   = combSubtotal * (mk / 100);
+  var savingVsSeparate = assembleDay.cost - marginalCost; // always positive
+
+  return {
+    surfType  : surfType,
+    staff     : staff,
+    travelPrep: travelPrep,
+    trav      : trav,
+    anchorDays: anchorDays,
+    assembleDay: assembleDay,
+    lr: lr, otr: otr, mk: mk,
+    separate: {
+      assembleCost : assembleDay.cost,
+      assembleOT   : assembleDay.otHrs,
+      assembleTrav : travelPrep * staff,
+      subtotal     : sepSubtotal,
+      markup       : sepMarkup,
+      total        : sepSubtotal + sepMarkup,
+      anchorCost   : anchorCost
+    },
+    combine: {
+      existHrs        : existHrs,
+      combinedHrs     : existHrs + 2,
+      marginalCost    : marginalCost,
+      travelSaved     : travelSaved,
+      travelSavedCost : travelSavedCost,
+      otIncurred      : otIncurred,
+      otExtraCost     : otExtraCost,
+      savingVsSeparate: savingVsSeparate,
+      subtotal        : combSubtotal,
+      markup          : combMarkup,
+      total           : combSubtotal + combMarkup,
+      anchorCost      : anchorCost
+    }
+  };
+}
+
+function getPBNetContext() {
+  var hasPaint  = (data.paintType === 'acrylic');
+  var hasTiles  = (data.paintType === 'tiles');
+  // Combine is ALWAYS available — attaches to paint game lines day if paint is chosen,
+  // or last day of work otherwise. Court finish is chosen on a later step so we
+  // default to 5 hrs (paint game lines) and update the label once paint is known.
+  var combineHrs   = 5; // paint game lines = last of 5 paint days = 5 work hrs
+  var combineLabel = hasPaint
+    ? 'Paint game lines (last paint day, 5 hrs)'
+    : 'Last day of work (to be confirmed on Court Finish step)';
+  return {
+    hasPaint    : hasPaint,
+    hasTiles    : hasTiles,
+    canCombine  : true,       // always selectable — label updates after Step 3
+    combineHrs  : combineHrs,
+    combineLabel: combineLabel
+  };
+}
+
+function renderPBNetEstimate(netId) {
+  var surf  = data.surfaceType || 'concrete';
+  var lr    = data.laborRate   !== undefined ? data.laborRate   : 30;
+  var otr   = data.otRate      !== undefined ? data.otRate      : 45;
+  var mk    = data.markupPct   !== undefined ? data.markupPct   : 50;
+  var trav  = data.travelHours !== undefined ? data.travelHours : 1;
+  var ctx   = getPBNetContext();
+
+  var e = calcPBNetLabor(surf, lr, otr, mk, trav, ctx.combineHrs || 5);
+  data.pbNetEst = e;
+
+  var isCombine  = !!(data.pbNetCombine && ctx.canCombine);
+  var chosenEst  = isCombine ? e.combine : e.separate;
+
+  var html = '<div class="pb-est-wrap">';
+
+  // ── Header ──────────────────────────────────────────────────────────────
+  html += '<div class="pb-est-header">'
+    + '<span class="pb-est-title">🏸 In-Ground Pickleball Net — Installation Labor</span>'
+    + '<span class="pb-est-tag">' + surf.charAt(0).toUpperCase() + surf.slice(1) + ' install</span>'
+    + '</div>'
+    + '<div class="pb-est-meta">'
+    + trav + ' hr one-way travel &nbsp;·&nbsp; '
+    + e.travelPrep + ' hrs travel prep/person/day &nbsp;·&nbsp; '
+    + 'Materials: <strong>$' + PB_NET_MAT_COST + '</strong> (concrete mix + expansion board)'
+    + '</div>';
+
+  // ── Anchor Installation Schedule ─────────────────────────────────────────
+  html += '<div class="pb-section-label">Anchor Installation</div>'
+    + '<table class="pb-table">'
+    + '<thead><tr><th style="text-align:left">Day</th><th class="tc">Staff</th>'
+    + '<th class="tc">Work&nbsp;Hrs</th><th class="tc">Travel&nbsp;Hrs</th>'
+    + '<th class="tc">OT&nbsp;Hrs</th><th class="tr">Day Cost</th></tr></thead><tbody>';
+
+  e.anchorDays.forEach(function(d, i) {
+    var lbl = (surf === 'asphalt') ? 'Set Net Anchor ×2' : 'Set Net Anchor ×1 — Day ' + (i+1);
+    html += '<tr>'
+      + '<td>' + lbl + '</td>'
+      + '<td class="tc">' + e.staff + '</td>'
+      + '<td class="tc">' + d.workHrs + '</td>'
+      + '<td class="tc">' + d.travelHrs + '</td>'
+      + '<td class="tc">' + (d.otHrs > 0 ? '<span class="pb-ot-pill">' + d.otHrs + ' OT</span>' : '—') + '</td>'
+      + '<td class="tr"><strong>$' + Math.round(d.cost).toLocaleString() + '</strong></td>'
+      + '</tr>';
+  });
+  html += '<tr class="pb-subtotal-row">'
+    + '<td colspan="5" style="text-align:right;font-size:0.8rem;color:#64748b">Anchor labor subtotal</td>'
+    + '<td class="tr"><strong>$' + Math.round(e.separate.anchorCost).toLocaleString() + '</strong></td>'
+    + '</tr>';
+  html += '</tbody></table>';
+
+  // ── Assemble Net — Option Cards ──────────────────────────────────────────
+  html += '<div class="pb-section-label" style="margin-top:18px">Assemble Net — Schedule Option'
+    + '<span class="pb-rule-note">⚠ Cannot be same day as last anchor (concrete must cure)</span>'
+    + '</div>';
+
+  html += '<div class="pb-options-row">';
+
+  // Card A — Separate trip
+  var sepActive = !isCombine;
+  html += '<div class="pb-card' + (sepActive ? ' pb-card-active' : '') + '" onclick="setPBNetOption(false,\'' + netId + '\')">'
+    + '<div class="pb-card-head">'
+    + '<span class="pb-card-icon">📅</span>'
+    + '<span class="pb-card-title">Separate Day</span>'
+    + (sepActive ? '<span class="pb-card-check">✓ Selected</span>' : '')
+    + '</div>'
+    + '<div class="pb-card-body">'
+    + '<div class="pb-stat-row"><span>Work hrs</span><span>2 hrs × ' + e.staff + ' staff</span></div>'
+    + '<div class="pb-stat-row"><span>Travel hrs</span><span>' + e.separate.assembleTrav + ' hrs (full trip)</span></div>'
+    + '<div class="pb-stat-row"><span>OT hrs</span><span>' + (e.separate.assembleOT > 0 ? '<span class="pb-ot-pill">' + e.separate.assembleOT + ' OT</span>' : '—') + '</span></div>'
+    + '<div class="pb-stat-divider"></div>'
+    + '<div class="pb-stat-row pb-stat-cost"><span>Assemble day cost</span><span>$' + Math.round(e.separate.assembleCost).toLocaleString() + '</span></div>'
+    + '</div></div>';
+
+  // Card B — Always available, label resolves once court finish step is completed
+  var combActive = isCombine;
+  var c = e.combine;
+  var netTag = c.savingVsSeparate >= 0
+    ? '<span class="pb-save-pill">Saves $' + Math.round(c.savingVsSeparate).toLocaleString() + ' vs separate</span>'
+    : '<span class="pb-ot-pill">+$' + Math.round(-c.savingVsSeparate).toLocaleString() + ' vs separate</span>';
+  var pendingNote = !ctx.hasPaint
+    ? '<div class="pb-pending-note">📋 Exact day confirmed after Court Finish step</div>'
+    : '';
+  html += '<div class="pb-card' + (combActive ? ' pb-card-active' : '') + '" onclick="setPBNetOption(true,\'' + netId + '\')">'
+    + '<div class="pb-card-head">'
+    + '<span class="pb-card-icon">🔗</span>'
+    + '<span class="pb-card-title">Combine with Project</span>'
+    + (combActive ? '<span class="pb-card-check">✓ Selected</span>' : '')
+    + '</div>'
+    + '<div class="pb-card-body">'
+    + '<div class="pb-card-combine-note">Add 2 hrs to <strong>' + ctx.combineLabel + '</strong></div>'
+    + pendingNote
+    + '<div class="pb-stat-row"><span>Combined day work</span><span>' + c.existHrs + ' + 2 = <strong>' + c.combinedHrs + ' hrs</strong></span></div>'
+    + '<div class="pb-stat-row"><span>Extra travel trip</span><span><span class="pb-save-pill">None — saved!</span></span></div>'
+    + '<div class="pb-stat-divider"></div>'
+    + '<div class="pb-stat-row"><span>Travel cost saved</span><span class="pb-green">+$' + Math.round(c.travelSavedCost).toLocaleString() + '</span></div>'
+    + '<div class="pb-stat-row"><span>OT incurred (' + c.otIncurred + ' hrs × $' + otr + ')</span><span class="pb-red">−$' + Math.round(c.otExtraCost).toLocaleString() + '</span></div>'
+    + '<div class="pb-stat-divider"></div>'
+    + '<div class="pb-stat-row pb-stat-cost"><span>Assemble marginal cost</span><span>$' + Math.round(c.marginalCost).toLocaleString() + '</span></div>'
+    + '<div style="margin-top:8px">' + netTag + '</div>'
+    + '</div></div>';
+
+  html += '</div>'; // pb-options-row
+
+  // ── Summary Totals ───────────────────────────────────────────────────────
+  html += '<div class="pb-total-box">'
+    + '<div class="pb-total-row"><span>Materials</span><span>$' + PB_NET_MAT_COST + '</span></div>'
+    + '<div class="pb-total-row"><span>Labor — anchor installation</span><span>$' + Math.round(e.separate.anchorCost).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row"><span>Labor — assemble net</span><span>$' + Math.round(chosenEst.marginalCost !== undefined ? chosenEst.marginalCost : chosenEst.assembleCost).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row"><span>Subtotal</span><span>$' + Math.round(chosenEst.subtotal).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row"><span>Markup (' + mk + '%)</span><span>$' + Math.round(chosenEst.markup).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row pb-total-grand"><span>Total Installation Estimate</span><span>$' + Math.round(chosenEst.total).toLocaleString() + '</span></div>'
+    + '</div>';
+
+  html += '</div>'; // pb-est-wrap
+  return html;
+}
+
+function setPBNetOption(combine, netId) {
+  data.pbNetCombine = combine;
+  var wrap = document.getElementById('pb-net-est-' + netId);
+  if (wrap) wrap.innerHTML = renderPBNetEstimate(netId);
+}
+
+function hasAnyInground() {
+  return ['p6','p7','p9','p10'].some(function(id) {
+    return data.accessories && data.accessories[id] && data.accessories[id].selected;
+  });
+}
+
+
 function buildAccessoriesReport() {
   var accs = Object.entries(data.accessories||{}).filter(function(e){ return e[1].selected; });
   if (!accs.length) return '';
@@ -1663,6 +2031,9 @@ function generateReport() {
         <!-- Paint Estimate (full width) -->
         ${buildPaintReport()}
 
+        <!-- PB Net Labor (full width) -->
+        ${buildPBNetReport()}
+
         <!-- Attachments & Notes (full width) -->
         <div class="report-section" style="margin-bottom:0">
           <div class="report-section-title">Attachments & Notes</div>
@@ -1688,6 +2059,68 @@ function generateReport() {
   document.getElementById('reportContainer').innerHTML = html;
   document.getElementById('reportContainer').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+function buildPBNetReport() {
+  if (!hasAnyInground()) return '';
+  var e = data.pbNetEst;
+  if (!e) {
+    var ctx  = getPBNetContext();
+    var lr   = data.laborRate   !== undefined ? data.laborRate   : 30;
+    var otr  = data.otRate      !== undefined ? data.otRate      : 45;
+    var mk   = data.markupPct   !== undefined ? data.markupPct   : 50;
+    var trav = data.travelHours !== undefined ? data.travelHours : 1;
+    e = calcPBNetLabor(data.surfaceType || 'concrete', lr, otr, mk, trav, ctx.combineHrs || 5);
+  }
+  var isCombine = !!(data.pbNetCombine && getPBNetContext().canCombine);
+  var chosenEst = isCombine ? e.combine : e.separate;
+  var ctx       = getPBNetContext();
+  var schedNote = isCombine
+    ? 'Combined with ' + ctx.combineLabel
+    : 'Dedicated separate trip';
+
+  var anchorRows = e.anchorDays.map(function(d, i) {
+    var lbl = (e.surfType === 'asphalt') ? 'Set Net Anchor ×2' : 'Set Net Anchor ×1 — Day ' + (i+1);
+    return '<tr><td>' + lbl + '</td>'
+      + '<td style="text-align:center">' + e.staff + '</td>'
+      + '<td style="text-align:center">' + d.workHrs + '</td>'
+      + '<td style="text-align:center">' + d.travelHrs + '</td>'
+      + '<td style="text-align:center">' + (d.otHrs > 0 ? d.otHrs + ' OT' : '—') + '</td>'
+      + '<td style="text-align:right">$' + Math.round(d.cost).toLocaleString() + '</td></tr>';
+  }).join('');
+
+  var assembleDetail = isCombine
+    ? 'Combined with ' + ctx.combineLabel
+        + ' (' + e.combine.existHrs + '→' + e.combine.combinedHrs + ' hrs)'
+        + (e.combine.otIncurred > 0 ? ' · ' + e.combine.otIncurred + ' OT hrs · OT cost $' + Math.round(e.combine.otExtraCost).toLocaleString() : ' · No OT')
+        + ' · Travel saved $' + Math.round(e.combine.travelSavedCost).toLocaleString()
+        + ' · Saves $' + Math.round(e.combine.savingVsSeparate).toLocaleString() + ' vs separate trip'
+    : 'Dedicated trip · ' + e.separate.assembleTrav + ' travel hrs · No OT';
+
+  var assembleCost = isCombine ? e.combine.marginalCost : e.separate.assembleCost;
+
+  return '<div class="report-section"><div class="report-section-title">In-Ground Pickleball Net — Installation Labor</div>'
+    + '<div style="font-size:0.78rem;color:#64748b;margin-bottom:10px">'
+    + e.surfType.charAt(0).toUpperCase() + e.surfType.slice(1) + ' installation &nbsp;·&nbsp; '
+    + e.trav + ' hr one-way travel &nbsp;·&nbsp; Assemble Net: ' + schedNote
+    + '</div>'
+    + '<table class="acc-table"><thead><tr>'
+    + '<th>Task</th><th style="text-align:center">Staff</th><th style="text-align:center">Work Hrs</th>'
+    + '<th style="text-align:center">Travel Hrs</th><th style="text-align:center">OT</th>'
+    + '<th style="text-align:right">Cost</th></tr></thead><tbody>'
+    + anchorRows
+    + '<tr><td>Assemble Net</td>'
+    + '<td colspan="4" style="font-size:0.8rem;color:#64748b">' + assembleDetail + '</td>'
+    + '<td style="text-align:right">$' + Math.round(assembleCost).toLocaleString() + '</td></tr>'
+    + '<tr style="background:#f8fafc"><td colspan="5" style="text-align:right;color:#94a3b8;font-size:0.78rem">Materials (32 bags concrete mix + expansion board)</td>'
+    + '<td style="text-align:right">$' + PB_NET_MAT_COST + '</td></tr>'
+    + '<tr class="acc-total-row"><td colspan="5" style="text-align:right">Subtotal</td><td style="text-align:right">$' + Math.round(chosenEst.subtotal).toLocaleString() + '</td></tr>'
+    + '<tr><td colspan="5" style="text-align:right;color:#94a3b8;font-size:0.78rem">Markup (' + e.mk + '%)</td><td style="text-align:right">$' + Math.round(chosenEst.markup).toLocaleString() + '</td></tr>'
+    + '<tr style="background:#f8fafc"><td colspan="5" style="font-weight:800">Total Installation Estimate</td>'
+    + '<td style="text-align:right;font-weight:800;color:#0f4a91">$' + Math.round(chosenEst.total).toLocaleString() + '</td></tr>'
+    + '</tbody></table>'
+    + '</div><hr class="report-divider">';
 }
 
 
@@ -1776,6 +2209,15 @@ const CATALOG = {
     { id:'h9', name:'40" Acrylic Poolside Hoop', sku:'PSH-1', price:800, shipping:299, icon:'🏊',
       desc:'6061 T6 aluminum construction with acrylic backboard and heavy-duty waterproof vinyl-coated rim. All the features of the flagship Dominator Hoop brought to your pool for the best pool basketball experience.',
       img:'https://www.dominatorhoop.com/wp-content/uploads/2023/02/psh-1-2.jpeg' },
+    { id:'ic-fch684', name:'FCH684-XXL — 6"×8" Post, 42"×72" Glass', sku:'FCH684-XXL', price:1409, shipping:600, icon:'🏀',
+      desc:'Ironclad Sports FCH684-XXL Fullcourt. Heavy-duty 6"×8" steel post with a massive 42"×72" tempered glass backboard. Built for commercial and premium residential courts with adjustable height and flex rim.',
+      img:'https://www.ironcladsports.com/application/files/6415/3307/0799/FCH684-xxk.jpg' },
+    { id:'ic-tpt553lg', name:'TPT553-LG — 5"×5" Post, 36"×60" Glass', sku:'TPT553-LG', price:1178, shipping:600, icon:'🏀',
+      desc:'Ironclad Sports TPT553-LG Triple Threat. Robust 5"×5" post with a 36"×60" tempered glass backboard. Pro-level performance with a space-efficient footprint, ideal for backyard and community courts.',
+      img:'https://www.ironcladsports.com/application/files/1115/3305/0923/TPT553-LG-large.jpg' },
+    { id:'ic-gc66xxl', name:'GC66-XXL — 6"×6" Post, 42"×72" Glass', sku:'GC66-XXL', price:1020, shipping:600, icon:'🏀',
+      desc:'Ironclad Sports GC66-XXL Gamechanger. Solid 6"×6" post with a full-size 42"×72" tempered glass backboard at exceptional value. The smart choice for serious outdoor courts.',
+      img:'https://www.ironcladsports.com/application/files/5415/7358/7662/GC66-XXL_Hero.PNG' },
   ],
   pickleball_portable: [
     { id:'p4', name:'Pro Max Portable Net - Silver', sku:'pb-max', price:1100, shipping:0, icon:'🏸',
@@ -1854,31 +2296,46 @@ function getAccSubtotal() {
   return { subtotal: subtotal, shipping: shipping, tax: tax, total: subtotal + shipping + tax };
 }
 
-function renderProductCard(p) {
+function renderProductCard(p, opts) {
+  opts = opts || {};
+  var disabled = opts.disabled || false;
+  var disabledNote = opts.disabledNote || '';
   if (!data.accessories) data.accessories = {};
   var acc = data.accessories[p.id] || { selected: false, qty: 1 };
+  // Force deselect if disabled
+  if (disabled && acc.selected) {
+    data.accessories[p.id].selected = false;
+    acc.selected = false;
+  }
   var selClass = acc.selected ? ' selected' : '';
+  var disClass = disabled ? ' product-card-disabled' : '';
+  var clickHandler = disabled ? '' : 'onclick="toggleAccessory(\'' + p.id + '\',' + p.price + ',' + p.shipping + ')"';
   var qtyHtml = '';
-  if (acc.selected) {
+  if (acc.selected && !disabled) {
     qtyHtml = '<div class="qty-row" onclick="event.stopPropagation()">' +
-      '<button class="qty-btn" onclick="changeQty(\''+p.id+'\', -1)">&#8722;</button>' +
-      '<span class="qty-num" id="qty-'+p.id+'">'+(acc.qty||1)+'</span>' +
-      '<button class="qty-btn" onclick="changeQty(\''+p.id+'\', 1)">&#43;</button>' +
+      '<button class="qty-btn" onclick="changeQty(\'' + p.id + '\', -1)">&#8722;</button>' +
+      '<span class="qty-num" id="qty-' + p.id + '">' + (acc.qty || 1) + '</span>' +
+      '<button class="qty-btn" onclick="changeQty(\'' + p.id + '\', 1)">&#43;</button>' +
       '<span style="font-size:0.72rem;color:var(--gray)">qty</span></div>';
   }
-  return '<div class="product-card'+selClass+'" id="pc-'+p.id+'" onclick="toggleAccessory(\''+p.id+'\','+p.price+','+p.shipping+')">' +
-    '<div class="pc-check">&#10003;</div>' +
-    '<img class="product-img" src="'+p.img+'" alt="'+p.name+'" style="display:block" onload="this.style.opacity=1" onerror="this.parentNode.querySelector(\'.product-img-placeholder\').style.display=\'flex\';this.style.display=\'none\'">' +
-    '<div class="product-img-placeholder" style="display:none;width:100%;height:150px;background:linear-gradient(135deg,#e8f1fb,#f4f6f9);align-items:center;justify-content:center;font-size:2.5rem">'+p.icon+'</div>' +
+  // Ironclad hoops: object-fit:contain so full backboard is always visible
+  var isIronclad = p.id.indexOf('ic-') === 0;
+  var imgStyle = isIronclad
+    ? 'width:100%;height:200px;object-fit:contain;object-position:center;background:#f8fafc;display:block;padding:12px 8px;box-sizing:border-box;'
+    : 'display:block;';
+  return '<div class="product-card' + selClass + disClass + '" id="pc-' + p.id + '" ' + clickHandler + '>' +
+    (disabled ? '' : '<div class="pc-check">&#10003;</div>') +
+    '<img class="product-img" src="' + p.img + '" alt="' + p.name + '" style="' + imgStyle + 'opacity:0" onload="this.style.opacity=1" onerror="this.parentNode.querySelector(\'.product-img-placeholder\').style.display=\'flex\';this.style.display=\'none\'">' +
+    '<div class="product-img-placeholder" style="display:none;width:100%;height:160px;background:linear-gradient(135deg,#e8f1fb,#f4f6f9);align-items:center;justify-content:center;font-size:2.5rem">' + p.icon + '</div>' +
     '<div class="product-info">' +
-      '<div class="product-name">'+p.name+'</div>' +
-      '<div class="product-desc">'+p.desc+'</div>' +
-      '<div class="product-price">$'+p.price.toLocaleString()+'</div>' +
-      '<div class="product-ship">'+(p.shipping > 0 ? 'Shipping: $'+p.shipping : 'Free shipping')+'</div>' +
+      '<div class="product-name">' + p.name + '</div>' +
+      '<div class="product-desc">' + p.desc + '</div>' +
+      '<div class="product-price">$' + p.price.toLocaleString() + '</div>' +
+      '<div class="product-ship">' + (p.shipping > 0 ? 'Shipping: $' + p.shipping : 'Free shipping') + '</div>' +
+      (disabled && disabledNote ? '<div class="product-disabled-note">⚠ ' + disabledNote + '</div>' : '') +
       qtyHtml +
     '</div></div>';
 }
-
 function renderPriceBar() {
   var t = getAccSubtotal();
   var taxLabel = data.taxExempt ? 'Tax Exempt' : 'Est. Tax (7%): $'+Math.round(t.tax).toLocaleString();
@@ -1928,7 +2385,14 @@ function toggleAccessory(id, price, shipping) {
     }
   }
   refreshPriceBar();
+  // If an inground PB net was toggled, refresh its labor estimate
+  var ingroundIds = ['p6','p7','p9','p10'];
+  if (ingroundIds.indexOf(id) > -1) {
+    var wrap = document.getElementById('pb-net-est-inground');
+    if (wrap) wrap.innerHTML = hasAnyInground() ? renderPBNetEstimate('inground') : '';
+  }
 }
+
 
 function changeQty(id, delta) {
   if (!data.accessories || !data.accessories[id]) return;
