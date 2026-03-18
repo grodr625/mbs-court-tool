@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_66.html -->
+<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_67.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -3375,38 +3375,95 @@ var TENNIS_COLORS = [
   { value: 'blue',  label: 'Blue',  swatch: '#1a4a91' }
 ];
 
+// Canonical base IDs (no weights): 'vt-sd' = singles, 'vt-dd' = doubles
+// Weights variants: 'vt-sw' = singles+weights, 'vt-dw' = doubles+weights
+function getTennisBaseId(isDoubles) { return isDoubles ? 'vt-dd' : 'vt-sd'; }
+function getTennisWeightsId(isDoubles) { return isDoubles ? 'vt-dw' : 'vt-sw'; }
+function getTennisIsDoubles() { return !!(data.tennisDoubles); }
+function getTennisHasWeights() { return !!(data.tennisWeights); }
+
+function getTennisActiveId() {
+  var isDoubles  = getTennisIsDoubles();
+  var hasWeights = getTennisHasWeights();
+  if (isDoubles)  return hasWeights ? 'vt-dw' : 'vt-dd';
+  return hasWeights ? 'vt-sw' : 'vt-sd';
+}
+
 function getTennisShippingCost(productId, method) {
   var p = CATALOG.tennis_nets.find(function(x){ return x.id === productId; });
   if (!p) return 0;
   return method === 'exp' ? p.shipping.exp : p.shipping.std;
 }
 
-function toggleTennisNet(id) {
+function applyTennisSelection() {
+  // Deselect all tennis SKUs, then select the correct one based on current config
   if (!data.accessories) data.accessories = {};
-  var p = CATALOG.tennis_nets.find(function(x){ return x.id === id; });
-  if (!p) return;
-  var acc = data.accessories[id];
-  if (acc && acc.selected) {
-    data.accessories[id].selected = false;
-  } else {
-    // Deselect all other tennis nets — one set per project
-    CATALOG.tennis_nets.forEach(function(tp) {
-      if (data.accessories[tp.id]) data.accessories[tp.id].selected = false;
-    });
-    var method = (data.tennisShippingMethod || 'std');
+  CATALOG.tennis_nets.forEach(function(tp) {
+    if (data.accessories[tp.id]) data.accessories[tp.id].selected = false;
+  });
+  var selectedNet = getSelectedTennisNet();
+  if (selectedNet) {
+    // Was already selected — stay selected with updated SKU
+    var id     = getTennisActiveId();
+    var p      = CATALOG.tennis_nets.find(function(x){ return x.id === id; });
+    var method = data.tennisShippingMethod || 'std';
     data.accessories[id] = {
       selected: true, qty: 1, price: p.price, shipping: 1,
       shippingCost: getTennisShippingCost(id, method),
       color: data.tennisColor || 'black'
     };
   }
+}
+
+function toggleTennisDoubles(isDoubles) {
+  // Toggle between singles and doubles, preserving weights & shipping choices
+  var wasSelected = !!getSelectedTennisNet();
+  data.tennisDoubles = isDoubles;
+  if (wasSelected) applyTennisSelection();
+  refreshTennisSection();
+  refreshPriceBar();
+}
+
+function toggleTennisNet(isDoubles) {
+  // Called when clicking a product card — selects that type (or deselects if already selected)
+  if (!data.accessories) data.accessories = {};
+  var wasDoubles  = getTennisIsDoubles();
+  var wasSelected = !!getSelectedTennisNet();
+  var clickingCurrent = wasSelected && (wasDoubles === isDoubles);
+  if (clickingCurrent) {
+    // Deselect — clear all tennis selections
+    CATALOG.tennis_nets.forEach(function(tp) {
+      if (data.accessories[tp.id]) data.accessories[tp.id].selected = false;
+    });
+  } else {
+    data.tennisDoubles = isDoubles;
+    applyTennisSelection();
+    // If nothing was selected yet, force a fresh selection
+    if (!getSelectedTennisNet()) {
+      var id     = getTennisActiveId();
+      var p      = CATALOG.tennis_nets.find(function(x){ return x.id === id; });
+      var method = data.tennisShippingMethod || 'std';
+      data.accessories[id] = {
+        selected: true, qty: 1, price: p.price, shipping: 1,
+        shippingCost: getTennisShippingCost(id, method),
+        color: data.tennisColor || 'black'
+      };
+    }
+  }
+  refreshTennisSection();
+  refreshPriceBar();
+}
+
+function setTennisWeights(hasWeights) {
+  var wasSelected = !!getSelectedTennisNet();
+  data.tennisWeights = hasWeights;
+  if (wasSelected) applyTennisSelection();
   refreshTennisSection();
   refreshPriceBar();
 }
 
 function setTennisColor(color) {
   data.tennisColor = color;
-  // Update stored color on selected tennis acc
   CATALOG.tennis_nets.forEach(function(p) {
     if (data.accessories && data.accessories[p.id] && data.accessories[p.id].selected) {
       data.accessories[p.id].color = color;
@@ -3417,7 +3474,6 @@ function setTennisColor(color) {
 
 function setTennisShipping(method) {
   data.tennisShippingMethod = method;
-  // Update shippingCost on selected tennis acc
   CATALOG.tennis_nets.forEach(function(p) {
     if (data.accessories && data.accessories[p.id] && data.accessories[p.id].selected) {
       data.accessories[p.id].shippingCost = getTennisShippingCost(p.id, method);
@@ -3447,48 +3503,51 @@ function renderTennisNets() {
   var selectedColor    = data.tennisColor || 'black';
   var selectedMethod   = data.tennisShippingMethod || 'std';
   var selectedNet      = getSelectedTennisNet();
-  var selectedId       = selectedNet ? selectedNet.product.id : null;
+  var isDoubles        = getTennisIsDoubles();
+  var hasWeights       = getTennisHasWeights();
+  // Which base SKU is active (may or may not be selected yet)
+  var activeId         = getTennisActiveId();
+  var activeProduct    = CATALOG.tennis_nets.find(function(p){ return p.id === activeId; });
+  var isSelected       = !!selectedNet;
 
   var html = '<div id="tennis-nets-section">';
 
-  // ── 4 product option cards in a 2×2 grid ─────────────────────────────────
-  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:16px">';
-  CATALOG.tennis_nets.forEach(function(p) {
-    var isSelected = selectedId === p.id;
-    var stdShip    = p.shipping.std.toFixed(2);
-    var expShip    = p.shipping.exp.toFixed(2);
-    // Fuel surcharge breakdown for tooltip
-    var baseStd = p.withWeights ? 499.99 : 329.99;
-    var fuelStd = p.withWeights ? 60.00  : 39.60;
-    var baseExp = p.withWeights ? 599.99 : 399.99;
-    var fuelExp = p.withWeights ? 72.00  : 48.00;
-
-    html += '<div class="product-card' + (isSelected ? ' selected' : '') + '"'
+  // ── Two product cards: Singles | Doubles ─────────────────────────────────
+  // Each card represents the base type; weights are handled in Configure panel
+  var cardTypes = [
+    { isDoubles: false, baseId: 'vt-sd', label: 'Singles', desc: 'Singles posts + 3.5mm net. Freestanding, no drilling required.' },
+    { isDoubles: true,  baseId: 'vt-dd', label: 'Doubles', desc: 'Doubles posts + 3.5mm net. Freestanding, no drilling required.' }
+  ];
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;max-width:600px">';
+  cardTypes.forEach(function(ct) {
+    var cardSelected = isSelected && (isDoubles === ct.isDoubles);
+    // Price shown reflects current weights toggle
+    var displayId = ct.isDoubles
+      ? (hasWeights ? 'vt-dw' : 'vt-dd')
+      : (hasWeights ? 'vt-sw' : 'vt-sd');
+    var displayP = CATALOG.tennis_nets.find(function(p){ return p.id === displayId; });
+    html += '<div class="product-card' + (cardSelected ? ' selected' : '') + '"'
       + ' style="cursor:pointer;position:relative"'
-      + ' onclick="toggleTennisNet(\'' + p.id + '\')">'
-      + (isSelected ? '<div class="pc-check">&#10003;</div>' : '')
-      + '<img class="product-img" src="' + p.img + '" alt="' + p.name + '"'
-      + ' style="display:block;opacity:0" onload="this.style.opacity=1"'
+      + ' onclick="toggleTennisNet(' + ct.isDoubles + ')">'
+      + (cardSelected ? '<div class="pc-check">&#10003;</div>' : '')
+      + '<img class="product-img" src="https://nwscdn.com/media/catalog/product/cache/h900xw900/s/i/singles-freestanding-tennis-post_new_label_3.jpg"'
+      + ' alt="Vermont 360 ' + ct.label + '" style="display:block;opacity:0" onload="this.style.opacity=1"'
       + ' onerror="this.parentNode.querySelector(\'.product-img-placeholder\').style.display=\'flex\';this.style.display=\'none\'">'
       + '<div class="product-img-placeholder" style="display:none;width:100%;height:160px;background:linear-gradient(135deg,#e8f1fb,#f4f6f9);align-items:center;justify-content:center;font-size:2.5rem">🎾</div>'
       + '<div class="product-info">'
-      + '<div class="product-name">' + p.name + '</div>'
-      + '<div class="product-desc">' + p.desc + (p.withWeights ? ' <strong>Includes stability weights.</strong>' : '') + '</div>'
-      + '<div class="product-price">$' + p.price.toFixed(2) + '</div>'
-      + '<div class="product-ship" style="font-size:0.74rem;color:#64748b">'
-      + 'Std shipping: $' + stdShip + ' (base $' + baseStd.toFixed(2) + ' + fuel $' + fuelStd.toFixed(2) + ')<br>'
-      + 'Exp shipping: $' + expShip + ' (base $' + baseExp.toFixed(2) + ' + fuel $' + fuelExp.toFixed(2) + ')'
-      + '</div>'
+      + '<div class="product-name">Vermont 360° ' + ct.label + '</div>'
+      + '<div class="product-desc">' + ct.desc + '</div>'
+      + '<div class="product-price">$' + displayP.price.toFixed(2) + (hasWeights ? ' <span style="font-size:0.72rem;color:#64748b">(w/ weights)</span>' : '') + '</div>'
       + '</div></div>';
   });
   html += '</div>';
 
-  // ── Options panel (color + shipping) — shown always ──────────────────────
-  html += '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px">';
-  html += '<div style="font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px">Configure Your Order</div>';
+  // ── Configure Your Order panel ────────────────────────────────────────────
+  html += '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px">'
+    + '<div style="font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:14px">Configure Your Order</div>';
 
   // Color row
-  html += '<div style="margin-bottom:14px">'
+  html += '<div style="margin-bottom:16px">'
     + '<div style="font-size:0.84rem;font-weight:600;color:#334155;margin-bottom:8px">Post Color</div>'
     + '<div style="display:flex;gap:10px;flex-wrap:wrap">';
   TENNIS_COLORS.forEach(function(col) {
@@ -3503,14 +3562,38 @@ function renderTennisNets() {
   });
   html += '</div></div>';
 
+  // Weights toggle
+  var sdPrice = CATALOG.tennis_nets.find(function(p){ return p.id === 'vt-sd'; }).price;
+  var swPrice = CATALOG.tennis_nets.find(function(p){ return p.id === 'vt-sw'; }).price;
+  var ddPrice = CATALOG.tennis_nets.find(function(p){ return p.id === 'vt-dd'; }).price;
+  var dwPrice = CATALOG.tennis_nets.find(function(p){ return p.id === 'vt-dw'; }).price;
+  var singlesDiff = (swPrice - sdPrice).toFixed(2);
+  var doublesDiff = (dwPrice - ddPrice).toFixed(2);
+  var weightsDiff = isDoubles ? doublesDiff : singlesDiff;
+  html += '<div style="margin-bottom:16px">'
+    + '<div style="font-size:0.84rem;font-weight:600;color:#334155;margin-bottom:4px">Stability Weights'
+    + ' <span style="font-size:0.78rem;font-weight:400;color:#64748b">— Recommended for windy locations</span></div>'
+    + '<div style="font-size:0.79rem;color:#64748b;margin-bottom:8px">Adds +$' + weightsDiff + ' to the net price</div>'
+    + '<div style="display:flex;gap:10px">';
+  [
+    { val: false, label: 'No Weights' },
+    { val: true,  label: '+ Add Weights' }
+  ].forEach(function(opt) {
+    var active = hasWeights === opt.val;
+    html += '<button onclick="event.stopPropagation();setTennisWeights(' + opt.val + ')"'
+      + ' style="padding:8px 18px;border-radius:8px;border:2px solid '
+      + (active ? '#0f4a91' : '#cbd5e1') + ';background:' + (active ? '#e8f1fb' : '#fff')
+      + ';cursor:pointer;font-size:0.83rem;font-weight:' + (active ? '700' : '500') + ';color:#1e293b">'
+      + (active ? '✓ ' : '') + opt.label + '</button>';
+  });
+  html += '</div></div>';
+
   // Shipping method row
-  var noWeights = !selectedId || !CATALOG.tennis_nets.find(function(p){ return p.id === selectedId && p.withWeights; });
-  var stdCost   = selectedId ? getTennisShippingCost(selectedId, 'std').toFixed(2) : '—';
-  var expCost   = selectedId ? getTennisShippingCost(selectedId, 'exp').toFixed(2) : '—';
+  var stdCost = isSelected ? getTennisShippingCost(selectedNet.product.id, 'std').toFixed(2) : (activeProduct ? getTennisShippingCost(activeId, 'std').toFixed(2) : '—');
+  var expCost = isSelected ? getTennisShippingCost(selectedNet.product.id, 'exp').toFixed(2) : (activeProduct ? getTennisShippingCost(activeId, 'exp').toFixed(2) : '—');
   html += '<div>'
     + '<div style="font-size:0.84rem;font-weight:600;color:#334155;margin-bottom:8px">Shipping Method</div>'
     + '<div style="display:flex;gap:10px;flex-wrap:wrap">';
-
   [
     { val:'std', label:'Standard', sub:'4–8 Business Days', cost: stdCost },
     { val:'exp', label:'Expedited', sub:'1–3 Business Days', cost: expCost }
@@ -3523,12 +3606,16 @@ function renderTennisNets() {
       + '<span style="font-size:0.85rem;font-weight:' + (active ? '700' : '600') + ';color:#1e293b">'
       + (active ? '✓ ' : '') + opt.label + '</span>'
       + '<span style="font-size:0.76rem;color:#64748b">' + opt.sub + '</span>'
-      + '<span style="font-size:0.83rem;font-weight:600;color:#0f4a91;margin-top:3px">'
-      + (selectedId ? '$' + opt.cost : 'Select a net above') + '</span>'
+      + '<span style="font-size:0.83rem;font-weight:600;color:#0f4a91;margin-top:3px">$' + opt.cost + '</span>'
       + '</button>';
   });
   html += '</div></div>';
-  html += '</div>'; // options panel
+  html += '</div>'; // configure panel
+
+  // ── Labor estimator — only when a net is selected ───────────────────────
+  if (isSelected) {
+    html += renderTennisNetLaborEst();
+  }
 
   // ── Selection summary ──────────────────────────────────────────────────────
   if (selectedNet) {
@@ -3537,19 +3624,105 @@ function renderTennisNets() {
     var method = selectedMethod === 'exp' ? 'Expedited (1–3 days)' : 'Standard (4–8 days)';
     var colorLabel = (TENNIS_COLORS.find(function(col){ return col.value === selectedColor; }) || {}).label || selectedColor;
     var shippingCost = (acc.shippingCost || 0).toFixed(2);
-    html += '<div style="background:#e8f4ee;border:1px solid #86efac;border-radius:8px;padding:12px 16px;font-size:0.84rem">'
+    html += '<div style="background:#e8f4ee;border:1px solid #86efac;border-radius:8px;padding:12px 16px;font-size:0.84rem;margin-top:12px">'
       + '<strong style="color:#166534">✓ Selected:</strong> ' + prod.name
+      + (hasWeights ? ' <strong>(+ Weights)</strong>' : '')
       + ' &nbsp;·&nbsp; Color: <strong>' + colorLabel + '</strong>'
       + ' &nbsp;·&nbsp; Shipping: <strong>' + method + ' ($' + shippingCost + ')</strong>'
       + ' &nbsp;·&nbsp; Total: <strong>$' + (prod.price + parseFloat(shippingCost)).toFixed(2) + '</strong>'
       + '</div>';
   } else {
-    html += '<div style="background:#fef9ec;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:0.83rem;color:#92400e">'
-      + '☝ Select a net configuration above, then choose your color and shipping method.'
+    html += '<div style="background:#fef9ec;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:0.83rem;color:#92400e;margin-top:12px">'
+      + '☝ Select Singles or Doubles above, then configure color, weights, and shipping.'
       + '</div>';
   }
 
   html += '</div>'; // tennis-nets-section wrapper
+  return html;
+}
+
+// ── Tennis net labor: 3 hrs × 2 crew, single day assembly, can combine ───────
+function renderTennisNetLaborEst() {
+  var lr   = data.laborRate   !== undefined ? data.laborRate   : 30;
+  var otr  = data.otRate      !== undefined ? data.otRate      : 45;
+  var mk   = data.markupPct   !== undefined ? data.markupPct   : 50;
+  var trav = data.travelHours !== undefined ? data.travelHours : 0.5;
+  var staff      = 2;
+  var travelPrep = (trav * 2) + 1;
+  var workHrs    = 3;
+  var regWork    = Math.min(workHrs, Math.max(0, 8 - travelPrep));
+  var otWork     = Math.max(0, workHrs - regWork);
+  var dayCost    = (regWork * staff * lr) + (otWork * staff * otr) + (travelPrep * staff * lr);
+  var travelHrs  = travelPrep * staff;
+  var regHrs     = regWork * staff;
+  var otHrs      = otWork  * staff;
+  var subtotal   = dayCost;
+  var markup     = subtotal * (mk / 100);
+  var total      = subtotal + markup;
+
+  var inputStyle = 'width:58px;padding:3px 6px;border:1px solid #cbd5e1;border-radius:5px;font-size:0.85rem';
+
+  var html = '<div class="pb-est-wrap" style="margin-bottom:12px">'
+    + '<div class="pb-est-header">'
+    + '<span class="pb-est-title">🎾 Tennis Net — Assembly Labor</span>'
+    + '<span class="pb-est-tag">Single Day</span>'
+    + '</div>'
+    + '<div class="pb-est-meta">'
+    + trav + ' hr one-way travel &nbsp;·&nbsp; '
+    + travelPrep + ' hrs travel prep/person/day &nbsp;·&nbsp; No materials cost'
+    + '</div>'
+    + '<div class="pb-save-pill" style="display:inline-flex;margin:4px 0 8px">'
+    + '🔗 Can be assembled with a hoop or other accessory on the same day'
+    + '</div>';
+
+  // Labor settings bar
+  html += '<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;'
+    + 'margin:6px 0;padding:8px 10px;background:#f8fafc;border-radius:7px;border:1px solid #e2e8f0">'
+    + '<span style="font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;'
+    + 'letter-spacing:0.07em;white-space:nowrap">Labor Settings</span>'
+    + '<label style="font-size:0.82rem;color:#475569;display:flex;align-items:center;gap:5px">'
+    + 'Travel&nbsp;<input type="number" value="' + trav + '" min="0.25" step="0.25" style="' + inputStyle + '"'
+    + ' onchange="data.travelHours=+this.value;refreshTennisSection()"'
+    + ' onblur="data.travelHours=+this.value;refreshTennisSection()">&nbsp;hr one-way</label>'
+    + '<label style="font-size:0.82rem;color:#475569;display:flex;align-items:center;gap:5px">'
+    + 'Regular&nbsp;$<input type="number" value="' + lr + '" min="0" step="1" style="' + inputStyle + '"'
+    + ' onchange="data.laborRate=+this.value;refreshTennisSection()"'
+    + ' onblur="data.laborRate=+this.value;refreshTennisSection()">/hr</label>'
+    + '<label style="font-size:0.82rem;color:#475569;display:flex;align-items:center;gap:5px">'
+    + 'OT&nbsp;$<input type="number" value="' + otr + '" min="0" step="1" style="' + inputStyle + '"'
+    + ' onchange="data.otRate=+this.value;refreshTennisSection()"'
+    + ' onblur="data.otRate=+this.value;refreshTennisSection()">/hr</label>'
+    + '</div>';
+
+  // Schedule table
+  html += '<div class="pb-section-label" style="margin-top:10px">Assembly Schedule</div>'
+    + '<table class="pb-table"><thead><tr>'
+    + '<th style="text-align:left">Task</th>'
+    + '<th class="tc">Staff</th><th class="tc">Work&nbsp;Hrs</th>'
+    + '<th class="tc">Travel&nbsp;Hrs</th><th class="tc">Reg&nbsp;Hrs</th>'
+    + '<th class="tc">OT&nbsp;Hrs</th><th class="tr">Day Cost</th>'
+    + '</tr></thead><tbody>'
+    + '<tr style="background:#f8fafc"><td colspan="7" style="font-size:0.77rem;color:#64748b;padding:4px 8px">'
+    + '&#9432; Travel prep: ' + travelPrep + ' hrs/person/day &nbsp;·&nbsp; Reg $' + lr + '/hr &nbsp;·&nbsp; OT $' + otr + '/hr'
+    + '</td></tr>'
+    + '<tr>'
+    + '<td>Assemble Tennis Net (3 work hrs × ' + staff + ' crew)</td>'
+    + '<td class="tc">' + staff + '</td>'
+    + '<td class="tc">' + workHrs + '</td>'
+    + '<td class="tc">' + travelHrs + '</td>'
+    + '<td class="tc">' + regHrs + '</td>'
+    + '<td class="tc">' + (otHrs > 0 ? '<span class="pb-ot-pill">' + otHrs + ' OT</span>' : '—') + '</td>'
+    + '<td class="tr"><strong>$' + Math.round(dayCost).toLocaleString() + '</strong></td>'
+    + '</tr></tbody></table>';
+
+  // Totals box
+  html += '<div class="pb-total-box">'
+    + '<div class="pb-total-row"><span>Labor — assembly</span><span>$' + Math.round(dayCost).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row"><span>Subtotal</span><span>$' + Math.round(subtotal).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row"><span>Markup (' + mk + '%)</span><span>$' + Math.round(markup).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row pb-total-grand"><span>Total Assembly Estimate</span><span>$' + Math.round(total).toLocaleString() + '</span></div>'
+    + '</div>'
+    + '</div>';
   return html;
 }
 
