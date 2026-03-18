@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_63.html -->
+<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_66.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1054,6 +1054,7 @@ const STEPS = [
       var needsHoops = types.indexOf('Basketball') > -1 || isMultisport;
       var needsPB    = types.indexOf('Pickleball') > -1 || isMultisport;
       var isAsphalt  = data.surfaceType === 'asphalt';
+      var isGravel   = data.surfaceType === 'gravel';
       var surfaceMountIds = ['p8','p11']; // spb-sm2 and spb-sm2-b
       if (!data.accessories) data.accessories = {};
       var html = '';
@@ -1089,13 +1090,28 @@ const STEPS = [
           html += '</div>';
           html += '<div id="h2l-net-labor-est" style="margin-top:4px">' + (getH2LNetCount() > 0 ? renderH2LNetLaborEst() : '') + '</div>';
         }
-        html += '<div class="sub-heading" style="margin-top:18px">&#9968; Inground &amp; Surface Mount</div><div class="product-grid">';
+        html += '<div class="sub-heading" style="margin-top:18px">&#9968; Inground &amp; Surface Mount</div>';
+        if (isGravel) {
+          html += '<div style="background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:0.83rem;color:#92400e">'
+            + '&#9888;&#65039; <strong>Gravel Court Note:</strong> Digging through a gravel court surface for inground anchors is not recommended. '
+            + 'Net posts should be wide enough to mount <strong>outside the court boundary in the surrounding grass or ground</strong>. '
+            + 'Verify post spacing against your court dimensions before ordering.'
+            + '</div>';
+        }
+        html += '<div class="product-grid">';
         CATALOG.pickleball_inground.forEach(function(p){
           var isSurfaceMount = surfaceMountIds.indexOf(p.id) > -1;
-          var disabled = isAsphalt && isSurfaceMount;
-          html += renderProductCard(p, disabled ? { disabled: true, disabledNote: 'Surface mount cannot be installed into asphalt.' } : {});
+          var disabledAsphalt = isAsphalt && isSurfaceMount;
+          var disabledGravel  = isGravel  && isSurfaceMount;
+          var disabled = disabledAsphalt || disabledGravel;
+          var disabledNote = disabledAsphalt ? 'Surface mount cannot be installed into asphalt.'
+                           : disabledGravel  ? 'Surface mount cannot be installed into gravel.'
+                           : '';
+          html += renderProductCard(p, disabled ? { disabled: true, disabledNote: disabledNote } : {});
         });
         html += '</div>';
+        // Show surface mount labor estimate if any surface mount net is selected
+        html += '<div id="sm-net-labor-est" style="margin-top:4px">' + (getSurfaceMountNetCount() > 0 ? renderSurfaceMountLaborEst() : '') + '</div>';
         // Show labor estimate if any inground net is selected
         html += '<div id="pb-net-est-inground">' + (hasAnyInground() ? renderPBNetEstimate('inground') : '') + '</div>';
         html += '<hr class="divider">';
@@ -3537,6 +3553,241 @@ function renderTennisNets() {
   return html;
 }
 
+
+// ─── SURFACE MOUNT PICKLEBALL NET LABOR ──────────────────────────────────────
+// p8 (Square Surface Mount), p11 (Square Surface Mount - Black)
+// One day: 3 work hrs × 2 crew to install and assemble (no anchor curing needed)
+// Can be combined with another accessory on same day (follows 6 hr / 3 item cap)
+// Materials: Sleeve Anchor 1/2" x 4" 10-pack @ $19
+
+var SM_NET_IDS = ['p8','p11'];
+var SM_ANCHOR_PACK_PRICE = 19;
+
+function getSurfaceMountNetCount() {
+  var count = 0;
+  SM_NET_IDS.forEach(function(id) {
+    if (data.accessories && data.accessories[id] && data.accessories[id].selected) {
+      count += (data.accessories[id].qty || 1);
+    }
+  });
+  return count;
+}
+
+function getSurfaceMountMaterials(netCount) {
+  var key = 'smNetMaterials';
+  if (data[key]) {
+    // Scale qty by netCount
+    return data[key].map(function(m) {
+      return Object.assign({}, m, { qty: m.baseQty * netCount, total: m.unitCost * m.baseQty * netCount });
+    });
+  }
+  return [
+    { name: 'Sleeve Anchor 1/2" x 4" (10-pack)', unitCost: SM_ANCHOR_PACK_PRICE, baseQty: 1, qty: netCount, total: SM_ANCHOR_PACK_PRICE * netCount }
+  ];
+}
+
+function calcSurfaceMountLabor(netCount, lr, otr, mk, trav) {
+  if (netCount === 0) return null;
+  var staff      = 2;
+  var travelPrep = (trav * 2) + 1;
+
+  function dayCalc(workHrs) {
+    var regWork = Math.min(workHrs, Math.max(0, 8 - travelPrep));
+    var otWork  = Math.max(0, workHrs - regWork);
+    return {
+      workHrs  : workHrs,
+      travelHrs: travelPrep * staff,
+      regHrs   : regWork * staff,
+      otHrs    : otWork  * staff,
+      cost     : (regWork * staff * lr) + (otWork * staff * otr) + (travelPrep * staff * lr)
+    };
+  }
+
+  // 3 hrs per net × 2 crew, single day install + assembly combined
+  var installDay = dayCalc(3 * netCount);
+  var mats       = getSurfaceMountMaterials(netCount);
+  var matTotal   = mats.reduce(function(s, m) { return s + m.total; }, 0);
+  var laborCost  = installDay.cost;
+  var subtotal   = matTotal + laborCost;
+  var markup     = subtotal * (mk / 100);
+
+  return {
+    netCount  : netCount,
+    staff     : staff,
+    travelPrep: travelPrep,
+    trav      : trav,
+    installDay: installDay,
+    mats      : mats,
+    matTotal  : matTotal,
+    laborCost : laborCost,
+    subtotal  : subtotal,
+    markup    : markup,
+    total     : subtotal + markup,
+    lr: lr, otr: otr, mk: mk
+  };
+}
+
+function renderSurfaceMountLaborEst() {
+  var netCount = getSurfaceMountNetCount();
+  if (netCount === 0) return '';
+  var lr   = data.laborRate   !== undefined ? data.laborRate   : 30;
+  var otr  = data.otRate      !== undefined ? data.otRate      : 45;
+  var mk   = data.markupPct   !== undefined ? data.markupPct   : 50;
+  var trav = data.travelHours !== undefined ? data.travelHours : 0.5;
+  var e    = calcSurfaceMountLabor(netCount, lr, otr, mk, trav);
+  data.smNetEst = e;
+
+  var inputStyle = 'width:58px;padding:3px 6px;border:1px solid #cbd5e1;border-radius:5px;font-size:0.85rem';
+
+  var html = '<div class="pb-est-wrap">';
+
+  // Header
+  html += '<div class="pb-est-header">'
+    + '<span class="pb-est-title">🏸 Surface Mount Net — Installation Labor</span>'
+    + '<span class="pb-est-tag">' + netCount + ' Net' + (netCount > 1 ? 's' : '') + ' — Single Day</span>'
+    + '</div>'
+    + '<div class="pb-est-meta">'
+    + trav + ' hr one-way travel &nbsp;·&nbsp; '
+    + e.travelPrep + ' hrs travel prep/person/day &nbsp;·&nbsp; '
+    + 'Install &amp; assemble in one visit &nbsp;·&nbsp; '
+    + 'Materials: <strong>$' + e.matTotal + '</strong>'
+    + '</div>';
+
+  // Combine note
+  html += '<div class="pb-save-pill" style="display:inline-flex;margin:4px 0 8px">'
+    + '🔗 Can be combined with a hoop or other accessory on the same day'
+    + '</div>';
+
+  // Labor settings bar
+  html += '<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;'
+    + 'margin:6px 0;padding:8px 10px;background:#f8fafc;border-radius:7px;border:1px solid #e2e8f0">'
+    + '<span style="font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;'
+    + 'letter-spacing:0.07em;white-space:nowrap">Labor Settings</span>'
+    + '<label style="font-size:0.82rem;color:#475569;display:flex;align-items:center;gap:5px">'
+    + 'Travel&nbsp;<input type="number" value="' + trav + '" min="0.25" step="0.25"'
+    + ' style="' + inputStyle + '"'
+    + ' onchange="data.travelHours=+this.value;refreshSurfaceMountLaborEst()"'
+    + ' onblur="data.travelHours=+this.value;refreshSurfaceMountLaborEst()">'
+    + '&nbsp;hr one-way</label>'
+    + '<label style="font-size:0.82rem;color:#475569;display:flex;align-items:center;gap:5px">'
+    + 'Regular&nbsp;$<input type="number" value="' + lr + '" min="0" step="1"'
+    + ' style="' + inputStyle + '"'
+    + ' onchange="data.laborRate=+this.value;refreshSurfaceMountLaborEst()"'
+    + ' onblur="data.laborRate=+this.value;refreshSurfaceMountLaborEst()">'
+    + '/hr</label>'
+    + '<label style="font-size:0.82rem;color:#475569;display:flex;align-items:center;gap:5px">'
+    + 'OT&nbsp;$<input type="number" value="' + otr + '" min="0" step="1"'
+    + ' style="' + inputStyle + '"'
+    + ' onchange="data.otRate=+this.value;refreshSurfaceMountLaborEst()"'
+    + ' onblur="data.otRate=+this.value;refreshSurfaceMountLaborEst()">'
+    + '/hr</label>'
+    + '</div>';
+
+  // Schedule table
+  html += '<div class="pb-section-label" style="margin-top:10px">Installation Schedule</div>'
+    + '<table class="pb-table">'
+    + '<thead><tr>'
+    + '<th style="text-align:left">Task</th>'
+    + '<th class="tc">Staff</th><th class="tc">Work&nbsp;Hrs</th>'
+    + '<th class="tc">Travel&nbsp;Hrs</th><th class="tc">Reg&nbsp;Hrs</th>'
+    + '<th class="tc">OT&nbsp;Hrs</th><th class="tr">Day Cost</th>'
+    + '</tr></thead><tbody>'
+    + '<tr style="background:#f8fafc"><td colspan="7" style="font-size:0.77rem;color:#64748b;padding:4px 8px">'
+    + '&#9432; Travel prep: ' + e.travelPrep + ' hrs/person/day &nbsp;·&nbsp; Reg $' + lr + '/hr &nbsp;·&nbsp; OT $' + otr + '/hr'
+    + '</td></tr>';
+
+  var lbl = 'Install &amp; Assemble Net' + (netCount > 1 ? 's' : '')
+    + ' (' + e.installDay.workHrs + ' work hrs × ' + e.staff + ' crew)';
+  var d = e.installDay;
+  html += '<tr>'
+    + '<td>' + lbl + '</td>'
+    + '<td class="tc">' + e.staff + '</td>'
+    + '<td class="tc">' + d.workHrs + '</td>'
+    + '<td class="tc">' + d.travelHrs + '</td>'
+    + '<td class="tc">' + d.regHrs + '</td>'
+    + '<td class="tc">' + (d.otHrs > 0 ? '<span class="pb-ot-pill">' + d.otHrs + ' OT</span>' : '—') + '</td>'
+    + '<td class="tr"><strong>$' + Math.round(d.cost).toLocaleString() + '</strong></td>'
+    + '</tr>'
+    + '</tbody></table>';
+
+  // Materials table
+  html += '<div class="pb-section-label" style="margin-top:14px">Installation Materials</div>'
+    + '<table class="pb-table"><thead><tr>'
+    + '<th style="text-align:left">Material</th><th class="tc">Qty</th>'
+    + '<th class="tc">Unit $</th><th class="tr">Total</th>'
+    + '</tr></thead><tbody>';
+  e.mats.forEach(function(m) {
+    html += '<tr><td>' + m.name + '</td>'
+      + '<td class="tc">' + m.qty + '</td>'
+      + '<td class="tc">$' + m.unitCost + '</td>'
+      + '<td class="tr">$' + m.total + '</td></tr>';
+  });
+  html += '<tr class="pb-subtotal-row">'
+    + '<td colspan="3" style="text-align:right;font-size:0.8rem;color:#64748b">Materials total</td>'
+    + '<td class="tr"><strong>$' + e.matTotal + '</strong></td>'
+    + '</tr></tbody></table>'
+    + '<div style="text-align:right;margin-top:5px">'
+    + '<button class="btn-modify-mat" onclick="toggleSMMatEditor()">&#9998; Modify Materials</button>'
+    + '</div>'
+    + '<div id="smMatEditorWrap" style="display:none"></div>';
+
+  // Totals box
+  html += '<div class="pb-total-box">'
+    + '<div class="pb-total-row"><span>Materials</span><span>$' + e.matTotal + '</span></div>'
+    + '<div class="pb-total-row"><span>Labor — install &amp; assemble</span><span>$' + Math.round(e.laborCost).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row"><span>Subtotal</span><span>$' + Math.round(e.subtotal).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row"><span>Markup (' + mk + '%)</span><span>$' + Math.round(e.markup).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row pb-total-grand"><span>Total Installation Estimate</span><span>$' + Math.round(e.total).toLocaleString() + '</span></div>'
+    + '</div>';
+
+  html += '</div>';
+  return html;
+}
+
+function refreshSurfaceMountLaborEst() {
+  var wrap = document.getElementById('sm-net-labor-est');
+  if (!wrap) return;
+  wrap.innerHTML = getSurfaceMountNetCount() > 0 ? renderSurfaceMountLaborEst() : '';
+}
+
+function resetSMNetMaterials() {
+  delete data.smNetMaterials;
+  refreshSurfaceMountLaborEst();
+  var wrap = document.getElementById('smMatEditorWrap');
+  if (wrap) wrap.style.display = 'none';
+  toggleSMMatEditor();
+}
+
+function toggleSMMatEditor() {
+  var wrap = document.getElementById('smMatEditorWrap');
+  if (!wrap) return;
+  if (wrap.style.display !== 'none') { wrap.style.display = 'none'; return; }
+  var netCount = getSurfaceMountNetCount();
+  var key = 'smNetMaterials';
+  if (!data[key]) {
+    data[key] = [{ name: 'Sleeve Anchor 1/2" x 4" (10-pack)', unitCost: SM_ANCHOR_PACK_PRICE, baseQty: 1, qty: netCount, total: SM_ANCHOR_PACK_PRICE * netCount }];
+  }
+  var mats = data[key];
+  var rows = mats.map(function(m, i) {
+    return '<tr>'
+      + '<td><input value="' + m.name + '" onchange="data.smNetMaterials[' + i + '].name=this.value;refreshSurfaceMountLaborEst()" style="width:100%;padding:3px 6px;border:1px solid #cbd5e1;border-radius:4px;font-size:0.82rem"></td>'
+      + '<td><input type="number" value="' + m.baseQty + '" min="0" step="1" onchange="data.smNetMaterials[' + i + '].baseQty=+this.value;refreshSurfaceMountLaborEst()" style="width:52px;padding:3px 6px;border:1px solid #cbd5e1;border-radius:4px;font-size:0.82rem;text-align:center"></td>'
+      + '<td><input type="number" value="' + m.unitCost + '" min="0" step="0.01" onchange="data.smNetMaterials[' + i + '].unitCost=+this.value;refreshSurfaceMountLaborEst()" style="width:64px;padding:3px 6px;border:1px solid #cbd5e1;border-radius:4px;font-size:0.82rem;text-align:right"></td>'
+      + '<td style="text-align:right;font-size:0.82rem;padding:4px 8px">$' + (m.unitCost * m.baseQty * getSurfaceMountNetCount()) + '</td>'
+      + '<td><button onclick="data.smNetMaterials.splice(' + i + ',1);refreshSurfaceMountLaborEst();toggleSMMatEditor();toggleSMMatEditor()" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:1rem">&#128465;</button></td>'
+      + '</tr>';
+  }).join('');
+  wrap.style.display = 'block';
+  wrap.innerHTML = '<div style="margin-top:10px;padding:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px">'
+    + '<div style="font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">Edit Materials</div>'
+    + '<table class="pb-table"><thead><tr><th style="text-align:left">Material</th><th class="tc">Qty/Net</th><th class="tc">Unit $</th><th class="tr">Total</th><th></th></tr></thead><tbody>'
+    + rows
+    + '</tbody></table>'
+    + '<button onclick="resetSMNetMaterials()" '
+    + 'style="margin-top:8px;font-size:0.78rem;color:#64748b;background:none;border:1px solid #cbd5e1;border-radius:5px;padding:4px 10px;cursor:pointer">↺ Reset to defaults</button>'
+    + '</div>';
+}
+
 function getAccSubtotal() {
   var subtotal = 0;
   var shippingTotal = 0;
@@ -3665,6 +3916,12 @@ function toggleAccessory(id, price, shipping) {
     var h2lWrap = document.getElementById('h2l-net-labor-est');
     if (h2lWrap) h2lWrap.innerHTML = getH2LNetCount() > 0 ? renderH2LNetLaborEst() : '';
   }
+  // If a surface mount net was toggled, refresh surface mount labor estimate
+  var smIds = ['p8','p11'];
+  if (smIds.indexOf(id) > -1) {
+    var smWrap = document.getElementById('sm-net-labor-est');
+    if (smWrap) smWrap.innerHTML = getSurfaceMountNetCount() > 0 ? renderSurfaceMountLaborEst() : '';
+  }
   // If a hoop was toggled, refresh hoop labor estimate
   var hoopIds = CATALOG.hoops.map(function(p){ return p.id; });
   if (hoopIds.indexOf(id) > -1) refreshHoopLaborEst();
@@ -3703,6 +3960,12 @@ function changeQty(id, delta) {
   if (id === 'ph2l') {
     var h2lWrap2 = document.getElementById('h2l-net-labor-est');
     if (h2lWrap2 && getH2LNetCount() > 0) h2lWrap2.innerHTML = renderH2LNetLaborEst();
+  }
+  // Refresh surface mount net labor if qty changed
+  var smIds2 = ['p8','p11'];
+  if (smIds2.indexOf(id) > -1) {
+    var smWrap2 = document.getElementById('sm-net-labor-est');
+    if (smWrap2 && getSurfaceMountNetCount() > 0) smWrap2.innerHTML = renderSurfaceMountLaborEst();
   }
 }
 
