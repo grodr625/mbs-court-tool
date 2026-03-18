@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_68.html -->
+<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_69.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -979,6 +979,7 @@
         <button class="jm-search-btn" onclick="renderJobList()">🔍 Search</button>
         <button class="jm-new-btn" onclick="startNewJob()">+ New Job</button>
       </div>
+      <div style="font-size:0.78rem;margin-bottom:12px;min-height:16px" id="jmSyncStatus"></div>
       <div class="jm-list" id="jmJobList"></div>
     </div>
     <div class="jm-save-bar">
@@ -4986,22 +4987,108 @@ function resetLightMaterials() {
 // ─── INIT ────────────────────────────────────────────────────
 
 // ─── JOB MANAGER ────────────────────────────────────────────
+// Supabase-backed with localStorage offline fallback
 
-var JM_KEY = 'mbs_court_jobs';
+// ── CONFIG (filled in by user) ────────────────────────────
+var SB_URL = 'https://yutqkzxgfsakbbrajlra.supabase.co';   // e.g. https://xxxx.supabase.co
+var SB_KEY = 'sb_publishable_qkzHSoK5uDw15lkwfOyXYA_rzbWkm59';   // anon/public key
+var SB_TABLE = 'court_jobs';
+var JM_KEY   = 'mbs_court_jobs';   // localStorage fallback key
 
-function jmLoadAll() {
+// ── Online detection ──────────────────────────────────────
+function sbConfigured() {
+  return SB_URL && SB_URL !== '' && SB_KEY && SB_KEY !== '';
+}
+
+// ── Supabase REST helpers ─────────────────────────────────
+function sbHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Prefer': 'return=representation'
+  };
+}
+
+async function sbFetchAll() {
+  var r = await fetch(SB_URL + '/rest/v1/' + SB_TABLE + '?order=updated_at.desc', {
+    headers: sbHeaders()
+  });
+  if (!r.ok) throw new Error('Supabase fetch failed: ' + r.status);
+  return await r.json();  // array of rows: { id, job_id, client_name, address, permit_num, updated_at, payload }
+}
+
+async function sbUpsert(snapshot) {
+  var row = {
+    job_id:      snapshot._jobId,
+    client_name: snapshot.clientName || '',
+    address:     snapshot.siteAddress || '',
+    permit_num:  snapshot.permitNum || '',
+    updated_at:  new Date(snapshot._savedAt).toISOString(),
+    payload:     JSON.stringify(snapshot)
+  };
+  var r = await fetch(SB_URL + '/rest/v1/' + SB_TABLE + '?on_conflict=job_id', {
+    method: 'POST',
+    headers: Object.assign({}, sbHeaders(), { 'Prefer': 'resolution=merge-duplicates,return=representation' }),
+    body: JSON.stringify(row)
+  });
+  if (!r.ok) throw new Error('Supabase upsert failed: ' + r.status);
+  return await r.json();
+}
+
+async function sbDelete(jobId) {
+  var r = await fetch(SB_URL + '/rest/v1/' + SB_TABLE + '?job_id=eq.' + encodeURIComponent(jobId), {
+    method: 'DELETE',
+    headers: sbHeaders()
+  });
+  if (!r.ok) throw new Error('Supabase delete failed: ' + r.status);
+}
+
+// ── localStorage fallback ─────────────────────────────────
+function lsLoadAll() {
   try { return JSON.parse(localStorage.getItem(JM_KEY) || '[]'); }
   catch(e) { return []; }
 }
-
-function jmSaveAll(jobs) {
+function lsSaveAll(jobs) {
   localStorage.setItem(JM_KEY, JSON.stringify(jobs));
 }
 
+// ── In-memory cache of jobs (hydrated on open) ────────────
+var _jmJobs   = [];
+var _jmOnline = false;
+
+// ── Config banner (shown when credentials not set) ────────
+function renderConfigBanner() {
+  var existing = document.getElementById('jmConfigBanner');
+  if (sbConfigured()) {
+    if (existing) existing.remove();
+    return;
+  }
+  if (existing) return;
+  var banner = document.createElement('div');
+  banner.id = 'jmConfigBanner';
+  banner.style.cssText = 'background:#fff8e1;border:1.5px solid #f0c040;border-radius:10px;padding:16px 20px;margin-bottom:18px;font-size:0.88rem;color:#7d5a00;line-height:1.6';
+  banner.innerHTML = '<strong>⚙️ Supabase not configured yet</strong> — jobs are saving to this browser only.<br>'
+    + 'To enable cloud sync, open the file in a text editor and set <code style="background:#f5f0e0;padding:1px 5px;border-radius:3px">SB_URL</code> and <code style="background:#f5f0e0;padding:1px 5px;border-radius:3px">SB_KEY</code> near the top of the Job Manager section, then run the SQL below in your Supabase project:<br><br>'
+    + '<code style="display:block;background:#1e293b;color:#7dd3fc;padding:10px 14px;border-radius:6px;font-size:0.82rem;white-space:pre-wrap">create table court_jobs (\n  id         bigserial primary key,\n  job_id     text unique not null,\n  client_name text,\n  address    text,\n  permit_num text,\n  updated_at timestamptz default now(),\n  payload    text\n);\nalter table court_jobs enable row level security;\ncreate policy "public read"  on court_jobs for select using (true);\ncreate policy "public write" on court_jobs for insert with check (true);\ncreate policy "public update" on court_jobs for update using (true);\ncreate policy "public delete" on court_jobs for delete using (true);</code>';
+  var body = document.querySelector('.jm-modal-body');
+  if (body) body.insertBefore(banner, body.firstChild);
+}
+
+// ── Status indicator ──────────────────────────────────────
+function renderSyncStatus(msg, color) {
+  var el = document.getElementById('jmSyncStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = color || '#64748b';
+}
+
+// ── Core UI ───────────────────────────────────────────────
 function openJobManager() {
   document.getElementById('jobManagerOverlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
-  renderJobList();
+  renderConfigBanner();
+  loadAndRenderJobs();
 }
 
 function closeJobManager() {
@@ -5013,9 +5100,40 @@ function handleOverlayClick(e) {
   if (e.target === document.getElementById('jobManagerOverlay')) closeJobManager();
 }
 
+async function loadAndRenderJobs() {
+  var list = document.getElementById('jmJobList');
+  list.innerHTML = '<div style="text-align:center;padding:24px;color:#94a3b8;font-size:0.9rem">Loading jobs…</div>';
+  renderSyncStatus('Syncing…', '#3AABDB');
+
+  if (sbConfigured()) {
+    try {
+      var rows = await sbFetchAll();
+      _jmJobs = rows.map(function(r) {
+        try { return JSON.parse(r.payload); }
+        catch(e) { return { clientName: r.client_name, siteAddress: r.address, permitNum: r.permit_num, _jobId: r.job_id, _savedAt: new Date(r.updated_at).getTime() }; }
+      });
+      _jmOnline = true;
+      // Also sync to localStorage as offline cache
+      lsSaveAll(_jmJobs);
+      renderSyncStatus('☁️ Cloud sync active', '#38a169');
+    } catch(e) {
+      console.warn('Supabase load failed, using localStorage:', e);
+      _jmJobs = lsLoadAll();
+      _jmOnline = false;
+      renderSyncStatus('⚠️ Offline — showing cached jobs', '#d97706');
+    }
+  } else {
+    _jmJobs = lsLoadAll();
+    _jmOnline = false;
+    renderSyncStatus('💾 Local storage only', '#94a3b8');
+  }
+
+  renderJobList();
+}
+
 function renderJobList() {
   var q = (document.getElementById('jmSearchInput').value || '').toLowerCase().trim();
-  var jobs = jmLoadAll();
+  var jobs = _jmJobs;
   var filtered = jobs;
   if (q) {
     filtered = jobs.filter(function(j) {
@@ -5030,8 +5148,7 @@ function renderJobList() {
       + '<div class="jm-empty-text">' + (q ? 'No jobs match your search.' : 'No saved jobs yet. Fill out the form and click <strong>Save Job</strong> to get started.') + '</div></div>';
     return;
   }
-  list.innerHTML = filtered.map(function(j, idx) {
-    var realIdx = jobs.indexOf(j);
+  list.innerHTML = filtered.map(function(j) {
     var meta = [];
     if (j.siteAddress) meta.push(j.siteAddress);
     if (j.permitNum) meta.push('Job #: ' + j.permitNum);
@@ -5046,28 +5163,18 @@ function renderJobList() {
       + '</div>'
       + (d ? '<div class="jm-job-date">' + d + '</div>' : '')
       + '<div class="jm-job-actions">'
-      + '<button class="jm-load-btn" onclick="loadJob(' + realIdx + ')">Open</button>'
-      + '<button class="jm-del-btn" onclick="deleteJob(' + realIdx + ',event)" title="Delete">✕</button>'
+      + '<button class="jm-load-btn" onclick="loadJob(\'' + (j._jobId||'') + '\')">Open</button>'
+      + '<button class="jm-del-btn" onclick="deleteJob(\'' + (j._jobId||'') + '\',event)" title="Delete">✕</button>'
       + '</div></div>';
   }).join('');
 }
 
-function saveCurrentJob() {
-  // Collect current step first
+async function saveCurrentJob() {
   if (STEPS[currentStep] && STEPS[currentStep].collect) STEPS[currentStep].collect();
 
   if (!data.clientName && !data.siteAddress && !data.permitNum) {
-    jmToast('⚠️ Please enter at least a client name, address, or job # before saving.', '#d97706');
+    jmToast('⚠️ Enter a client name, address, or job # before saving.', '#d97706');
     return;
-  }
-
-  var jobs = jmLoadAll();
-  // Find existing job by id
-  var existingIdx = -1;
-  if (data._jobId) {
-    for (var i = 0; i < jobs.length; i++) {
-      if (jobs[i]._jobId === data._jobId) { existingIdx = i; break; }
-    }
   }
 
   var snapshot = JSON.parse(JSON.stringify(data));
@@ -5075,31 +5182,47 @@ function saveCurrentJob() {
   if (!snapshot._jobId) snapshot._jobId = 'job_' + Date.now() + '_' + Math.floor(Math.random()*10000);
   data._jobId = snapshot._jobId;
 
+  // Update in-memory list
+  var existingIdx = _jmJobs.findIndex(function(j){ return j._jobId === snapshot._jobId; });
   if (existingIdx > -1) {
-    jobs[existingIdx] = snapshot;
-    jmToast('✅ Job updated: ' + (snapshot.clientName || 'Unnamed Job'));
+    _jmJobs[existingIdx] = snapshot;
   } else {
-    jobs.unshift(snapshot);
-    jmToast('✅ Job saved: ' + (snapshot.clientName || 'Unnamed Job'));
+    _jmJobs.unshift(snapshot);
   }
 
-  jmSaveAll(jobs);
+  // Always save to localStorage
+  lsSaveAll(_jmJobs);
+
+  // Attempt cloud save
+  if (sbConfigured()) {
+    var btn = document.querySelector('.jm-save-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+    try {
+      await sbUpsert(snapshot);
+      jmToast('☁️ Saved to cloud: ' + (snapshot.clientName || 'Unnamed Job'));
+    } catch(e) {
+      console.warn('Cloud save failed:', e);
+      jmToast('💾 Saved locally (cloud sync failed)', '#d97706');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Job'; }
+    }
+  } else {
+    jmToast('💾 Saved locally: ' + (snapshot.clientName || 'Unnamed Job'));
+  }
+
   renderJobList();
 }
 
-function loadJob(idx) {
-  var jobs = jmLoadAll();
-  var j = jobs[idx];
+function loadJob(jobId) {
+  var j = _jmJobs.find(function(x){ return x._jobId === jobId; });
   if (!j) return;
 
-  // Clear data and reload
   Object.keys(data).forEach(function(k){ delete data[k]; });
   Object.assign(data, j);
 
   currentStep = 0;
   closeJobManager();
 
-  // Hide report if showing
   var rc = document.getElementById('reportContainer');
   if (rc) { rc.classList.add('hidden'); rc.innerHTML = ''; }
   var sc = document.getElementById('stepsContainer');
@@ -5112,20 +5235,32 @@ function loadJob(idx) {
   jmToast('📂 Loaded: ' + (j.clientName || 'Unnamed Job'));
 }
 
-function deleteJob(idx, e) {
+async function deleteJob(jobId, e) {
   e.stopPropagation();
-  var jobs = jmLoadAll();
-  var j = jobs[idx];
+  var j = _jmJobs.find(function(x){ return x._jobId === jobId; });
   if (!j) return;
-  if (!confirm('Delete job "' + (j.clientName || 'Unnamed Job') + '"? This cannot be undone.')) return;
-  jobs.splice(idx, 1);
-  jmSaveAll(jobs);
+  if (!confirm('Delete "' + (j.clientName || 'Unnamed Job') + '"? This cannot be undone.')) return;
+
+  _jmJobs = _jmJobs.filter(function(x){ return x._jobId !== jobId; });
+  lsSaveAll(_jmJobs);
+
+  if (sbConfigured()) {
+    try {
+      await sbDelete(jobId);
+      jmToast('🗑️ Deleted from cloud.');
+    } catch(e) {
+      console.warn('Cloud delete failed:', e);
+      jmToast('🗑️ Removed locally (cloud delete failed)', '#d97706');
+    }
+  } else {
+    jmToast('🗑️ Job deleted.');
+  }
+
   renderJobList();
-  jmToast('🗑️ Job deleted.');
 }
 
 function startNewJob() {
-  if (!confirm('Start a new job? Any unsaved changes to the current form will be lost.')) return;
+  if (!confirm('Start a new job? Unsaved changes will be lost.')) return;
   Object.keys(data).forEach(function(k){ delete data[k]; });
   currentStep = 0;
   closeJobManager();
@@ -5145,8 +5280,8 @@ function jmToast(msg, bg) {
   t.style.background = bg || '#1e293b';
   t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity 0.4s'; }, 2400);
-  setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 2900);
+  setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity 0.5s'; }, 2600);
+  setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 3200);
 }
 
 // Keyboard shortcut: Escape closes modal
