@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_73.html -->
+<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_79.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -994,13 +994,13 @@
   <!-- PROGRESS -->
   <div class="progress-wrap" id="progressWrap">
     <div class="progress-label">
-      <span id="stepLabel">Step 1 of 7</span>
+      <span id="stepLabel">Step 1 of 6</span>
       <span id="stepCount">Project Setup</span>
     </div>
     <div class="progress-bar-bg">
       <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
     </div>
-    <div class="step-dots" id="stepDots"><div class="step-dot active"></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div></div>
+    <div class="step-dots" id="stepDots"><div class="step-dot active"></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div><div class="step-dot "></div></div>
   </div>
 
   <!-- STEPS CONTAINER -->
@@ -1246,8 +1246,8 @@ const STEPS = [
         html += '<div class="product-grid">';
         icHoops.forEach(function(p){ html += renderProductCard(p); });
         html += '</div>';
-        // Basketball hoop labor estimate — always shown when any hoop is selected
-        html += '<div id="hoop-labor-est" style="margin-top:4px">' + (getHoopCount() > 0 ? renderHoopLaborEst() : '') + '</div>';
+        // Unified assembly estimate — shown once covering all non-lighting accessories
+        // Individual per-type estimates replaced by unified block below
         html += '<hr class="divider">';
       }
       if (needsPB) {
@@ -1258,7 +1258,7 @@ const STEPS = [
         html += '<div class="sub-heading">&#127955; Portable Pickleball Nets</div><div class="product-grid">';
         stdPortable.forEach(function(p){ html += renderProductCard(p); });
         html += '</div>';
-        html += '<div id="portable-net-labor-est" style="margin-top:4px">' + (getPortableNetCount() > 0 ? renderPortableNetLaborEst() : '') + '</div>';
+        // portable net labor now in unified block
         if (h2lProducts.length) {
           html += '<div class="sub-heading" style="margin-top:18px">&#128161; Hoop-to-Light Pickleball Net</div><div class="product-grid">';
           h2lProducts.forEach(function(p){ html += renderProductCard(p); });
@@ -1285,8 +1285,7 @@ const STEPS = [
           html += renderProductCard(p, disabled ? { disabled: true, disabledNote: disabledNote } : {});
         });
         html += '</div>';
-        // Show surface mount labor estimate if any surface mount net is selected
-        html += '<div id="sm-net-labor-est" style="margin-top:4px">' + (getSurfaceMountNetCount() > 0 ? renderSurfaceMountLaborEst() : '') + '</div>';
+        // surface mount net labor now in unified block
         // Show labor estimate if any inground net is selected
         html += '<div id="pb-net-est-inground">' + (hasAnyInground() ? renderPBNetEstimate('inground') : '') + '</div>';
         html += '<hr class="divider">';
@@ -1307,6 +1306,8 @@ const STEPS = [
       CATALOG.lighting.forEach(function(p){ html += renderProductCard(p); });
       html += '</div>';
       html += '<div id="lighting-labor-est" style="margin-top:4px">' + (getLightingCount() > 0 ? renderLightingLaborEst() : '') + '</div>';
+      // Unified assembly labor block — covers hoops, portable/SM/tennis nets together
+      html += '<div id="unified-asm-est">' + (getUnifiedAssemblyItems().length > 0 ? renderUnifiedAssemblyEst() : '') + '</div>';
       html += renderPriceBar();
       return html;
     },
@@ -1359,11 +1360,11 @@ const STEPS = [
     valid() { return !!data.paintType; }
   },
 
-  // STEP 4: Pre-Construction + Subgrade
+  // STEP 4: Pre-Construction + Subgrade + Surface Specs + Drainage (combined)
   {
-    section: 'Pre-Construction',
-    title: 'Pre-Construction & Subgrade',
-    desc: 'Verify pre-construction checklist and define foundation requirements.',
+    section: 'Pre-Construction & Surface',
+    title: 'Pre-Construction, Subgrade & Surface',
+    desc: 'Pre-construction checklist, base material, surface specs, and drainage — all in one place.',
     render() {
       const checks = [
         ['plansReviewed','Approved plans received and reviewed'],
@@ -1374,57 +1375,7 @@ const STEPS = [
         ['ownerNotified','Owner notified of start date'],
         ['materialsOrdered','Materials ordered & delivery scheduled'],
       ];
-      return `
-        <div class="sub-heading">Pre-Construction Checklist</div>
-        <div class="check-list">
-          ${checks.map(([k,l])=>`<label class="check-item"><input type="checkbox" id="${k}" ${data[k]?'checked':''}><span class="check-item-label">${l}</span></label>`).join('')}
-        </div>
-        <div class="field" style="margin-top:14px">
-          <label>Pre-Construction Notes</label>
-          <textarea id="preconNotes" placeholder="Notes or exceptions...">${data.preconNotes||''}</textarea>
-        </div>
-        <hr class="divider">
-        <div class="sub-heading">Subgrade & Base</div>
-        <div class="field-grid">
-          <div class="field">
-            <label>Base Material</label>
-            <select id="baseMaterial">
-              <option value="">— Select —</option>
-              ${['Compacted Gravel','Crushed Stone','Processed Stone','Existing Subgrade','Other'].map(o=>`<option ${data.baseMaterial===o?'selected':''}>${o}</option>`).join('')}
-            </select>
-          </div>
-          <div class="field">
-            <label>Compacted Thickness (in)</label>
-            <input type="number" id="baseThickness" value="${data.baseThickness||''}" placeholder="e.g. 6">
-          </div>
-          <div class="field">
-            <label>Geotextile Fabric</label>
-            <div class="toggle-row">
-              ${['Yes','No'].map(o=>`<button class="toggle-btn ${data.geotextile===o?'active':''}" onclick="setToggle('geotextile','${o}',this)">${o}</button>`).join('')}
-            </div>
-          </div>
-          <div class="field full">
-            <label>Subgrade Notes</label>
-            <textarea id="subgradeNotes" placeholder="Prep conditions, concerns...">${data.subgradeNotes||''}</textarea>
-          </div>
-        </div>`;
-    },
-    collect() {
-      ['plansReviewed','permitsConfirmed','utilitiesLocated','accessConfirmed','existingConditions','ownerNotified','materialsOrdered'].forEach(k=>data[k]=document.getElementById(k)?.checked);
-      data.preconNotes   = v('preconNotes');
-      data.baseMaterial  = v('baseMaterial');
-      data.baseThickness = v('baseThickness');
-      data.subgradeNotes = v('subgradeNotes');
-    },
-    valid() { return true; }
-  },
-
-  // STEP 5: Surface Specs + Slope & Drainage
-  {
-    section: 'Surface & Drainage',
-    title: 'Surface Specs & Drainage',
-    desc: 'Surface material specifications and site drainage.',
-    render() {
+      if (!data.baseMaterial) data.baseMaterial = '3/4" Clean Stone';
       const s = data.surfaceType;
       let sf = '';
       if (s === 'asphalt') {
@@ -1459,9 +1410,57 @@ const STEPS = [
           <div class="field"><label>Framing</label><div class="toggle-row">${['PT Lumber','Steel Edging','None'].map(o=>`<button class="toggle-btn ${data.gravelFraming===o?'active':''}" onclick="setToggle('gravelFraming','${o}',this)">${o}</button>`).join('')}</div></div>`;
       }
       return `
-        <div class="sub-heading">Surface Specifications — ${s||'(select surface in Step 1)'}</div>
+        <div class="sub-heading">Pre-Construction Checklist</div>
+        <div class="check-list">
+          ${checks.map(([k,l])=>`<label class="check-item"><input type="checkbox" id="${k}" ${data[k]?'checked':''}><span class="check-item-label">${l}</span></label>`).join('')}
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label>Pre-Construction Notes</label>
+          <textarea id="preconNotes" placeholder="Notes or exceptions...">${data.preconNotes||''}</textarea>
+        </div>
+
+        <hr class="divider">
+        <div class="sub-heading">Subgrade & Base</div>
+        <div class="field-grid">
+          <div class="field full">
+            <label>Base Material</label>
+            <div class="option-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))">
+              ${[
+                ['3/4" Clean Stone','🪨'],
+                ['2" Clean Stone','🪨'],
+                ['RCA','♻️'],
+                ['Compacted Gravel','⬛'],
+                ['Processed Stone','🔲'],
+                ['Existing Subgrade','✅'],
+                ['Other','📝'],
+              ].map(([val,icon])=>`
+                <div class="option-card ${data.baseMaterial===val?'selected':''}" onclick="data.baseMaterial='${val}';this.closest('.option-grid').querySelectorAll('.option-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
+                  <span class="opt-icon">${icon}</span>
+                  <span class="opt-label">${val}</span>
+                </div>`).join('')}
+            </div>
+          </div>
+          <div class="field">
+            <label>Compacted Thickness (in)</label>
+            <input type="number" id="baseThickness" value="${data.baseThickness||''}" placeholder="e.g. 6">
+          </div>
+          <div class="field">
+            <label>Geotextile Fabric</label>
+            <div class="toggle-row">
+              ${['Yes','No'].map(o=>`<button class="toggle-btn ${data.geotextile===o?'active':''}" onclick="setToggle('geotextile','${o}',this)">${o}</button>`).join('')}
+            </div>
+          </div>
+          <div class="field full">
+            <label>Subgrade Notes</label>
+            <textarea id="subgradeNotes" placeholder="Prep conditions, concerns...">${data.subgradeNotes||''}</textarea>
+          </div>
+        </div>
+
+        <hr class="divider">
+        <div class="sub-heading">Surface Specifications${s?' — '+s:' (set surface type in Step 1)'}</div>
         <div class="field-grid">${sf}</div>
         <div class="field" style="margin-top:4px"><label>Surface Notes</label><textarea id="surfaceNotes" placeholder="Additional specs...">${data.surfaceNotes||''}</textarea></div>
+
         <hr class="divider">
         <div class="sub-heading">Slope & Drainage</div>
         <div class="field-grid">
@@ -1474,6 +1473,10 @@ const STEPS = [
         ${data.retainingWall==='Yes'?`<div class="field-grid" style="margin-top:12px"><div class="field"><label>Wall Height (ft)</label><input type="number" id="wallH" value="${data.wallH||''}"></div><div class="field"><label>Wall Length (ft)</label><input type="number" id="wallL" value="${data.wallL||''}"></div><div class="field"><label>Wall Material</label><select id="wallMaterial"><option value="">— Select —</option>${['Concrete Block','Natural Stone','Timber','Poured Concrete','Segmental Block'].map(o=>`<option ${data.wallMaterial===o?'selected':''}>${o}</option>`).join('')}</select></div></div>`:''}`;
     },
     collect() {
+      ['plansReviewed','permitsConfirmed','utilitiesLocated','accessConfirmed','existingConditions','ownerNotified','materialsOrdered'].forEach(k=>data[k]=document.getElementById(k)?.checked);
+      data.preconNotes   = v('preconNotes');
+      data.baseThickness = v('baseThickness');
+      data.subgradeNotes = v('subgradeNotes');
       data.asphaltMix=v('asphaltMix'); data.surfaceThick=v('surfaceThick'); data.binderThick=v('binderThick');
       data.concretePSI=v('concretePSI'); data.concreteThick=v('concreteThick'); data.curingAllowed=v('curingAllowed');
       data.concreteFinish=v('concreteFinish'); data.jointSpacing=v('jointSpacing');
@@ -1486,7 +1489,7 @@ const STEPS = [
     valid() { return true; }
   },
 
-  // STEP 6: Edges, Fencing & Site
+    // STEP 6: Edges, Fencing & Site
   {
     section: 'Edges, Fencing & Site',
     title: 'Edges, Backfill, Fencing & Site Conditions',
@@ -1875,9 +1878,8 @@ function renderPortableNetLaborEst() {
 }
 
 function refreshPortableNetLaborEst() {
-  var wrap = document.getElementById('portable-net-labor-est');
-  if (!wrap) return;
-  wrap.innerHTML = getPortableNetCount() > 0 ? renderPortableNetLaborEst() : '';
+  // Now handled by unified assembly block
+  refreshUnifiedAssemblyEst();
 }
 
 // ─── HOOP-TO-LIGHT NET LABOR ─────────────────────────────────────────────────
@@ -2397,67 +2399,447 @@ function getHoopCount() {
 }
 
 
-// ─── COMBINED HOOP + NET ASSEMBLY LOGIC ─────────────────────────────────────
-// Assembly bin-packing: max 3 accessories/day AND max 6 work hrs/day (avoids OT)
-// Each hoop = 2 assembly hrs, each net = 2 assembly hrs.
-// Examples: 3 nets = 1 day (6 hrs); 2 hoops + 1 net = 1 day (6 hrs);
-//           3 hoops + 1 net = 2 days (6 + 2 hrs);
-//           4 nets = 2 days (6 + 2 hrs)
-function getCombinedAssemblyContext() {
-  var hoops    = getHoopCount();
-  var netCount = getIngroundNetCount();
-  var hasNet   = netCount > 0;
+// ─── UNIFIED ASSEMBLY CONTEXT ───────────────────────────────────────────────
+// All non-lighting accessories (hoops, portable PB nets, surface-mount nets,
+// tennis nets) share a single assembly day schedule.
+// Each item = 2 assembly hrs.  Default: max 3 items/day (6 hrs, no OT).
+// condensed toggle: pack up to 4/day (8 hrs, OT applies).
+// Lighting uses its own separate schedule and is EXCLUDED here.
 
-  var MAX_ITEMS = 3;
-  var MAX_HRS   = 6;
+var TENNIS_NET_IDS_ALL = null; // lazy-init below
+function getTennisNetIds() {
+  if (!TENNIS_NET_IDS_ALL) TENNIS_NET_IDS_ALL = CATALOG.tennis_nets.map(function(p){ return p.id; });
+  return TENNIS_NET_IDS_ALL;
+}
 
-  // Build ordered list: hoops first, then nets
+// hrs per accessory type
+var ASM_HRS = { hoop: 2, portable: 2, surfaceMount: 2, tennis: 2 };
+// surface-mount net IDs (need anchor materials but same assembly hrs)
+var SM_NET_IDS_CTX = ['p8','p11'];
+var H2L_IDS_CTX    = ['ph2l'];
+
+function getUnifiedAssemblyItems() {
+  // Returns array of {type, id, qty} for every selected non-lighting accessory
+  // (excludes ph2l / hoop-to-light which follows lighting schedule)
   var items = [];
-  for (var h = 0; h < hoops;    h++) items.push('hoop');
-  for (var n = 0; n < netCount; n++) items.push('net');
+  var acc = data.accessories || {};
 
-  // Bin-pack into days
-  var asmDays = [];
-  var dayItems = [], dayHrs = 0;
-  items.forEach(function(item) {
-    if (dayItems.length >= MAX_ITEMS || dayHrs + 2 > MAX_HRS) {
-      if (dayItems.length) asmDays.push({ items: dayItems.slice(), hrs: dayHrs });
-      dayItems = []; dayHrs = 0;
+  // Hoops
+  CATALOG.hoops.forEach(function(p) {
+    var a = acc[p.id];
+    if (a && a.selected) {
+      for (var i = 0; i < (a.qty||1); i++) items.push({ type:'hoop', id:p.id });
     }
-    dayItems.push(item);
-    dayHrs += 2;
   });
-  if (dayItems.length) asmDays.push({ items: dayItems.slice(), hrs: dayHrs });
 
-  // canMerge = hoops and nets share at least one assembly day (day 1 has both types)
+  // Portable PB nets (excluding h2l)
+  CATALOG.pickleball_portable.forEach(function(p) {
+    if (H2L_IDS_CTX.indexOf(p.id) > -1) return;
+    var a = acc[p.id];
+    if (a && a.selected) {
+      for (var i = 0; i < (a.qty||1); i++) items.push({ type:'portable', id:p.id });
+    }
+  });
+
+  // Surface mount PB nets
+  CATALOG.pickleball_inground.forEach(function(p) {
+    if (SM_NET_IDS_CTX.indexOf(p.id) === -1) return;
+    var a = acc[p.id];
+    if (a && a.selected) {
+      for (var i = 0; i < (a.qty||1); i++) items.push({ type:'surfaceMount', id:p.id });
+    }
+  });
+
+  // Tennis nets
+  getTennisNetIds().forEach(function(id) {
+    var a = acc[id];
+    if (a && a.selected) {
+      for (var i = 0; i < (a.qty||1); i++) items.push({ type:'tennis', id:id });
+    }
+  });
+
+  return items;
+}
+
+function getCombinedAssemblyContext() {
+  var items     = getUnifiedAssemblyItems();
+  var hoops     = items.filter(function(i){ return i.type==='hoop'; }).length;
+  var netCount  = getIngroundNetCount(); // inground PB nets (separate anchor days)
+  var hasNet    = netCount > 0;
+  var condensed = !!data.hoopCondensed;
+
+  var OT_THRESHOLD       = 6;
+  var ITEMS_PER_DAY_DEFAULT = 3;
+  var ITEMS_PER_DAY_CONDENSED = 4;
+
+  var asmDays = [];
+
+  if (condensed) {
+    var dayItems = [], dayHrs = 0;
+    items.forEach(function(item) {
+      if (dayItems.length >= ITEMS_PER_DAY_CONDENSED) {
+        asmDays.push({ items: dayItems.slice(), hrs: dayHrs, hasOT: dayHrs > OT_THRESHOLD });
+        dayItems = []; dayHrs = 0;
+      }
+      dayItems.push(item.type);
+      dayHrs += 2;
+    });
+    if (dayItems.length) asmDays.push({ items: dayItems.slice(), hrs: dayHrs, hasOT: dayHrs > OT_THRESHOLD });
+  } else {
+    var dayItems2 = [], dayHrs2 = 0;
+    items.forEach(function(item) {
+      if (dayItems2.length >= ITEMS_PER_DAY_DEFAULT) {
+        asmDays.push({ items: dayItems2.slice(), hrs: dayHrs2, hasOT: false });
+        dayItems2 = []; dayHrs2 = 0;
+      }
+      dayItems2.push(item.type);
+      dayHrs2 += 2;
+    });
+    if (dayItems2.length) asmDays.push({ items: dayItems2.slice(), hrs: dayHrs2, hasOT: false });
+  }
+
+  // canMerge: hoops and inground nets share an assembly day
   var canMerge = hasNet && hoops > 0 && asmDays.length > 0
-    && asmDays[0].items.indexOf('hoop') > -1
-    && asmDays[0].items.indexOf('net')  > -1;
+    && asmDays[0].items.indexOf('hoop') > -1;
 
-  // For the first merged day: hoop hrs vs net hrs
   var day1 = asmDays[0] || { items: [], hrs: 0 };
   var hoopAsmHrs = day1.items.filter(function(i){ return i==='hoop'; }).length * 2;
-  var netAsmHrs  = day1.items.filter(function(i){ return i==='net';  }).length * 2;
+  var netAsmHrs  = 0; // inground nets handled separately in pb net section
   var mergedHrs  = day1.hrs;
 
+  var showCondenseToggle = items.length > ITEMS_PER_DAY_DEFAULT;
+
   return {
-    hoops      : hoops,
-    netCount   : netCount,
-    hasNet     : hasNet,
-    canMerge   : canMerge,
-    asmDays    : asmDays,
-    hoopAsmHrs : hoopAsmHrs,
-    netAsmHrs  : netAsmHrs,
-    mergedHrs  : mergedHrs,
-    totalAsmDays: asmDays.length
+    hoops            : hoops,
+    netCount         : netCount,
+    hasNet           : hasNet,
+    condensed        : condensed,
+    canMerge         : canMerge,
+    asmDays          : asmDays,
+    totalItems       : items.length,
+    hoopAsmHrs       : hoopAsmHrs,
+    netAsmHrs        : netAsmHrs,
+    mergedHrs        : mergedHrs,
+    totalAsmDays     : asmDays.length,
+    showCondenseToggle: showCondenseToggle
   };
 }
+
+
+// ─── UNIFIED ASSEMBLY LABOR RENDERER ────────────────────────────────────────
+// Single combined schedule for all non-lighting accessories.
+// Called once; replaces the 4 individual portable/tennis/surface-mount/hoop assembly blocks.
+
+function calcUnifiedAssemblyLabor(lr, otr, mk, trav) {
+  var staff      = 2;
+  var travelPrep = (trav * 2) + 1;
+  var ctx        = getCombinedAssemblyContext();
+
+  function dayCalc(workHrs) {
+    var regWork = Math.min(workHrs, Math.max(0, 8 - travelPrep));
+    var otWork  = Math.max(0, workHrs - regWork);
+    return {
+      workHrs  : workHrs,
+      staff    : staff,
+      travelHrs: travelPrep * staff,
+      regHrs   : regWork * staff,
+      otHrs    : otWork  * staff,
+      hasOT    : otWork > 0,
+      cost     : (regWork * staff * lr) + (otWork * staff * otr) + (travelPrep * staff * lr)
+    };
+  }
+
+  var asmDays = ctx.asmDays.map(function(d) {
+    var day = dayCalc(d.hrs);
+    day.itemTypes = d.items;
+    day.hasOT = d.hasOT || day.otHrs > 0;
+    return day;
+  });
+
+  var laborCost = asmDays.reduce(function(s, d){ return s + d.cost; }, 0);
+
+  // Surface mount materials (sleeve anchors)
+  var smCount  = getSurfaceMountNetCount();
+  var smMats   = smCount > 0 ? getSurfaceMountMaterials(smCount) : [];
+  var smMatTotal = smMats.reduce(function(s,m){ return s + m.total; }, 0);
+
+  var subtotal = laborCost + smMatTotal;
+  var markup   = subtotal * (mk / 100);
+
+  return {
+    asmDays   : asmDays,
+    laborCost : laborCost,
+    smMats    : smMats,
+    smMatTotal: smMatTotal,
+    subtotal  : subtotal,
+    markup    : markup,
+    total     : subtotal + markup,
+    ctx       : ctx,
+    staff     : staff,
+    travelPrep: travelPrep,
+    trav      : trav,
+    lr: lr, otr: otr, mk: mk
+  };
+}
+
+function itemTypeLabel(type) {
+  return type === 'hoop'         ? 'Hoop'
+       : type === 'portable'     ? 'Portable PB Net'
+       : type === 'surfaceMount' ? 'Surface Mount Net'
+       : type === 'tennis'       ? 'Tennis Net'
+       : type;
+}
+
+function renderUnifiedAssemblyEst() {
+  var items = getUnifiedAssemblyItems();
+  if (items.length === 0) return '';
+
+  var lr   = data.laborRate   !== undefined ? data.laborRate   : 30;
+  var otr  = data.otRate      !== undefined ? data.otRate      : 45;
+  var mk   = data.markupPct   !== undefined ? data.markupPct   : 50;
+  var trav = data.travelHours !== undefined ? data.travelHours : 0.5;
+
+  var e   = calcUnifiedAssemblyLabor(lr, otr, mk, trav);
+  var ctx = e.ctx;
+  data.unifiedAsmEst = e;
+
+  var inputStyle = 'width:58px;padding:3px 6px;border:1px solid #cbd5e1;border-radius:5px;font-size:0.85rem';
+
+  // ── Condensed toggle panel ─────────────────────────────────────────────────
+  var condensedNote = '';
+  if (ctx.showCondenseToggle) {
+    var wasC = data.hoopCondensed;
+    data.hoopCondensed = false;
+    var eDef = calcUnifiedAssemblyLabor(lr, otr, mk, trav);
+    data.hoopCondensed = true;
+    var eCon = calcUnifiedAssemblyLabor(lr, otr, mk, trav);
+    data.hoopCondensed = wasC;
+
+    var defDays = eDef.asmDays.length;
+    var conDays = eCon.asmDays.length;
+    var costDiff = eCon.laborCost - eDef.laborCost;
+    var diffStr  = (costDiff >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(costDiff)).toLocaleString();
+    var isOn     = !!data.hoopCondensed;
+    var activeE  = isOn ? eCon : eDef;
+    var daysSummary = activeE.asmDays.map(function(d, i) {
+      return 'Day ' + (i+1) + ': ' + d.workHrs + ' hrs' + (d.hasOT ? ' ⚡OT' : '');
+    }).join(' · ');
+
+    condensedNote = '<div style="margin:8px 0 4px;padding:10px 14px;background:#f0f9ff;'
+      + 'border:1.5px solid #bae6fd;border-radius:8px">'
+      + '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+      + '<div style="flex:1;min-width:160px">'
+      + '<div style="font-size:0.8rem;font-weight:700;color:#0369a1;margin-bottom:2px">Assembly Schedule Option</div>'
+      + '<div style="font-size:0.78rem;color:#334155">' + daysSummary + '</div>'
+      + '<div style="font-size:0.75rem;color:#64748b;margin-top:2px">'
+      + (isOn
+          ? 'Condensed to fewer days (OT applies). vs. ' + defDays + '-day default: ' + diffStr + ' labor.'
+          : 'Split to ' + defDays + ' days — no OT. Condense for ' + diffStr + ' labor (' + (costDiff >= 0 ? 'more cost, fewer days' : 'saves cost') + ').')
+      + '</div>'
+      + '</div>'
+      + '<button onclick="data.hoopCondensed=' + (!isOn) + ';refreshUnifiedAssemblyEst()" '
+      + 'style="flex-shrink:0;padding:7px 16px;border-radius:6px;font-family:\'Barlow Condensed\',sans-serif;'
+      + 'font-weight:700;font-size:0.82rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;'
+      + 'transition:all 0.15s;border:1.5px solid '
+      + (isOn ? '#0369a1;background:#0369a1;color:#fff' : '#bae6fd;background:#fff;color:#0369a1') + '">'
+      + (isOn ? '↕ Split to ' + defDays + ' Days' : '⚡ Condense to ' + conDays + ' Day' + (conDays > 1 ? 's' : ''))
+      + '</button>'
+      + '</div>'
+      + '</div>';
+  }
+
+  // ── Summary of what's being assembled ─────────────────────────────────────
+  var typeCounts = {};
+  items.forEach(function(i){ typeCounts[i.type] = (typeCounts[i.type]||0) + 1; });
+  var summaryParts = Object.keys(typeCounts).map(function(t){
+    return typeCounts[t] + ' ' + itemTypeLabel(t) + (typeCounts[t] > 1 ? 's' : '');
+  });
+
+  var html = '<div class="pb-est-wrap" style="margin-top:14px">';
+  html += '<div class="pb-est-header">'
+    + '<span class="pb-est-title">🔧 Combined Accessory Assembly</span>'
+    + '<span class="pb-est-tag">' + items.length + ' Item' + (items.length > 1 ? 's' : '') + '</span>'
+    + '</div>'
+    + '<div class="pb-est-meta">' + summaryParts.join(' · ') + '</div>'
+    + condensedNote;
+
+  // ── Labor settings ─────────────────────────────────────────────────────────
+  html += '<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;'
+    + 'margin:10px 0 6px;padding:8px 10px;background:#f8fafc;border-radius:7px;border:1px solid #e2e8f0">'
+    + '<span style="font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;'
+    + 'letter-spacing:0.07em;white-space:nowrap">Labor Settings</span>'
+    + '<label style="font-size:0.82rem;color:#475569;display:flex;align-items:center;gap:5px">'
+    + 'Travel&nbsp;<input type="number" id="uasmTrav" value="' + trav + '" min="0.25" step="0.25" style="' + inputStyle + '"'
+    + ' onchange="data.travelHours=+this.value;refreshUnifiedAssemblyEst()"'
+    + ' onblur="data.travelHours=+this.value;refreshUnifiedAssemblyEst()">&nbsp;hr one-way</label>'
+    + '<label style="font-size:0.82rem;color:#475569;display:flex;align-items:center;gap:5px">'
+    + 'Regular&nbsp;$<input type="number" id="uasmLR" value="' + lr + '" min="0" step="1" style="' + inputStyle + '"'
+    + ' onchange="data.laborRate=+this.value;refreshUnifiedAssemblyEst()"'
+    + ' onblur="data.laborRate=+this.value;refreshUnifiedAssemblyEst()">/hr</label>'
+    + '<label style="font-size:0.82rem;color:#475569;display:flex;align-items:center;gap:5px">'
+    + 'OT&nbsp;$<input type="number" id="uasmOT" value="' + otr + '" min="0" step="1" style="' + inputStyle + '"'
+    + ' onchange="data.otRate=+this.value;refreshUnifiedAssemblyEst()"'
+    + ' onblur="data.otRate=+this.value;refreshUnifiedAssemblyEst()">/hr</label>'
+    + '</div>';
+
+  // ── Schedule table ─────────────────────────────────────────────────────────
+  html += '<div class="pb-section-label" style="margin-top:8px">Assembly Schedule</div>'
+    + '<table class="pb-table"><thead><tr>'
+    + '<th style="text-align:left">Task</th>'
+    + '<th class="tc">Staff</th><th class="tc">Work&nbsp;Hrs</th>'
+    + '<th class="tc">Travel&nbsp;Hrs</th><th class="tc">Reg&nbsp;Hrs</th>'
+    + '<th class="tc">OT&nbsp;Hrs</th><th class="tr">Day Cost</th>'
+    + '</tr></thead><tbody>'
+    + '<tr style="background:#f8fafc"><td colspan="7" style="font-size:0.77rem;color:#64748b;padding:4px 8px">'
+    + '&#9432; Travel prep: ' + e.travelPrep + ' hrs/person/day'
+    + ' (' + trav + ' hr × 2 + 1 prep) &nbsp;·&nbsp; Reg $' + lr + '/hr &nbsp;·&nbsp; OT $' + otr + '/hr'
+    + '</td></tr>';
+
+  // Anchor rows from hoop labor (if hoops present) — pulled from calcHoopLabor
+  var hoopCount = getHoopCount();
+  if (hoopCount > 0) {
+    var eHoop = calcHoopLabor(hoopCount, lr, otr, mk, trav);
+    (eHoop.anchorDays || []).forEach(function(ad) {
+      html += '<tr>'
+        + '<td>' + (ad.label || 'Set Anchor') + '</td>'
+        + '<td class="tc">' + ad.staff + '</td>'
+        + '<td class="tc">' + ad.workHrs + '</td>'
+        + '<td class="tc">' + ad.travelHrs + '</td>'
+        + '<td class="tc">' + ad.regHrs + '</td>'
+        + '<td class="tc">' + (ad.otHrs > 0 ? '<span class="pb-ot-pill">' + ad.otHrs + ' OT</span>' : '—') + '</td>'
+        + '<td class="tr"><strong>$' + Math.round(ad.cost).toLocaleString() + '</strong></td>'
+        + '</tr>';
+    });
+  }
+
+  // Assembly day rows
+  var anchorDayCount = hoopCount > 0 ? calcHoopLabor(hoopCount, lr, otr, mk, trav).anchorDays.length : 0;
+  e.asmDays.forEach(function(asmDay, di) {
+    var typesThis = asmDay.itemTypes || [];
+    var tc = {};
+    typesThis.forEach(function(t){ tc[t] = (tc[t]||0) + 1; });
+    var parts = Object.keys(tc).map(function(t){
+      return tc[t] + ' ' + itemTypeLabel(t) + (tc[t] > 1 ? 's' : '');
+    });
+    var otBadge = asmDay.hasOT ? ' <span class="pb-ot-pill" style="font-size:0.72rem;padding:1px 6px">⚡ OT</span>' : '';
+    var lbl = 'Assemble ' + parts.join(' + ')
+      + (e.asmDays.length > 1 ? ' — Day ' + (anchorDayCount + di + 1) : '')
+      + ' (' + asmDay.workHrs + ' hrs × ' + e.staff + ' crew)' + otBadge;
+    html += '<tr>'
+      + '<td>' + lbl + '</td>'
+      + '<td class="tc">' + asmDay.staff + '</td>'
+      + '<td class="tc">' + asmDay.workHrs + '</td>'
+      + '<td class="tc">' + asmDay.travelHrs + '</td>'
+      + '<td class="tc">' + asmDay.regHrs + '</td>'
+      + '<td class="tc">' + (asmDay.otHrs > 0 ? '<span class="pb-ot-pill">' + asmDay.otHrs + ' OT</span>' : '—') + '</td>'
+      + '<td class="tr"><strong>$' + Math.round(asmDay.cost).toLocaleString() + '</strong></td>'
+      + '</tr>';
+  });
+
+  // Totals row
+  var anchorCostTotal = hoopCount > 0 ? calcHoopLabor(hoopCount, lr, otr, mk, trav).anchorTotalCost : 0;
+  var totWork = e.asmDays.reduce(function(s,d){return s+d.workHrs;},0);
+  var totTrav = e.asmDays.reduce(function(s,d){return s+d.travelHrs;},0);
+  var totReg  = e.asmDays.reduce(function(s,d){return s+d.regHrs;},0);
+  var totOT   = e.asmDays.reduce(function(s,d){return s+d.otHrs;},0);
+  if (hoopCount > 0) {
+    var eH2 = calcHoopLabor(hoopCount, lr, otr, mk, trav);
+    totWork += eH2.anchorDays.reduce(function(s,d){return s+d.workHrs;},0);
+    totTrav += eH2.anchorDays.reduce(function(s,d){return s+d.travelHrs;},0);
+    totReg  += eH2.anchorDays.reduce(function(s,d){return s+d.regHrs;},0);
+    totOT   += eH2.anchorDays.reduce(function(s,d){return s+d.otHrs;},0);
+  }
+  html += '<tr class="pb-subtotal-row">'
+    + '<td style="font-size:0.8rem;color:#64748b">Totals</td>'
+    + '<td class="tc" style="font-size:0.8rem;color:#64748b">' + e.staff + '</td>'
+    + '<td class="tc" style="font-size:0.8rem;color:#64748b">' + totWork + '</td>'
+    + '<td class="tc" style="font-size:0.8rem;color:#64748b">' + totTrav + '</td>'
+    + '<td class="tc" style="font-size:0.8rem;color:#64748b">' + totReg  + '</td>'
+    + '<td class="tc" style="font-size:0.8rem;color:#64748b">' + (totOT > 0 ? totOT : '—') + '</td>'
+    + '<td class="tr"><strong>$' + Math.round(e.laborCost + anchorCostTotal).toLocaleString() + '</strong></td>'
+    + '</tr>';
+  html += '</tbody></table>';
+
+  // ── Hoop materials ─────────────────────────────────────────────────────────
+  if (hoopCount > 0) {
+    var eH3  = calcHoopLabor(hoopCount, lr, otr, mk, trav);
+    var hMats = eH3.mats;
+    html += '<div class="pb-section-label" style="margin-top:14px">Hoop Installation Materials</div>'
+      + '<table class="pb-table"><thead><tr>'
+      + '<th style="text-align:left">Material</th><th class="tc">Qty</th>'
+      + '<th class="tc">Unit $</th><th class="tr">Total</th>'
+      + '</tr></thead><tbody>';
+    hMats.forEach(function(m) {
+      html += '<tr><td>' + m.name + '</td><td class="tc">' + m.qty + '</td>'
+        + '<td class="tc">$' + m.unitCost + '</td>'
+        + '<td class="tr">$' + (m.unitCost * m.qty).toLocaleString() + '</td></tr>';
+    });
+    html += '<tr class="pb-subtotal-row"><td colspan="3" style="text-align:right;font-size:0.8rem;color:#64748b">Hoop materials total</td>'
+      + '<td class="tr"><strong>$' + eH3.matTotal.toLocaleString() + '</strong></td></tr>';
+    html += '</tbody></table>';
+  }
+
+  // ── Surface mount materials ────────────────────────────────────────────────
+  if (e.smMats.length > 0) {
+    html += '<div class="pb-section-label" style="margin-top:14px">Surface Mount Materials</div>'
+      + '<table class="pb-table"><thead><tr>'
+      + '<th style="text-align:left">Material</th><th class="tc">Qty</th>'
+      + '<th class="tc">Unit $</th><th class="tr">Total</th>'
+      + '</tr></thead><tbody>';
+    e.smMats.forEach(function(m) {
+      html += '<tr><td>' + m.name + '</td><td class="tc">' + m.qty + '</td>'
+        + '<td class="tc">$' + m.unitCost + '</td>'
+        + '<td class="tr">$' + m.total.toLocaleString() + '</td></tr>';
+    });
+    html += '<tr class="pb-subtotal-row"><td colspan="3" style="text-align:right;font-size:0.8rem;color:#64748b">Surface mount materials total</td>'
+      + '<td class="tr"><strong>$' + e.smMatTotal.toLocaleString() + '</strong></td></tr>';
+    html += '</tbody></table>';
+  }
+
+  // ── Summary totals box ────────────────────────────────────────────────────
+  var hoopMats = hoopCount > 0 ? calcHoopLabor(hoopCount, lr, otr, mk, trav).matTotal : 0;
+  var totalMats = hoopMats + e.smMatTotal;
+  var anchorLaborTotal = hoopCount > 0 ? calcHoopLabor(hoopCount, lr, otr, mk, trav).anchorTotalCost : 0;
+  var totalLabor = e.laborCost + anchorLaborTotal;
+  var grandSub   = totalMats + totalLabor;
+  var grandMk    = grandSub * (mk / 100);
+  var grandTotal = grandSub + grandMk;
+
+  html += '<div class="pb-total-box" style="margin-top:12px">';
+  if (totalMats > 0) {
+    html += '<div class="pb-total-row"><span>Materials</span><span>$' + totalMats.toLocaleString() + '</span></div>';
+  }
+  if (anchorLaborTotal > 0) {
+    html += '<div class="pb-total-row"><span>Labor — anchor' + (hoopCount > 2 ? 's' : '') + '</span>'
+      + '<span>$' + Math.round(anchorLaborTotal).toLocaleString() + '</span></div>';
+  }
+  html += '<div class="pb-total-row"><span>Labor — assembly'
+    + (e.asmDays.length > 1 ? ' (' + e.asmDays.length + ' days)' : '') + '</span>'
+    + '<span>$' + Math.round(e.laborCost).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row" style="border-top:1px solid #e2e8f0;padding-top:5px;margin-top:4px">'
+    + '<span>Subtotal</span><span>$' + Math.round(grandSub).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row"><span>Markup (' + mk + '%)</span>'
+    + '<span>$' + Math.round(grandMk).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row pb-total-grand"><span>Total Installation Estimate</span>'
+    + '<span>$' + Math.round(grandTotal).toLocaleString() + '</span></div>'
+    + '</div>';
+
+  html += '</div>';
+  return html;
+}
+
+function refreshUnifiedAssemblyEst() {
+  var wrap = document.getElementById('unified-asm-est');
+  if (!wrap) return;
+  wrap.innerHTML = getUnifiedAssemblyItems().length > 0 ? renderUnifiedAssemblyEst() : '';
+}
+
 
 function calcHoopLabor(hoopCount, lr, otr, mk, trav) {
   if (hoopCount === 0) return null;
   var staff      = 2;
   var travelPrep = (trav * 2) + 1;
-  var n          = Math.min(hoopCount, 2); // anchor/material spec caps at 2
+  var n          = Math.min(hoopCount, 2); // material spec caps at 2
 
   function dayCalc(workHrs) {
     var regWork = Math.min(workHrs, Math.max(0, 8 - travelPrep));
@@ -2474,17 +2856,59 @@ function calcHoopLabor(hoopCount, lr, otr, mk, trav) {
 
   var ctx = getCombinedAssemblyContext(); // check if net + hoops should merge
 
-  // Anchor hours: 1 hoop=4hrs, 2+ hoops=6hrs
-  var anchorWorkHrs = (n === 1) ? 4 : 6;
-  var anchorDay     = dayCalc(anchorWorkHrs);
+  // ── Anchor days ──────────────────────────────────────────────────────────
+  // Anchors are set in pairs (2 per day = 6 hrs). Odd hoop gets its own day (4 hrs).
+  // 1 hoop  → 1 day  (4 hrs)
+  // 2 hoops → 1 day  (6 hrs)
+  // 3 hoops → 2 days (6 + 4 hrs)
+  // 4 hoops → 2 days (6 + 6 hrs)
+  // 5 hoops → 3 days (6 + 6 + 4 hrs)
+  // 6 hoops → 3 days (6 + 6 + 6 hrs)  ... and so on
+  var anchorDays = [];
+  if (hoopCount === 1) {
+    anchorDays.push(Object.assign(dayCalc(4), {
+      label: 'Set Anchor — 1 hoop (4 hrs × ' + staff + ' crew)'
+    }));
+  } else {
+    var remaining = hoopCount;
+    var dayNum    = 1;
+    var hoopNum   = 1;
+    while (remaining > 0) {
+      if (remaining === 1) {
+        // Last lone hoop — solo anchor day
+        anchorDays.push(Object.assign(dayCalc(4), {
+          label: 'Set Anchor — Hoop ' + hoopNum + ' of ' + hoopCount
+               + ' (4 hrs × ' + staff + ' crew)'
+        }));
+        remaining -= 1;
+        hoopNum   += 1;
+      } else {
+        // Set 2 anchors this day
+        var endHoop = hoopNum + 1;
+        anchorDays.push(Object.assign(dayCalc(6), {
+          label: 'Set Anchor ×2 — Hoops ' + hoopNum + '–' + endHoop + ' of ' + hoopCount
+               + ' (6 hrs × ' + staff + ' crew)'
+        }));
+        remaining -= 2;
+        hoopNum   += 2;
+      }
+      dayNum++;
+    }
+  }
+
+  // Keep anchorDay pointing to first anchor day for backward-compat display
+  var anchorDay     = anchorDays[0];
+  var anchorTotalCost = anchorDays.reduce(function(s, d){ return s + d.cost; }, 0);
 
   var assemblyDay, assemblyLabel, laborCost;
 
-  // Build assembly days from bin-pack context
-  // ctx.asmDays is the full schedule for ALL accessories (hoops + nets)
-  // calcHoopLabor owns the cost of ALL assembly days (net section shows marginal only)
-  var allAsmDays = ctx.asmDays.map(function(d) { return dayCalc(d.hrs); });
-  assemblyDay   = allAsmDays[0] || dayCalc(hoopCount * 2); // first day (for display compat)
+  // Build assembly days from bin-pack context (hrs already set, hasOT flag preserved)
+  var allAsmDays = ctx.asmDays.map(function(d) {
+    var day = dayCalc(d.hrs);
+    day.hasOT = d.hasOT || day.otHrs > 0;
+    return day;
+  });
+  assemblyDay   = allAsmDays[0] || dayCalc(hoopCount * 2);
   var asmTotalCost = allAsmDays.reduce(function(s, d) { return s + d.cost; }, 0);
 
   if (ctx.canMerge) {
@@ -2496,9 +2920,9 @@ function calcHoopLabor(hoopCount, lr, otr, mk, trav) {
     assemblyLabel = 'Assemble Hoop' + (hoopCount > 1 ? 's' : '')
                   + ' (' + asmHrs + ' hrs × ' + staff + ' crew, separate day)';
   }
-  laborCost = anchorDay.cost + asmTotalCost;
+  laborCost = anchorTotalCost + asmTotalCost;
 
-  // Materials
+  // Materials (still capped at 2-hoop spec for material quantities)
   var mats     = getHoopMaterials(n);
   var matTotal = mats.reduce(function(s, m){ return s + (m.unitCost * m.qty); }, 0);
 
@@ -2511,10 +2935,12 @@ function calcHoopLabor(hoopCount, lr, otr, mk, trav) {
     staff        : staff,
     travelPrep   : travelPrep,
     trav         : trav,
-    anchorDay    : anchorDay,
+    anchorDay    : anchorDay,       // first anchor day (display compat)
+    anchorDays   : anchorDays,      // all anchor days (new)
     assemblyDay  : assemblyDay,
     allAsmDays   : allAsmDays,
     asmTotalCost : asmTotalCost,
+    anchorTotalCost: anchorTotalCost,
     assemblyLabel: assemblyLabel,
     ctx          : ctx,
     mats         : mats,
@@ -2546,6 +2972,51 @@ function renderHoopLaborEst() {
   var ctx   = e.ctx;
   var staff = 2;
 
+  // ── Condensed toggle: cost comparison panel ─────────────────────────────
+  var condensedNote = '';
+  if (ctx.showCondenseToggle) {
+    var wasCondensed = data.hoopCondensed;
+    data.hoopCondensed = false;
+    var eDefault   = calcHoopLabor(hoopCount, lr, otr, mk, trav);
+    data.hoopCondensed = true;
+    var eCondensed = calcHoopLabor(hoopCount, lr, otr, mk, trav);
+    data.hoopCondensed = wasCondensed;
+
+    var defDays  = eDefault.allAsmDays.length;
+    var conDays  = eCondensed.allAsmDays.length;
+    var costDiff = eCondensed.laborCost - eDefault.laborCost;
+    var diffStr  = (costDiff >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(costDiff)).toLocaleString();
+    var isOn     = !!data.hoopCondensed;
+    var activeE  = isOn ? eCondensed : eDefault;
+    var activeDays = activeE.allAsmDays;
+
+    var daysSummary = activeDays.map(function(d, i) {
+      return (i + 1) + ': ' + d.workHrs + ' hrs' + (d.hasOT ? ' ⚡OT' : '');
+    }).join(' · ');
+
+    condensedNote = '<div style="margin:10px 0 4px;padding:11px 14px;background:#f0f9ff;'
+      + 'border:1.5px solid #bae6fd;border-radius:8px">'
+      + '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+      + '<div style="flex:1;min-width:160px">'
+      + '<div style="font-size:0.8rem;font-weight:700;color:#0369a1;margin-bottom:3px">Assembly Schedule</div>'
+      + '<div style="font-size:0.78rem;color:#334155">' + daysSummary + '</div>'
+      + '<div style="font-size:0.75rem;color:#64748b;margin-top:3px">'
+      + (isOn
+          ? 'Condensed vs. split saves a trip day. Labor cost: ' + diffStr + ' vs. ' + defDays + '-day default.'
+          : 'Split across ' + defDays + ' days keeps crew at 3 items/day — no OT. Condense saves a day for ' + diffStr + ' labor.')
+      + '</div>'
+      + '</div>'
+      + '<button onclick="data.hoopCondensed=' + (!isOn) + ';refreshHoopLaborEst()" '
+      + 'style="flex-shrink:0;padding:7px 16px;border-radius:6px;font-family:\'Barlow Condensed\',sans-serif;'
+      + 'font-weight:700;font-size:0.82rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;'
+      + 'transition:all 0.15s;border:1.5px solid '
+      + (isOn ? '#0369a1;background:#0369a1;color:#fff' : '#bae6fd;background:#fff;color:#0369a1') + '">'
+      + (isOn ? '↕ Split to ' + defDays + ' Days' : '⚡ Condense to ' + conDays + ' Day' + (conDays > 1 ? 's' : ''))
+      + '</button>'
+      + '</div>'
+      + '</div>';
+  }
+
   // ── Merge note ────────────────────────────────────────────────────────────
   var schedNote = '';
   if (ctx.canMerge) {
@@ -2569,6 +3040,7 @@ function renderHoopLaborEst() {
     + '<span class="pb-est-title">🏀 Basketball Hoop Installation</span>'
     + '<span class="pb-est-tag">' + hoopCount + ' Hoop' + (hoopCount > 1 ? 's' : '') + '</span>'
     + '</div>'
+    + condensedNote
     + schedNote;
 
   // ── Editable inputs row: Travel + Labor Rates ─────────────────────────────
@@ -2633,12 +3105,14 @@ function renderHoopLaborEst() {
     + '/hr &nbsp;·&nbsp; OT rate $' + otr + '/hr'
     + '</td></tr>';
 
-  // Anchor row
-  var anchorLabel = 'Set Anchor' + (hoopCount > 1 ? ' ×' + hoopCount : '')
-    + ' — Day 1 (main build, ' + e.anchorDay.workHrs + ' work hrs)';
-  html += rowHtml(anchorLabel, e.anchorDay);
+  // Anchor rows — one per anchor day (1 day for 1-2 hoops, 2 days for 3 hoops)
+  e.anchorDays.forEach(function(anchorDay, ai) {
+    html += rowHtml(anchorDay.label, anchorDay);
+  });
 
   // Assembly rows — one per bin-packed day
+  // Day numbering starts after all anchor days
+  var asmDayOffset = e.anchorDays.length + 1;
   e.allAsmDays.forEach(function(asmDay, di) {
     var dayDef = ctx.asmDays[di];
     var hoopsThisDay = dayDef ? dayDef.items.filter(function(i){ return i==='hoop'; }).length : 0;
@@ -2646,16 +3120,21 @@ function renderHoopLaborEst() {
     var parts = [];
     if (hoopsThisDay > 0) parts.push(hoopsThisDay + ' hoop' + (hoopsThisDay>1?'s':''));
     if (netsThisDay  > 0) parts.push(netsThisDay  + ' net'  + (netsThisDay >1?'s':''));
+    var otBadge = asmDay.hasOT ? ' <span class="pb-ot-pill" style="font-size:0.72rem;padding:1px 6px">⚡ OT day</span>' : '';
     var asmLabel = 'Assemble ' + parts.join(' + ')
-      + ' — Day ' + (di + 2) + ' (' + asmDay.workHrs + ' work hrs, ' + staff + ' crew)';
+      + ' — Day ' + (asmDayOffset + di) + ' (' + asmDay.workHrs + ' work hrs, ' + staff + ' crew)' + otBadge;
     html += rowHtml(asmLabel, asmDay);
   });
 
   // Totals row
-  var totWork = e.anchorDay.workHrs + e.allAsmDays.reduce(function(s,d){return s+d.workHrs;},0);
-  var totTrav = e.anchorDay.travelHrs + e.allAsmDays.reduce(function(s,d){return s+d.travelHrs;},0);
-  var totReg  = e.anchorDay.regHrs   + e.allAsmDays.reduce(function(s,d){return s+d.regHrs;},0);
-  var totOT   = e.anchorDay.otHrs    + e.allAsmDays.reduce(function(s,d){return s+d.otHrs;},0);
+  var totWork = e.anchorDays.reduce(function(s,d){return s+d.workHrs;},0)
+              + e.allAsmDays.reduce(function(s,d){return s+d.workHrs;},0);
+  var totTrav = e.anchorDays.reduce(function(s,d){return s+d.travelHrs;},0)
+              + e.allAsmDays.reduce(function(s,d){return s+d.travelHrs;},0);
+  var totReg  = e.anchorDays.reduce(function(s,d){return s+d.regHrs;},0)
+              + e.allAsmDays.reduce(function(s,d){return s+d.regHrs;},0);
+  var totOT   = e.anchorDays.reduce(function(s,d){return s+d.otHrs;},0)
+              + e.allAsmDays.reduce(function(s,d){return s+d.otHrs;},0);
   html += '<tr class="pb-subtotal-row">'
     + '<td style="font-size:0.8rem;color:#64748b">Totals</td>'
     + '<td class="tc" style="font-size:0.8rem;color:#64748b">' + staff + '</td>'
@@ -2705,8 +3184,8 @@ function renderHoopLaborEst() {
   html += '<div class="pb-total-box" style="margin-top:12px">'
     + '<div class="pb-total-row"><span>Materials</span>'
     + '<span>$' + e.matTotal.toLocaleString() + '</span></div>'
-    + '<div class="pb-total-row"><span>Labor — anchor day</span>'
-    + '<span>$' + Math.round(e.anchorDay.cost).toLocaleString() + '</span></div>'
+    + '<div class="pb-total-row"><span>Labor — anchor' + (e.anchorDays.length > 1 ? ' (' + e.anchorDays.length + ' days)' : ' day') + '</span>'
+    + '<span>$' + Math.round(e.anchorTotalCost).toLocaleString() + '</span></div>'
     + '<div class="pb-total-row"><span>Labor — assembly'
     + (e.allAsmDays.length > 1 ? ' (' + e.allAsmDays.length + ' days)' : ' day')
     + (ctx.canMerge ? ' (incl. PB net)' : '') + '</span>'
@@ -2726,6 +3205,7 @@ function renderHoopLaborEst() {
 
 
 function refreshHoopLaborEst() {
+  refreshUnifiedAssemblyEst(); return; // now unified
   var wrap = document.getElementById('hoop-labor-est');
   if (!wrap) return;
   var count = getHoopCount();
@@ -3204,13 +3684,24 @@ function buildHoopLaborReport() {
   }
   if (!e) return '';
 
-  var anchorLabel = 'Set Anchor' + (e.hoopCount > 1 ? ' ×' + e.hoopCount : '') + ' (Day 1 — main build, ' + e.anchorDay.workHrs + ' work hrs)';
-
   var matRows = e.mats.map(function(m) {
     return '<tr><td>' + m.name + '</td>'
       + '<td style="text-align:center">' + m.qty + '</td>'
       + '<td style="text-align:center">$' + m.unitCost + '</td>'
       + '<td style="text-align:right">$' + (m.unitCost * m.qty).toLocaleString() + '</td></tr>';
+  }).join('');
+
+  var anchorDays = e.anchorDays || [e.anchorDay];
+  var anchorDayCount = anchorDays.length;
+
+  var anchorRows = anchorDays.map(function(ad) {
+    return '<tr><td>' + (ad.label || ('Set Anchor (' + ad.workHrs + ' work hrs)')) + '</td>'
+      + '<td style="text-align:center">' + ad.staff + '</td>'
+      + '<td style="text-align:center">' + ad.workHrs + '</td>'
+      + '<td style="text-align:center">' + ad.travelHrs + '</td>'
+      + '<td style="text-align:center">' + ad.regHrs + '</td>'
+      + '<td style="text-align:center">' + (ad.otHrs > 0 ? ad.otHrs + ' OT' : '—') + '</td>'
+      + '<td style="text-align:right">$' + Math.round(ad.cost).toLocaleString() + '</td></tr>';
   }).join('');
 
   return '<div class="report-section"><div class="report-section-title">Basketball Hoop Installation Labor</div>'
@@ -3223,13 +3714,7 @@ function buildHoopLaborReport() {
     + '<th style="text-align:center">Travel Hrs</th><th style="text-align:center">Reg Hrs</th>'
     + '<th style="text-align:center">OT Hrs</th><th style="text-align:right">Cost</th>'
     + '</tr></thead><tbody>'
-    + '<tr><td>' + anchorLabel + '</td>'
-    + '<td style="text-align:center">' + e.anchorDay.staff + '</td>'
-    + '<td style="text-align:center">' + e.anchorDay.workHrs + '</td>'
-    + '<td style="text-align:center">' + e.anchorDay.travelHrs + '</td>'
-    + '<td style="text-align:center">' + e.anchorDay.regHrs + '</td>'
-    + '<td style="text-align:center">' + (e.anchorDay.otHrs > 0 ? e.anchorDay.otHrs + ' OT' : '—') + '</td>'
-    + '<td style="text-align:right">$' + Math.round(e.anchorDay.cost).toLocaleString() + '</td></tr>'
+    + anchorRows
     + (function(){
         var rows = '';
         var allAsm = e.allAsmDays || [e.assemblyDay];
@@ -3242,8 +3727,8 @@ function buildHoopLaborReport() {
           if (hoopsD > 0) parts.push(hoopsD + ' hoop' + (hoopsD>1?'s':''));
           if (netsD  > 0) parts.push(netsD  + ' net'  + (netsD >1?'s':''));
           var lbl = parts.length
-            ? 'Assemble ' + parts.join(' + ') + ' — Day ' + (di+2) + ' (' + asmDay.workHrs + ' work hrs)'
-            : 'Assemble — Day ' + (di+2) + ' (' + asmDay.workHrs + ' work hrs)';
+            ? 'Assemble ' + parts.join(' + ') + ' — Day ' + (anchorDayCount + di + 1) + ' (' + asmDay.workHrs + ' work hrs)'
+            : 'Assemble — Day ' + (anchorDayCount + di + 1) + ' (' + asmDay.workHrs + ' work hrs)';
           rows += '<tr><td>' + lbl + '</td>'
             + '<td style="text-align:center">' + (asmDay.staff || 2) + '</td>'
             + '<td style="text-align:center">' + asmDay.workHrs + '</td>'
@@ -3789,7 +4274,7 @@ function renderTennisNets() {
 
   // ── Labor estimator — only when a net is selected ───────────────────────
   if (isSelected) {
-    html += renderTennisNetLaborEst();
+    // Tennis net labor now in unified assembly block
   }
 
   // ── Selection summary ──────────────────────────────────────────────────────
@@ -4093,9 +4578,7 @@ function renderSurfaceMountLaborEst() {
 }
 
 function refreshSurfaceMountLaborEst() {
-  var wrap = document.getElementById('sm-net-labor-est');
-  if (!wrap) return;
-  wrap.innerHTML = getSurfaceMountNetCount() > 0 ? renderSurfaceMountLaborEst() : '';
+  refreshUnifiedAssemblyEst(); // now unified
 }
 
 function resetSMNetMaterials() {
@@ -4404,76 +4887,152 @@ function lookupTravelTime(address) {
 
 function setPaintType(type) {
   data.paintType = type;
+  // Clear any previously customized materials so the correct defaults load
+  data.paintMaterials = null;
   renderStep();
 }
 
-// ─── DEFAULT MATERIAL LIST (from Tennis_Paint_New_Asphalt.xlsx) ─────────────
-var DEFAULT_PAINT_MATERIALS = [
-  { name: 'Acrylic Resurfacer',  cost: 780,  qty: 3,  freight: 800, scale: true  },
-  { name: 'Coarse Sealer Sand',  cost: 9,    qty: 39, freight: 0,   scale: true  },
-  { name: 'Neutral Concentrate', cost: 711,  qty: 2,  freight: 0,   scale: true  },
-  { name: 'Color Plus Tint',     cost: 81,   qty: 8,  freight: 0,   scale: true  },
-  { name: 'Fine Sand',           cost: 14,   qty: 16, freight: 0,   scale: true  },
-  { name: 'Patch Binder',        cost: 143,  qty: 1,  freight: 0,   scale: false },
-  { name: 'TC Line Paint',       cost: 37,   qty: 1,  freight: 0,   scale: false },
-  { name: 'Line Primer',         cost: 23,   qty: 1,  freight: 0,   scale: false },
-  { name: 'Squeegee',            cost: 50,   qty: 1,  freight: 0,   scale: false },
-  { name: 'Tar Paper',           cost: 37,   qty: 1,  freight: 0,   scale: false },
-  { name: 'Masking Tape',        cost: 25,   qty: 3,  freight: 0,   scale: false },
-  { name: 'Utility Blades',      cost: 2,    qty: 2,  freight: 0,   scale: false },
-  { name: 'String Line',         cost: 11,   qty: 1,  freight: 0,   scale: false },
-  { name: 'Buckets',             cost: 4,    qty: 3,  freight: 0,   scale: false },
-  { name: 'Bucket Lids',         cost: 3,    qty: 2,  freight: 0,   scale: false },
-  { name: 'Roller Refills',      cost: 5,    qty: 1,  freight: 0,   scale: false },
-  { name: 'Rosin Paper',         cost: 14,   qty: 1,  freight: 0,   scale: false },
-  { name: 'Rub Bricks',          cost: 17,   qty: 4,  freight: 0,   scale: false },
-  { name: 'Sanding Disc',        cost: 10.5, qty: 1,  freight: 0,   scale: false },
-  { name: 'Portland Cement',     cost: 20,   qty: 1,  freight: 0,   scale: false },
-  { name: 'Power Washer Rental', cost: 150,  qty: 1,  freight: 0,   scale: false },
-  { name: 'Trash Removal',       cost: 300,  qty: 1,  freight: 0,   scale: false },
-  { name: 'Gasoline',            cost: 3.5,  qty: 5,  freight: 0,   scale: false },
+// ─── ASPHALT (new) — Tennis_Paint_New_Asphalt.xlsx ──────────────────────────
+var DEFAULT_PAINT_MATERIALS_ASPHALT = [
+  { name: 'Acrylic Resurfacer 55 Gal',       cost: 780,  qty: 3,  freight: 800, scale: true  },
+  { name: 'Coarse Sealer Sand 50lbs',         cost: 9,    qty: 39, freight: 0,   scale: true  },
+  { name: 'Neutral Concentrate 55 gal',       cost: 711,  qty: 2,  freight: 0,   scale: true  },
+  { name: 'Color Plus Tint 1 gal',            cost: 81,   qty: 8,  freight: 0,   scale: true  },
+  { name: 'Fine Sand for Color 50lbs',        cost: 14,   qty: 16, freight: 0,   scale: true  },
+  { name: 'Patch Binder',                     cost: 143,  qty: 1,  freight: 0,   scale: false },
+  { name: 'TC Line Paint',                    cost: 37,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Stripe Rite Line Primer 1 gal',    cost: 23,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Squeegee Durometer',               cost: 50,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Tar Paper Roll',                   cost: 37,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Masking Tape 1.88 6pack',          cost: 25,   qty: 3,  freight: 0,   scale: false },
+  { name: 'Utility Blade Refill 5 pack',      cost: 2,    qty: 2,  freight: 0,   scale: false },
+  { name: 'Mason String Line 500 ft',         cost: 11,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Bucket 5 gal',                     cost: 4,    qty: 3,  freight: 0,   scale: false },
+  { name: 'Bucket Lid',                       cost: 3,    qty: 2,  freight: 0,   scale: false },
+  { name: '3" x 3/8 Nap Roller Refill 2pack', cost: 5,    qty: 1,  freight: 0,   scale: false },
+  { name: "3' x 166' Rosin Paper Roll",       cost: 14,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Rub Bricks',                       cost: 17,   qty: 4,  freight: 0,   scale: false },
+  { name: 'Sanding Disc',                     cost: 10.5, qty: 1,  freight: 0,   scale: false },
+  { name: 'Portland Cement',                  cost: 20,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Pressure Washer Rental',           cost: 153,  qty: 2,  freight: 0,   scale: false },
+  { name: 'Gasoline for Generator/Washer',    cost: 3.5,  qty: 10, freight: 0,   scale: false },
 ];
 
+// Labor schedule — Asphalt (5 days): from Tennis_Paint_New_Asphalt.xlsx
+// Day 1 Powerwash: 1 staff, 5 hrs | Days 2-5: 2 staff, [5,6,5,5] hrs
+var LABOR_SCHEDULE_ASPHALT = [
+  { label: 'Day 1 — Powerwash Court',          staff: 1, workHrs: 5 },
+  { label: 'Day 2 — Apply Resurfacer x 2',     staff: 2, workHrs: 5 },
+  { label: 'Day 3 — Paint Inbounds x 2 Coats', staff: 2, workHrs: 6 },
+  { label: 'Day 4 — Paint OOB x 2 Coats',      staff: 2, workHrs: 5 },
+  { label: 'Day 5 — Paint Tennis Game Lines',   staff: 2, workHrs: 5 },
+];
+
+// ─── CONCRETE — Tennis_Paint_Template_Concrete.xlsx ─────────────────────────
+// Key differences vs asphalt:
+//   • Adds Adhesion Promoter (replaces one coat of resurfacer)
+//   • Only 1 coat of resurfacer (1 drum 55gal + 1 pail 5gal) instead of 3 drums
+//   • Adds Muriatic Acid for acid etching
+//   • 6-day labor schedule including powerwash + acid etch days
+var DEFAULT_PAINT_MATERIALS_CONCRETE = [
+  { name: 'Acrylic Resurfacer 55 Gal',       cost: 780,  qty: 1,  freight: 800, scale: true  },
+  { name: 'Acrylic Resurfacer 5 Gal',         cost: 77,   qty: 5,  freight: 0,   scale: true  },
+  { name: 'Coarse Sealer Sand 50lbs',         cost: 9,    qty: 18, freight: 0,   scale: true  },
+  { name: 'Neutral Concentrate 55 gal',       cost: 711,  qty: 2,  freight: 0,   scale: true  },
+  { name: 'Color Plus Tint 1 gal',            cost: 81,   qty: 8,  freight: 0,   scale: true  },
+  { name: 'Fine Sand for Color 50lbs',        cost: 14,   qty: 16, freight: 0,   scale: true  },
+  { name: 'Adhesion Promoter 5 gal',          cost: 87,   qty: 7,  freight: 0,   scale: true  },
+  { name: 'TC Line Paint',                    cost: 37,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Stripe Rite Line Primer 1 gal',    cost: 23,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Squeegee Durometer',               cost: 50,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Tar Paper Roll',                   cost: 37,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Masking Tape 1.88 6pack',          cost: 25,   qty: 3,  freight: 0,   scale: false },
+  { name: 'Utility Blade Refill 5 pack',      cost: 2,    qty: 2,  freight: 0,   scale: false },
+  { name: 'Mason String Line 500 ft',         cost: 11,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Bucket 5 gal',                     cost: 4,    qty: 3,  freight: 0,   scale: false },
+  { name: 'Bucket Lid',                       cost: 3,    qty: 2,  freight: 0,   scale: false },
+  { name: '3" x 3/8 Nap Roller Refill 2pack', cost: 5,    qty: 1,  freight: 0,   scale: false },
+  { name: "3' x 166' Rosin Paper Roll",       cost: 14,   qty: 1,  freight: 0,   scale: false },
+  { name: 'Pressure Washer Rental',           cost: 153,  qty: 2,  freight: 0,   scale: false },
+  { name: 'Muriatic Acid 1 Gal 4 Pack',       cost: 46,   qty: 4,  freight: 0,   scale: false },
+  { name: 'Gasoline for Generator/Washer',    cost: 3.5,  qty: 10, freight: 0,   scale: false },
+];
+
+// Labor schedule — Concrete (6 days): from Tennis_Paint_Template_Concrete.xlsx
+// Day 1 Powerwash: 1 staff 5hrs | Day 2 Acid Etch: 2 staff 4hrs
+// Day 3 Adhesion Promoter + Resurfacer x1: 2 staff 5hrs
+// Day 4 Inbounds x2 Coats: 2 staff 6hrs (2 OT hrs)
+// Day 5 OOB x2 Coats: 2 staff 5hrs | Day 6 Game Lines: 2 staff 5hrs
+var LABOR_SCHEDULE_CONCRETE = [
+  { label: 'Day 1 — Powerwash Court',                         staff: 1, workHrs: 5 },
+  { label: 'Day 2 — Acid Etch Court',                         staff: 2, workHrs: 4 },
+  { label: 'Day 3 — Apply Adhesion Promoter & Resurfacer x1', staff: 2, workHrs: 5 },
+  { label: 'Day 4 — Paint Inbounds Color x 2 Coats',          staff: 2, workHrs: 6 },
+  { label: 'Day 5 — Paint Out of Bounds Color x 2 Coats',     staff: 2, workHrs: 5 },
+  { label: 'Day 6 — Paint Tennis Game Lines',                  staff: 2, workHrs: 5 },
+];
+
+// ─── Helpers: detect surface type and return correct defaults ────────────────
+function isConcreteCourtPaint() {
+  return (data.surfaceType === 'concrete');
+}
+
+function getDefaultPaintMaterials() {
+  return isConcreteCourtPaint()
+    ? DEFAULT_PAINT_MATERIALS_CONCRETE
+    : DEFAULT_PAINT_MATERIALS_ASPHALT;
+}
+
+function getLaborSchedule() {
+  return isConcreteCourtPaint()
+    ? LABOR_SCHEDULE_CONCRETE
+    : LABOR_SCHEDULE_ASPHALT;
+}
+
 function getPaintMaterials() {
-  return data.paintMaterials || DEFAULT_PAINT_MATERIALS.map(function(m){ return Object.assign({}, m); });
+  // Key off surface type so switching surfaces resets to correct defaults
+  var cacheKey = isConcreteCourtPaint() ? 'paintMaterialsConcrete' : 'paintMaterialsAsphalt';
+  return data[cacheKey] || getDefaultPaintMaterials().map(function(m){ return Object.assign({}, m); });
 }
 
 function calcPaint(L, W, lr, otr, mk, trav) {
-  var sqFt = L * W;
-  var sqYd = sqFt / 9;
+  var sqFt  = L * W;
+  var sqYd  = sqFt / 9;
   var scale = sqYd / 800;
-  var mats = getPaintMaterials();
+  var mats  = getPaintMaterials();
   var matTotal = 0;
   mats.forEach(function(m) {
     var q = m.scale ? Math.ceil(m.qty * scale) : m.qty;
     matTotal += (m.cost * q) + (m.freight || 0);
   });
-  // Labor — 5 days, 2 staff (from spreadsheet)
-  var days = [5, 5, 6, 5, 5];
-  var staff = 2;
-  var travelPrep = (trav * 2) + 1;
+
+  // Labor — use surface-appropriate schedule
+  var schedule   = getLaborSchedule();
+  var travelPrep = (trav * 2) + 1;   // one-way × 2 + 1 prep hr per person per day
   var totalLaborHrs = 0, totalTravHrs = 0, totalOT = 0;
-  days.forEach(function(h) {
-    totalLaborHrs += staff * h;
-    totalTravHrs  += travelPrep * staff;
-    totalOT       += Math.max(0, travelPrep + h - 8) * staff;
+  schedule.forEach(function(day) {
+    totalLaborHrs += day.staff * day.workHrs;
+    totalTravHrs  += travelPrep * day.staff;
+    totalOT       += Math.max(0, travelPrep + day.workHrs - 8) * day.staff;
   });
-  var regHrs = totalLaborHrs - totalOT + totalTravHrs;
+  var regHrs    = totalLaborHrs + totalTravHrs - totalOT;
   var laborCost = (regHrs * lr) + (totalOT * otr);
-  var subtotal = matTotal + laborCost;
-  var markup = subtotal * (mk / 100);
-  var total = subtotal + markup;
+  var subtotal  = matTotal + laborCost;
+  var markup    = subtotal * (mk / 100);
+  var total     = subtotal + markup;
   return {
     sqFt: sqFt, sqYd: Math.round(sqYd), scale: scale,
     matTotal: Math.round(matTotal),
-    regHrs: Math.round(regHrs * 10) / 10,
-    otHrs: Math.round(totalOT * 10) / 10,
-    travHrs: Math.round(totalTravHrs * 10) / 10,
+    regHrs:   Math.round(regHrs   * 10) / 10,
+    otHrs:    Math.round(totalOT  * 10) / 10,
+    travHrs:  Math.round(totalTravHrs * 10) / 10,
     laborCost: Math.round(laborCost),
-    subtotal: Math.round(subtotal),
-    markup: Math.round(markup),
-    total: Math.round(total),
-    lr: lr, otr: otr, mk: mk, trav: trav
+    subtotal:  Math.round(subtotal),
+    markup:    Math.round(markup),
+    total:     Math.round(total),
+    lr: lr, otr: otr, mk: mk, trav: trav,
+    schedule: schedule, travelPrep: travelPrep,
+    isConcrete: isConcreteCourtPaint()
   };
 }
 
@@ -4551,8 +5110,9 @@ function toggleNewMatScale() {
 }
 
 function updateMat(i, field, val) {
-  if (!data.paintMaterials) data.paintMaterials = getPaintMaterials();
-  data.paintMaterials[i][field] = val;
+  var cacheKey = isConcreteCourtPaint() ? 'paintMaterialsConcrete' : 'paintMaterialsAsphalt';
+  if (!data[cacheKey]) data[cacheKey] = getPaintMaterials();
+  data[cacheKey][i][field] = val;
   // Refresh line total in place without full re-render
   if (field !== 'name') {
     var m = data.paintMaterials[i];
@@ -4572,8 +5132,9 @@ function updateMat(i, field, val) {
 }
 
 function deleteMat(i) {
-  if (!data.paintMaterials) data.paintMaterials = getPaintMaterials();
-  data.paintMaterials.splice(i, 1);
+  var cacheKey = isConcreteCourtPaint() ? 'paintMaterialsConcrete' : 'paintMaterialsAsphalt';
+  if (!data[cacheKey]) data[cacheKey] = getPaintMaterials();
+  data[cacheKey].splice(i, 1);
   renderMatEditor();
   refreshPaintEst();
 }
@@ -4584,15 +5145,18 @@ function addNewMat() {
   var qty     = parseFloat((document.getElementById('newMatQty')||{}).value)||1;
   var freight = parseFloat((document.getElementById('newMatFreight')||{}).value)||0;
   if (!name) { alert('Please enter a material name.'); return; }
-  if (!data.paintMaterials) data.paintMaterials = getPaintMaterials();
-  data.paintMaterials.push({ name: name, cost: cost, qty: qty, freight: freight, scale: _newMatScale });
+  var cacheKey = isConcreteCourtPaint() ? 'paintMaterialsConcrete' : 'paintMaterialsAsphalt';
+  if (!data[cacheKey]) data[cacheKey] = getPaintMaterials();
+  data[cacheKey].push({ name: name, cost: cost, qty: qty, freight: freight, scale: _newMatScale });
   renderMatEditor();
   refreshPaintEst();
 }
 
 function resetMaterials() {
-  if (!confirm('Reset all materials to spreadsheet defaults? This will discard any changes.')) return;
-  data.paintMaterials = null;
+  var label = isConcreteCourtPaint() ? 'concrete' : 'asphalt';
+  if (!confirm('Reset all materials to ' + label + ' spreadsheet defaults? This will discard any changes.')) return;
+  var cacheKey = isConcreteCourtPaint() ? 'paintMaterialsConcrete' : 'paintMaterialsAsphalt';
+  data[cacheKey] = null;
   renderMatEditor();
   refreshPaintEst();
 }
@@ -4601,8 +5165,30 @@ function resetMaterials() {
 function buildPaintEst(L, W, lr, otr, mk, trav) {
   var e = calcPaint(L, W, lr, otr, mk, trav);
   data.paintEst = e;
+  var surfaceLabel = e.isConcrete ? 'Concrete' : 'Asphalt';
   var html = '<div class="estimate-box">';
-  html += '<div class="estimate-box-title">Paint Estimate &mdash; ' + L + ' &times; ' + W + ' ft (' + e.sqFt.toLocaleString() + ' sq ft / ' + e.sqYd.toLocaleString() + ' sq yds)</div>';
+  html += '<div class="estimate-box-title">'
+        + surfaceLabel + ' Paint Estimate &mdash; ' + L + ' &times; ' + W
+        + ' ft (' + e.sqFt.toLocaleString() + ' sq ft / ' + e.sqYd.toLocaleString() + ' sq yds)'
+        + '</div>';
+
+  // Day-by-day labor breakdown
+  var travelPrep = e.travelPrep;
+  html += '<div style="margin:10px 0 4px;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#b8dff0">Labor Schedule</div>';
+  e.schedule.forEach(function(day) {
+    var ot = Math.max(0, travelPrep + day.workHrs - 8) * day.staff;
+    var dayCostReg = (Math.min(travelPrep + day.workHrs, 8) * day.staff - (ot > 0 ? 0 : 0)) * lr;
+    var regD = Math.min(travelPrep + day.workHrs, 8) * day.staff;
+    var dayCost = (regD * lr) + (ot * otr);
+    html += '<div class="estimate-row" style="font-size:0.82rem">'
+          + '<span class="estimate-row-label">' + day.label
+          + ' &nbsp;<span style="opacity:0.6">(' + day.staff + ' staff · ' + day.workHrs + ' work hrs'
+          + (ot > 0 ? ' · <span style="color:#f0a500">' + ot + ' OT hrs</span>' : '') + ')</span></span>'
+          + '<span class="estimate-row-value">$' + Math.round(dayCost).toLocaleString() + '</span>'
+          + '</div>';
+  });
+
+  html += '<div style="border-top:1px solid rgba(255,255,255,0.1);margin:8px 0"></div>';
   html += '<div class="estimate-row"><span class="estimate-row-label">Materials</span><span class="estimate-row-value">$' + e.matTotal.toLocaleString() + '</span></div>';
   html += '<div class="estimate-row"><span class="estimate-row-label">Regular Labor (' + e.regHrs + ' hrs @ $' + lr + '/hr)</span><span class="estimate-row-value">$' + Math.round(e.regHrs * lr).toLocaleString() + '</span></div>';
   if (e.otHrs > 0) {
@@ -5002,10 +5588,14 @@ function sbConfigured() {
 
 // ── Supabase REST helpers ─────────────────────────────────
 function sbHeaders() {
+  // Support both legacy JWT keys (eyJ...) and new publishable keys (sb_publishable_...)
+  var authVal = SB_KEY.startsWith('sb_publishable_')
+    ? 'Bearer ' + SB_KEY
+    : 'Bearer ' + SB_KEY;
   return {
     'Content-Type': 'application/json',
     'apikey': SB_KEY,
-    'Authorization': 'Bearer ' + SB_KEY,
+    'Authorization': authVal,
     'Prefer': 'return=representation'
   };
 }
