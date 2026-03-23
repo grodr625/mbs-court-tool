@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_79.html -->
+<!-- saved from url=(0046)file:///C:/Users/Owner/Downloads/index_86.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -573,6 +573,100 @@
     pointer-events: none;
   }
 
+
+  /* ── COURT DESIGNER ── */
+  .cd-wrap { margin: 0 0 4px; }
+  .cd-layout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px,1fr));
+    gap: 10px; margin-bottom: 18px;
+  }
+  .cd-layout-card {
+    border: 2px solid var(--border); border-radius: 10px; padding: 10px 8px;
+    text-align: center; cursor: pointer; transition: all 0.2s;
+    background: var(--gray-light); font-size: 0.78rem; font-weight: 600;
+    color: var(--gray);
+  }
+  .cd-layout-card:hover { border-color: var(--blue); background: var(--blue-light); }
+  .cd-layout-card.selected { border-color: var(--blue); background: var(--blue-light); color: var(--blue-dark); }
+  .cd-layout-icon { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+
+  .cd-main { display: grid; grid-template-columns: 1fr 260px; gap: 20px; align-items: start; }
+  @media (max-width:700px) { .cd-main { grid-template-columns: 1fr; } }
+
+  .cd-canvas-wrap {
+    background: #1a1a2e; border-radius: 12px; padding: 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .cd-canvas-wrap canvas { border-radius: 6px; max-width: 100%; display: block; }
+
+  .cd-panels { display: flex; flex-direction: column; gap: 12px; }
+
+  .cd-panel {
+    background: var(--gray-light); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 14px;
+  }
+  .cd-panel-title {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 10px;
+  }
+
+  .cd-zone-list { display: flex; flex-direction: column; gap: 6px; }
+  .cd-zone-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; background: #fff; border-radius: 6px;
+    border: 1px solid var(--border); cursor: pointer; transition: border-color 0.15s;
+  }
+  .cd-zone-row:hover { border-color: var(--blue); }
+  .cd-zone-row.active { border-color: var(--blue); background: var(--blue-light); }
+  .cd-zone-swatch {
+    width: 20px; height: 20px; border-radius: 4px;
+    border: 1.5px solid rgba(0,0,0,0.15); flex-shrink: 0;
+  }
+  .cd-zone-label { font-size: 0.82rem; font-weight: 600; color: var(--text); flex: 1; }
+
+  .cd-color-grid {
+    display: grid; grid-template-columns: repeat(6,1fr); gap: 5px; margin-top: 8px;
+  }
+  .cd-color-swatch {
+    width: 100%; aspect-ratio: 1; border-radius: 4px;
+    border: 2px solid transparent; cursor: pointer; transition: all 0.15s;
+  }
+  .cd-color-swatch:hover { transform: scale(1.12); border-color: #000; }
+  .cd-color-swatch.selected { border-color: #000; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000; }
+
+  .cd-color-name {
+    font-size: 0.7rem; color: var(--gray); text-align: center; margin-top: 4px;
+    font-weight: 600; min-height: 28px;
+  }
+
+  .cd-line-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem;
+  }
+  .cd-line-toggle:last-child { border-bottom: none; }
+  .cd-line-label { color: var(--text); font-weight: 500; }
+  .cd-line-color-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.2); cursor: pointer; flex-shrink: 0;
+    transition: transform 0.15s;
+  }
+  .cd-line-color-dot:hover { transform: scale(1.2); }
+
+  .cd-save-btn {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 0.88rem; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 8px 18px; border-radius: 7px; border: none;
+    background: var(--blue); color: #fff; cursor: pointer; transition: background 0.15s;
+    width: 100%;
+  }
+  .cd-save-btn:hover { background: var(--blue-dark); }
+
+  .cd-active-zone-label {
+    font-size: 0.75rem; font-weight: 700; color: #b8dff0;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
   /* HIDDEN */
   .hidden { display: none !important; }
 
@@ -1315,11 +1409,11 @@ const STEPS = [
     valid() { return true; }
   },
 
-  // STEP 3: Court Finish
+  // STEP 3: Court Finish + Court Designer
   {
     section: 'Court Finish',
     title: 'Court Painting & Finish',
-    desc: 'Choose a surface finish. Acrylic paint estimates calculate from your dimensions and travel time.',
+    desc: 'Choose a surface finish. When selecting acrylic paint, design your court colors below.',
     render() {
       var pt  = data.paintType || '';
       var lr  = data.laborRate  !== undefined ? data.laborRate  : 30;
@@ -1334,6 +1428,7 @@ const STEPS = [
       html += '<div class="paint-option'+(pt==='none'?' selected':'')+'" onclick="setPaintType(\'none\')"><div class="paint-option-title">&#9744; No Finish / TBD</div><div class="paint-option-desc">To be determined or handled separately.</div></div>';
       html += '</div>';
       if (pt === 'acrylic') {
+        html += '<hr class="divider">' + renderCourtDesigner();
         html += '<hr class="divider"><div class="sub-heading">Estimate Settings</div><div class="field-grid">';
         html += '<div class="field"><label>Court Length (ft)</label><input type="number" id="pe-L" value="'+L+'" oninput="refreshPaintEst()" min="1"></div>';
         html += '<div class="field"><label>Court Width (ft)</label><input type="number" id="pe-W" value="'+W+'" oninput="refreshPaintEst()" min="1"></div>';
@@ -1648,6 +1743,10 @@ function renderStep() {
         </button>
       </div>
     </div>`;
+  // Init court designer if on the paint step and acrylic selected
+  if (document.getElementById('cd-canvas')) {
+    requestAnimationFrame(initCourtDesigner);
+  }
 }
 
 function goNext() {
@@ -2406,10 +2505,9 @@ function getHoopCount() {
 // condensed toggle: pack up to 4/day (8 hrs, OT applies).
 // Lighting uses its own separate schedule and is EXCLUDED here.
 
-var TENNIS_NET_IDS_ALL = null; // lazy-init below
+// Tennis net IDs read directly from CATALOG at call time (CATALOG defined later in file)
 function getTennisNetIds() {
-  if (!TENNIS_NET_IDS_ALL) TENNIS_NET_IDS_ALL = CATALOG.tennis_nets.map(function(p){ return p.id; });
-  return TENNIS_NET_IDS_ALL;
+  return CATALOG.tennis_nets.map(function(p){ return p.id; });
 }
 
 // hrs per accessory type
@@ -4073,6 +4171,7 @@ function applyTennisSelection() {
       color: data.tennisColor || 'black'
     };
   }
+  refreshUnifiedAssemblyEst();
 }
 
 function toggleTennisDoubles(isDoubles) {
@@ -4156,6 +4255,7 @@ function getSelectedTennisNet() {
 function refreshTennisSection() {
   var wrap = document.getElementById('tennis-nets-section');
   if (wrap) wrap.innerHTML = renderTennisNets();
+  refreshUnifiedAssemblyEst();
 }
 
 function renderTennisNets() {
@@ -4298,6 +4398,16 @@ function renderTennisNets() {
   }
 
   html += '</div>'; // tennis-nets-section wrapper
+  // Court design image + color summary
+  if (data.cdSavedDesign) {
+    var sd = data.cdSavedDesign;
+    html += '<div class="report-section"><div class="report-section-title">Court Color Design — ' + sd.label + '</div>';
+    if (data.cdImageDataUrl) {
+      html += '<img src="' + data.cdImageDataUrl + '" style="max-width:100%;border-radius:8px;margin-bottom:12px;display:block">';
+    }
+    html += '<div style="font-size:0.85rem;color:var(--text);line-height:1.8">' + sd.summary.replace(/\|/g,'<br>') + '</div>';
+    html += '</div><hr class="report-divider">';
+  }
   return html;
 }
 
@@ -4730,35 +4840,22 @@ function toggleAccessory(id, price, shipping) {
     }
   }
   refreshPriceBar();
-  // If an inground PB net was toggled, refresh its labor estimate
+  // Inground PB net — refresh its own anchor/cure estimate
   var ingroundIds = ['p6','p7','p9','p10'];
   if (ingroundIds.indexOf(id) > -1) {
     var wrap = document.getElementById('pb-net-est-inground');
     if (wrap) wrap.innerHTML = hasAnyInground() ? renderPBNetEstimate('inground') : '';
   }
-  // If a standard portable net was toggled, refresh portable net labor estimate
-  var portableStdIds = ['p4','p4b','p2','p2b','p1'];
-  if (portableStdIds.indexOf(id) > -1) {
-    var pWrap = document.getElementById('portable-net-labor-est');
-    if (pWrap) pWrap.innerHTML = getPortableNetCount() > 0 ? renderPortableNetLaborEst() : '';
-  }
-  // If a hoop-to-light net was toggled, refresh h2l labor estimate
+  // Hoop-to-light net — its own lighting-style estimate
   if (id === 'ph2l') {
     var h2lWrap = document.getElementById('h2l-net-labor-est');
     if (h2lWrap) h2lWrap.innerHTML = getH2LNetCount() > 0 ? renderH2LNetLaborEst() : '';
   }
-  // If a surface mount net was toggled, refresh surface mount labor estimate
-  var smIds = ['p8','p11'];
-  if (smIds.indexOf(id) > -1) {
-    var smWrap = document.getElementById('sm-net-labor-est');
-    if (smWrap) smWrap.innerHTML = getSurfaceMountNetCount() > 0 ? renderSurfaceMountLaborEst() : '';
-  }
-  // If a hoop was toggled, refresh hoop labor estimate
-  var hoopIds = CATALOG.hoops.map(function(p){ return p.id; });
-  if (hoopIds.indexOf(id) > -1) refreshHoopLaborEst();
-  // If a light was toggled, refresh lighting labor estimate
+  // Lighting — its own estimate
   var lightIds = CATALOG.lighting.map(function(p){ return p.id; });
   if (lightIds.indexOf(id) > -1) refreshLightingLaborEst();
+  // Everything else (hoops, portable PB nets, surface mount nets) → unified block
+  refreshUnifiedAssemblyEst();
 }
 
 
@@ -4770,34 +4867,23 @@ function changeQty(id, delta) {
   var el = document.getElementById('qty-'+id);
   if (el) el.textContent = qty;
   refreshPriceBar();
-  // Refresh hoop labor if qty of a hoop changed
-  var hoopIds = CATALOG.hoops.map(function(p){ return p.id; });
-  if (hoopIds.indexOf(id) > -1) refreshHoopLaborEst();
+  // Lighting — its own estimate
   var lightIds2 = CATALOG.lighting.map(function(p){ return p.id; });
-  if (lightIds2.indexOf(id) > -1) refreshLightingLaborEst();
-  // Refresh PB net labor if qty of an inground net changed
+  if (lightIds2.indexOf(id) > -1) { refreshLightingLaborEst(); return; }
+  // Hoop-to-light — its own estimate
+  if (id === 'ph2l') {
+    var h2lWrap2 = document.getElementById('h2l-net-labor-est');
+    if (h2lWrap2 && getH2LNetCount() > 0) h2lWrap2.innerHTML = renderH2LNetLaborEst();
+    return;
+  }
+  // Inground PB net — its own anchor/cure estimate
   var pbNetIds = ['p6','p7','p9','p10'];
   if (pbNetIds.indexOf(id) > -1) {
     var pbWrap2 = document.getElementById('pb-net-est-inground');
     if (pbWrap2 && hasAnyInground()) pbWrap2.innerHTML = renderPBNetEstimate('inground');
   }
-  // Refresh portable net labor if qty changed
-  var portStdIds2 = ['p4','p4b','p2','p2b','p1'];
-  if (portStdIds2.indexOf(id) > -1) {
-    var pWrap2 = document.getElementById('portable-net-labor-est');
-    if (pWrap2 && getPortableNetCount() > 0) pWrap2.innerHTML = renderPortableNetLaborEst();
-  }
-  // Refresh h2l net labor if qty changed
-  if (id === 'ph2l') {
-    var h2lWrap2 = document.getElementById('h2l-net-labor-est');
-    if (h2lWrap2 && getH2LNetCount() > 0) h2lWrap2.innerHTML = renderH2LNetLaborEst();
-  }
-  // Refresh surface mount net labor if qty changed
-  var smIds2 = ['p8','p11'];
-  if (smIds2.indexOf(id) > -1) {
-    var smWrap2 = document.getElementById('sm-net-labor-est');
-    if (smWrap2 && getSurfaceMountNetCount() > 0) smWrap2.innerHTML = renderSurfaceMountLaborEst();
-  }
+  // Everything else (hoops, portable PB, surface mount, tennis) → unified block
+  refreshUnifiedAssemblyEst();
 }
 
 
@@ -5881,6 +5967,593 @@ function jmToast(msg, bg) {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeJobManager();
 });
+
+// ─── COURT DESIGNER ─────────────────────────────────────────────────────────
+
+var SM_COLORS = [
+  { id:'dark-green',        name:'Dark Green',              hex:'#1a5c2a' },
+  { id:'light-green',       name:'Light Green',             hex:'#5cb85c' },
+  { id:'forest-green',      name:'Forest Green',            hex:'#2e7d32' },
+  { id:'blue',              name:'Blue',                    hex:'#1565c0' },
+  { id:'light-blue',        name:'Light Blue',              hex:'#42a5f5' },
+  { id:'ice-blue',          name:'Ice Blue',                hex:'#b3e5fc' },
+  { id:'beige',             name:'Beige',                   hex:'#d4b896' },
+  { id:'red',               name:'Red',                     hex:'#c62828' },
+  { id:'brite-red',         name:'Brite Red',               hex:'#ef5350' },
+  { id:'sandstone',         name:'Sandstone',               hex:'#c8a96e' },
+  { id:'maroon',            name:'Maroon',                  hex:'#7b1c2a' },
+  { id:'gray',              name:'Gray',                    hex:'#757575' },
+  { id:'dove-gray',         name:'Dove Gray',               hex:'#9e9e9e' },
+  { id:'tournament-purple', name:'Tournament Purple',       hex:'#6a1b9a' },
+  { id:'orange',            name:'Orange',                  hex:'#ef6c00' },
+  { id:'yellow',            name:'Yellow',                  hex:'#f9a825' },
+  { id:'black',             name:'Black',                   hex:'#212121' },
+  { id:'white',             name:'White',                   hex:'#f5f5f5' },
+  { id:'fus-gray-ice',      name:'Gray + Ice Blue',         hex:'#8ecae6' },
+  { id:'fus-lb-sand',       name:'Lt Blue + Sandstone',     hex:'#b5cfb7' },
+  { id:'fus-dg-lb',         name:'Dark Green + Lt Blue',    hex:'#2e8b57' },
+  { id:'fus-blue-sand',     name:'Blue + Sandstone',        hex:'#607d8b' },
+  { id:'fus-lg-blue',       name:'Lt Green + Blue',         hex:'#4caf8a' },
+  { id:'fus-fg-ice',        name:'Forest Green + Ice Blue', hex:'#4db6ac' },
+  { id:'fus-lb-ib',         name:'Lt Blue + Ice Blue',      hex:'#81d4fa' },
+  { id:'fus-blue-gray',     name:'Blue + Gray',             hex:'#546e7a' },
+  { id:'fus-red-maroon',    name:'Red + Maroon',            hex:'#9c2020' },
+  { id:'fus-sand-dg',       name:'Sandstone + Dove Gray',   hex:'#bcaaa4' },
+  { id:'fus-tp-yellow',     name:'Purple + Yellow',         hex:'#9c6f2a' },
+  { id:'fus-blue-dg',       name:'Blue + Dove Gray',        hex:'#78909c' },
+];
+
+// hRatio = canvasHeight / canvasWidth  (portrait courts > 1, landscape < 1)
+// Pickleball total OOB: 30' × 60' → ratio = 60/30 = 2.0
+// Tennis total OOB: 60' × 120' → ratio = 120/60 = 2.0
+// Half basketball: 50'w × 47'l → ratio = 47/50 = 0.94 (landscape)
+// Full basketball: 50'w × 94'l → ratio = 94/50 = 1.88
+var CD_LAYOUTS = [
+  { id:'pickleball',       label:'Pickleball',                    icon:'🏸', hRatio: 60/30  },
+  { id:'tennis',           label:'Tennis',                        icon:'🎾', hRatio: 120/60 },
+  { id:'half-bball',       label:'Half Court Basketball',         icon:'🏀', hRatio: 47/50  },
+  { id:'full-bball',       label:'Full Court Basketball',         icon:'🏀', hRatio: 94/50  },
+  { id:'pb-tennis',        label:'Pickleball + Tennis',           icon:'🎾🏸', hRatio: 120/60 },
+  { id:'pb-tennis-bball',  label:'PB + Tennis + ½ Basketball',   icon:'🏀🎾🏸', hRatio: 120/60 },
+];
+
+var CD_DEFAULT_COLORS = {
+  'pickleball':        { outbounds:'dark-green',  inbounds:'blue',       kitchen:'light-blue', lines:'white' },
+  'tennis':            { outbounds:'dark-green',  inbounds:'blue',       lines:'white' },
+  'half-bball':        { outbounds:'gray',         inbounds:'red',        key:'maroon',         lines:'white' },
+  'full-bball':        { outbounds:'gray',         inbounds:'red',        key:'maroon',         lines:'white' },
+  'pb-tennis':         { outbounds:'dark-green',  inbounds:'blue',       pb_inbounds:'light-blue', pb_kitchen:'ice-blue', lines:'white' },
+  'pb-tennis-bball':   { outbounds:'dark-green',  inbounds:'blue',       pb_inbounds:'light-blue', pb_kitchen:'ice-blue', key:'maroon', lines:'white' },
+};
+
+var CD_ZONES = {
+  'pickleball':      [ { id:'outbounds',label:'Out of Bounds' }, { id:'inbounds',label:'Inbounds' }, { id:'kitchen',label:'Kitchen / NVZ' }, { id:'lines',label:'Lines' } ],
+  'tennis':          [ { id:'outbounds',label:'Out of Bounds' }, { id:'inbounds',label:'Playing Area' }, { id:'lines',label:'Lines' } ],
+  'half-bball':      [ { id:'outbounds',label:'Out of Bounds' }, { id:'inbounds',label:'Court' }, { id:'key',label:'Key / Paint Area' }, { id:'lines',label:'Lines' } ],
+  'full-bball':      [ { id:'outbounds',label:'Out of Bounds' }, { id:'inbounds',label:'Court' }, { id:'key',label:'Key / Paint Area' }, { id:'lines',label:'Lines' } ],
+  'pb-tennis':       [ { id:'outbounds',label:'Out of Bounds' }, { id:'inbounds',label:'Tennis Inbounds' }, { id:'pb_inbounds',label:'Pickleball Inbounds' }, { id:'pb_kitchen',label:'Pickleball Kitchen' }, { id:'lines',label:'Lines' } ],
+  'pb-tennis-bball': [ { id:'outbounds',label:'Out of Bounds' }, { id:'inbounds',label:'Tennis Inbounds' }, { id:'pb_inbounds',label:'Pickleball Inbounds' }, { id:'pb_kitchen',label:'Pickleball Kitchen' }, { id:'key',label:'Basketball Key' }, { id:'lines',label:'Lines' } ],
+};
+
+function cdHex(colorId) {
+  var c = SM_COLORS.find(function(x){ return x.id === colorId; });
+  return c ? c.hex : '#aaa';
+}
+function cdGetColors() {
+  var layout = data.cdLayout || 'pickleball';
+  var defs   = CD_DEFAULT_COLORS[layout] || {};
+  var saved  = data.cdColors || {};
+  var out    = {};
+  Object.keys(defs).forEach(function(k){ out[k] = saved[k] !== undefined ? saved[k] : defs[k]; });
+  return out;
+}
+function cdSetColor(zoneId, colorId) {
+  if (!data.cdColors) data.cdColors = {};
+  data.cdColors[zoneId] = colorId;
+  renderCourtDesignerCanvas();
+  renderCourtDesignerZones();
+  renderCourtDesignerPalette();
+}
+function cdSetLayout(layoutId) {
+  data.cdLayout = layoutId;
+  data.cdColors = {};
+  data.cdActiveZone = null;
+  var ld = CD_LAYOUTS.find(function(l){ return l.id === layoutId; }) || CD_LAYOUTS[0];
+  // Update name label
+  var nameEl = document.getElementById('cd-court-name');
+  if (nameEl) nameEl.textContent = ld.label;
+  // Resize canvas
+  var canvas = document.getElementById('cd-canvas');
+  if (canvas) {
+    canvas.height = Math.round(canvas.width * ld.hRatio);
+  }
+  // Update card highlights
+  document.querySelectorAll('.cd-layout-card').forEach(function(el) {
+    el.classList.toggle('selected', el.dataset.lid === layoutId);
+  });
+  renderCourtDesignerCanvas();
+  renderCourtDesignerZones();
+  renderCourtDesignerPalette();
+}
+function cdSetActiveZone(zoneId) {
+  data.cdActiveZone = zoneId;
+  renderCourtDesignerZones();
+  renderCourtDesignerPalette();
+}
+
+// ── Drawing helpers ───────────────────────────────────────────────────────────
+var CD_PAD = 16;
+
+function cdDashedLine(ctx, x1, y1, x2, y2, dashLen, gapLen) {
+  ctx.setLineDash([dashLen, gapLen]);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ── PICKLEBALL ─────────────────────────────────────────────────────────────
+// Total OOB footprint: 30' wide × 60' long
+// Court lines: 20' wide × 44' long (centered in OOB)
+// Kitchen (NVZ): 7' from net on each side
+// Each side has 2 service areas (left + right), separated by center line
+// Net is dashed, runs full width at center
+function cdDrawPickleball(ctx, W, H, colors) {
+  var p    = CD_PAD;
+  var TW   = 30; // total width ft
+  var TH   = 60; // total height ft
+  var CW   = 20; // court width ft
+  var CH   = 44; // court length ft
+  var NVZ  = 7;  // kitchen ft from net
+
+  var sx   = W / TW; // px per foot X
+  var sy   = H / TH; // px per foot Y
+
+  // Court rectangle in canvas px (centered in total footprint)
+  var cx   = (W - CW*sx) / 2;
+  var cy   = (H - CH*sy) / 2;
+  var cw   = CW * sx;
+  var ch   = CH * sy;
+
+  var midY = cy + ch / 2;          // net Y
+  var nvzPx = NVZ * sy;            // kitchen height in px
+  var lw   = 2;
+
+  // Out of bounds
+  ctx.fillStyle = cdHex(colors.outbounds);
+  ctx.fillRect(0, 0, W, H);
+
+  // Inbounds (service areas = inbounds color)
+  ctx.fillStyle = cdHex(colors.inbounds);
+  ctx.fillRect(cx, cy, cw, ch);
+
+  // Kitchen top half (between baseline and NVZ line, near top)
+  ctx.fillStyle = cdHex(colors.kitchen);
+  ctx.fillRect(cx, cy, cw, nvzPx);
+  // Kitchen bottom half
+  ctx.fillRect(cx, cy + ch - nvzPx, cw, nvzPx);
+
+  // Lines
+  ctx.strokeStyle = cdHex(colors.lines);
+  ctx.lineWidth   = lw;
+  ctx.setLineDash([]);
+
+  // Outer boundary
+  ctx.strokeRect(cx, cy, cw, ch);
+
+  // NVZ (kitchen) lines
+  ctx.beginPath(); ctx.moveTo(cx, cy + nvzPx); ctx.lineTo(cx + cw, cy + nvzPx); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy + ch - nvzPx); ctx.lineTo(cx + cw, cy + ch - nvzPx); ctx.stroke();
+
+  // Center line — top service zone (NVZ line to net)
+  ctx.beginPath(); ctx.moveTo(cx + cw/2, cy + nvzPx); ctx.lineTo(cx + cw/2, midY); ctx.stroke();
+  // Center line — bottom service zone (net to NVZ line)
+  ctx.beginPath(); ctx.moveTo(cx + cw/2, midY); ctx.lineTo(cx + cw/2, cy + ch - nvzPx); ctx.stroke();
+
+  // Net — DASHED
+  ctx.strokeStyle = cdHex(colors.lines);
+  ctx.lineWidth   = lw * 1.2;
+  cdDashedLine(ctx, cx, midY, cx + cw, midY, 6, 4);
+  ctx.lineWidth   = lw;
+}
+
+// ── TENNIS ─────────────────────────────────────────────────────────────────
+// Total OOB footprint: 60' wide × 120' long
+// Doubles court: 36' wide × 78' long (centered)
+// Singles lines: 4.5' alleys each side (singles width = 27')
+// Service boxes: 21' from net, center service line
+// Net is dashed full width at center
+function cdDrawTennis(ctx, W, H, colors) {
+  var TW   = 60; var TH   = 120;
+  var CW   = 36; var CH   = 78;
+  var ALLY = 4.5; // alley each side
+  var SVC  = 21;  // service line distance from net
+
+  var sx   = W / TW; var sy = H / TH;
+  var cx   = (W - CW*sx) / 2;
+  var cy   = (H - CH*sy) / 2;
+  var cw   = CW * sx; var ch = CH * sy;
+
+  var allyPx = ALLY * sx;
+  var svcPx  = SVC  * sy;
+  var midY   = cy + ch / 2;
+  var lw     = 2;
+
+  // OOB
+  ctx.fillStyle = cdHex(colors.outbounds); ctx.fillRect(0, 0, W, H);
+  // Inbounds
+  ctx.fillStyle = cdHex(colors.inbounds);  ctx.fillRect(cx, cy, cw, ch);
+
+  ctx.strokeStyle = cdHex(colors.lines); ctx.lineWidth = lw; ctx.setLineDash([]);
+
+  // Outer doubles boundary
+  ctx.strokeRect(cx, cy, cw, ch);
+  // Singles sidelines
+  ctx.beginPath(); ctx.moveTo(cx+allyPx, cy); ctx.lineTo(cx+allyPx, cy+ch); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx+cw-allyPx, cy); ctx.lineTo(cx+cw-allyPx, cy+ch); ctx.stroke();
+  // Service lines
+  ctx.beginPath(); ctx.moveTo(cx+allyPx, cy+svcPx); ctx.lineTo(cx+cw-allyPx, cy+svcPx); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx+allyPx, cy+ch-svcPx); ctx.lineTo(cx+cw-allyPx, cy+ch-svcPx); ctx.stroke();
+  // Center service lines
+  ctx.beginPath(); ctx.moveTo(cx+cw/2, cy+svcPx); ctx.lineTo(cx+cw/2, midY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx+cw/2, midY); ctx.lineTo(cx+cw/2, cy+ch-svcPx); ctx.stroke();
+
+  // Net — dashed, full doubles width
+  ctx.lineWidth = lw * 1.3;
+  cdDashedLine(ctx, cx, midY, cx+cw, midY, 8, 5);
+  ctx.lineWidth = lw;
+}
+
+// ── BASKETBALL KEY HELPER ──────────────────────────────────────────────────
+// High school: 12' wide key, 19.75' 3pt line radius, no dashed free-throw arc
+// keyX/keyY = top-left corner of key rectangle
+// kw/kh in px, side = 'top'|'bottom'
+// bktOffsetFt = basket distance from baseline in ft (typically 5.25ft)
+function cdDrawBballKey(ctx, keyX, keyY, kw, kh, lineCol, lw, side, scaleX, scaleY, courtCenterX, bktOffsetFt) {
+  ctx.strokeStyle = lineCol; ctx.lineWidth = lw; ctx.setLineDash([]);
+
+  // Key rectangle
+  ctx.strokeRect(keyX, keyY, kw, kh);
+
+  var centerX  = keyX + kw / 2;
+  var bktOffPx = bktOffsetFt * scaleY;
+
+  if (side === 'top') {
+    // Basket near top baseline
+    var bktY   = keyY + bktOffPx;
+    var ftY    = keyY + kh; // free-throw line at bottom of key
+
+    // Free-throw circle (solid, no dash) — radius = 6ft
+    var ftR = 6 * scaleX;
+    ctx.beginPath(); ctx.arc(centerX, ftY, ftR, 0, Math.PI * 2); ctx.stroke();
+
+    // Restricted area arc (4ft radius from basket)
+    var raR = 4 * scaleX;
+    ctx.beginPath(); ctx.arc(centerX, bktY, raR, 0, Math.PI, true); ctx.stroke();
+
+    // Basket
+    ctx.beginPath(); ctx.arc(centerX, bktY, 3, 0, Math.PI*2);
+    ctx.fillStyle = lineCol; ctx.fill();
+
+    // 3-point arc: 19.75ft radius from basket
+    // Corner straights at 3ft from sideline
+    var arcR    = 19.75 * scaleX;
+    var corner1X = keyX - (kw/2 - 3*scaleX); // 3ft from each sideline
+    // For HS court width 50ft, key 12ft centered → key starts at (50-12)/2 = 19ft from edge
+    // Corner 3pt x: 3ft from sideline of the COURT (passed in as courtCenterX)
+    var courtHalfW = courtCenterX - (keyX + kw/2) + kw/2 + 19*scaleX; // approx
+    // Use courtCenterX to compute corner positions
+    var c1x = courtCenterX - (25 - 3) * scaleX;  // 3ft from left sideline
+    var c2x = courtCenterX + (25 - 3) * scaleX;  // 3ft from right sideline
+    // Arc start/end angle
+    var dx1 = c1x - centerX;
+    var dy1 = Math.sqrt(Math.max(0, arcR*arcR - dx1*dx1));
+    var cornerArcY = bktY + dy1;
+    var startAngle = Math.atan2(cornerArcY - bktY, dx1);
+    var endAngle   = Math.PI - startAngle;
+
+    // Corner straight lines
+    ctx.beginPath(); ctx.moveTo(c1x, keyY); ctx.lineTo(c1x, cornerArcY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(c2x, keyY); ctx.lineTo(c2x, cornerArcY); ctx.stroke();
+
+    // 3pt arc
+    ctx.beginPath(); ctx.arc(centerX, bktY, arcR, startAngle, endAngle, false); ctx.stroke();
+
+  } else {
+    // Basket near bottom baseline
+    var bktY2  = keyY + kh - bktOffPx;
+    var ftY2   = keyY; // free-throw line at top of key
+    var ftR2   = 6 * scaleX;
+    ctx.beginPath(); ctx.arc(centerX, ftY2, ftR2, 0, Math.PI * 2); ctx.stroke();
+
+    var raR2 = 4 * scaleX;
+    ctx.beginPath(); ctx.arc(centerX, bktY2, raR2, 0, Math.PI, false); ctx.stroke();
+    ctx.beginPath(); ctx.arc(centerX, bktY2, 3, 0, Math.PI*2);
+    ctx.fillStyle = lineCol; ctx.fill();
+
+    var arcR2  = 19.75 * scaleX;
+    var c1x2   = courtCenterX - (25 - 3) * scaleX;
+    var c2x2   = courtCenterX + (25 - 3) * scaleX;
+    var dx2    = c1x2 - centerX;
+    var dy2    = Math.sqrt(Math.max(0, arcR2*arcR2 - dx2*dx2));
+    var cArcY2 = bktY2 - dy2;
+    var sa2    = Math.atan2(cArcY2 - bktY2, dx2);
+    var ea2    = Math.PI - sa2;
+
+    ctx.beginPath(); ctx.moveTo(c1x2, keyY+kh); ctx.lineTo(c1x2, cArcY2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(c2x2, keyY+kh); ctx.lineTo(c2x2, cArcY2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(centerX, bktY2, arcR2, -ea2, -sa2, false); ctx.stroke();
+  }
+}
+
+// ── HALF BASKETBALL: 50' wide × 47' long ──────────────────────────────────
+// Key: 12' wide × 15' long (HS). Basket: 5.25' from baseline.
+function cdDrawHalfBasketball(ctx, W, H, colors) {
+  var TW=50, TH=47; // use full court dims as canvas scale
+  var sx = W/TW, sy = H/TH;
+  var p  = CD_PAD;
+  // Court fills canvas minus padding
+  var cx = p, cy = p;
+  var cw = W - p*2, ch = H - p*2;
+  // Rescale: actual court
+  sx = cw/TW; sy = ch/TH;
+
+  var lw    = 2;
+  var lineC = cdHex(colors.lines);
+  var kw    = 12 * sx; // key width
+  var kh    = 15 * sy; // key length (HS)
+  var kx    = cx + cw/2 - kw/2;
+
+  // OOB
+  ctx.fillStyle = cdHex(colors.outbounds); ctx.fillRect(0, 0, W, H);
+  // Court
+  ctx.fillStyle = cdHex(colors.inbounds);  ctx.fillRect(cx, cy, cw, ch);
+  // Key fill
+  ctx.fillStyle = cdHex(colors.key);        ctx.fillRect(kx, cy, kw, kh);
+
+  ctx.strokeStyle = lineC; ctx.lineWidth = lw; ctx.setLineDash([]);
+  ctx.strokeRect(cx, cy, cw, ch);
+  cdDrawBballKey(ctx, kx, cy, kw, kh, lineC, lw, 'top', sx, sy, cx+cw/2, 5.25);
+
+  // Net dashed line at baseline (top)
+  ctx.lineWidth = lw * 1.2;
+  cdDashedLine(ctx, cx, cy, cx+cw, cy, 6, 4);
+  ctx.lineWidth = lw;
+}
+
+// ── FULL BASKETBALL: 50' wide × 94' long ──────────────────────────────────
+function cdDrawFullBasketball(ctx, W, H, colors) {
+  var TW=50, TH=94;
+  var p  = CD_PAD;
+  var cx = p, cy = p;
+  var cw = W - p*2, ch = H - p*2;
+  var sx = cw/TW, sy = ch/TH;
+
+  var lw    = 2;
+  var lineC = cdHex(colors.lines);
+  var kw    = 12 * sx;
+  var kh    = 15 * sy;
+  var kx    = cx + cw/2 - kw/2;
+  var midY  = cy + ch/2;
+
+  ctx.fillStyle = cdHex(colors.outbounds); ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = cdHex(colors.inbounds);  ctx.fillRect(cx, cy, cw, ch);
+  // Top key fill
+  ctx.fillStyle = cdHex(colors.key); ctx.fillRect(kx, cy, kw, kh);
+  // Bottom key fill
+  ctx.fillStyle = cdHex(colors.key); ctx.fillRect(kx, cy+ch-kh, kw, kh);
+
+  ctx.strokeStyle = lineC; ctx.lineWidth = lw; ctx.setLineDash([]);
+  ctx.strokeRect(cx, cy, cw, ch);
+
+  // Half-court line
+  ctx.beginPath(); ctx.moveTo(cx, midY); ctx.lineTo(cx+cw, midY); ctx.stroke();
+  // Center circles (inner 2ft radius jump circle + outer 6ft)
+  ctx.beginPath(); ctx.arc(cx+cw/2, midY, 2*sx, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx+cw/2, midY, 6*sx, 0, Math.PI*2); ctx.stroke();
+
+  cdDrawBballKey(ctx, kx, cy, kw, kh, lineC, lw, 'top', sx, sy, cx+cw/2, 5.25);
+  cdDrawBballKey(ctx, kx, cy+ch-kh, kw, kh, lineC, lw, 'bottom', sx, sy, cx+cw/2, 5.25);
+
+  // Nets — dashed at both baselines
+  ctx.lineWidth = lw * 1.2;
+  cdDashedLine(ctx, cx, cy, cx+cw, cy, 6, 4);
+  cdDashedLine(ctx, cx, cy+ch, cx+cw, cy+ch, 6, 4);
+  ctx.lineWidth = lw;
+}
+
+// ── PICKLEBALL + TENNIS ─────────────────────────────────────────────────────
+function cdDrawPBTennis(ctx, W, H, colors) {
+  // Draw tennis court base
+  cdDrawTennis(ctx, W, H, {
+    outbounds: colors.outbounds, inbounds: colors.inbounds, lines: colors.lines
+  });
+
+  var TW=60, TH=120;
+  var CTW=36, CTH=78;  // tennis court dims
+  var PBW=20, PBH=44;  // pickleball dims
+  var NVZ=7;
+
+  var sx = W/TW, sy = H/TH;
+  var tcx = (W - CTW*sx)/2, tcy = (H - CTH*sy)/2;
+  var tcw = CTW*sx, tch = CTH*sy;
+
+  // Center PB court inside tennis court
+  var pbw = PBW*sx, pbh = PBH*sy;
+  var pbx = (W - pbw)/2;
+  var pby = (H - pbh)/2;
+  var nvzPx = NVZ*sy;
+  var pbMid = pby + pbh/2;
+  var lw    = 2;
+
+  // PB inbounds
+  ctx.fillStyle = cdHex(colors.pb_inbounds);
+  ctx.fillRect(pbx, pby, pbw, pbh);
+  // PB kitchens
+  ctx.fillStyle = cdHex(colors.pb_kitchen);
+  ctx.fillRect(pbx, pby, pbw, nvzPx);
+  ctx.fillRect(pbx, pby+pbh-nvzPx, pbw, nvzPx);
+
+  ctx.strokeStyle = cdHex(colors.lines); ctx.lineWidth = lw; ctx.setLineDash([]);
+  ctx.strokeRect(pbx, pby, pbw, pbh);
+  ctx.beginPath(); ctx.moveTo(pbx, pby+nvzPx); ctx.lineTo(pbx+pbw, pby+nvzPx); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pbx, pby+pbh-nvzPx); ctx.lineTo(pbx+pbw, pby+pbh-nvzPx); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pbx+pbw/2, pby+nvzPx); ctx.lineTo(pbx+pbw/2, pbMid); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pbx+pbw/2, pbMid); ctx.lineTo(pbx+pbw/2, pby+pbh-nvzPx); ctx.stroke();
+  // PB net dashed
+  ctx.lineWidth = lw * 1.1;
+  cdDashedLine(ctx, pbx, pbMid, pbx+pbw, pbMid, 5, 3);
+  ctx.lineWidth = lw;
+}
+
+// ── PB + TENNIS + ½ BASKETBALL ─────────────────────────────────────────────
+function cdDrawPBTennisBball(ctx, W, H, colors) {
+  cdDrawPBTennis(ctx, W, H, colors);
+
+  var TW=60, TH=120, CTW=36;
+  var sx = W/TW, sy = H/TH;
+  var tcx = (W - CTW*sx)/2;
+  var tcw = CTW*sx;
+  var tcy = (H - 78*sy)/2;
+
+  // Basketball key at top baseline (inside tennis court footprint)
+  var kw = 12*sx, kh = 15*sy;
+  var kx = (W - kw)/2;
+  var lw = 2;
+
+  ctx.fillStyle = cdHex(colors.key);
+  ctx.fillRect(kx, tcy, kw, kh);
+  cdDrawBballKey(ctx, kx, tcy, kw, kh, cdHex(colors.lines), lw, 'top', sx, sy, W/2, 5.25);
+}
+
+// ── Dispatcher ────────────────────────────────────────────────────────────
+function renderCourtDesignerCanvas() {
+  var canvas = document.getElementById('cd-canvas');
+  if (!canvas) return;
+  var ctx    = canvas.getContext('2d');
+  var W      = canvas.width;
+  var H      = canvas.height;
+  var layout = data.cdLayout || 'pickleball';
+  var colors = cdGetColors();
+
+  ctx.clearRect(0, 0, W, H);
+
+  if      (layout === 'pickleball')       cdDrawPickleball(ctx, W, H, colors);
+  else if (layout === 'tennis')           cdDrawTennis(ctx, W, H, colors);
+  else if (layout === 'half-bball')       cdDrawHalfBasketball(ctx, W, H, colors);
+  else if (layout === 'full-bball')       cdDrawFullBasketball(ctx, W, H, colors);
+  else if (layout === 'pb-tennis')        cdDrawPBTennis(ctx, W, H, colors);
+  else if (layout === 'pb-tennis-bball')  cdDrawPBTennisBball(ctx, W, H, colors);
+}
+
+function renderCourtDesignerZones() {
+  var wrap = document.getElementById('cd-zone-list');
+  if (!wrap) return;
+  var layout = data.cdLayout || 'pickleball';
+  var zones  = CD_ZONES[layout] || [];
+  var colors = cdGetColors();
+  var active = data.cdActiveZone || (zones[0] ? zones[0].id : null);
+  wrap.innerHTML = zones.map(function(z) {
+    return '<div class="cd-zone-row' + (active===z.id?' active':'') + '" onclick="cdSetActiveZone(\'' + z.id + '\')">'
+      + '<div class="cd-zone-swatch" style="background:' + cdHex(colors[z.id]||'gray') + '"></div>'
+      + '<span class="cd-zone-label">' + z.label + '</span></div>';
+  }).join('');
+}
+
+function renderCourtDesignerPalette() {
+  var grid   = document.getElementById('cd-palette-grid');
+  var nameEl = document.getElementById('cd-palette-zone-name');
+  if (!grid) return;
+  var layout = data.cdLayout || 'pickleball';
+  var zones  = CD_ZONES[layout] || [];
+  var active = data.cdActiveZone || (zones[0] ? zones[0].id : null);
+  var colors = cdGetColors();
+  var curCol = active ? (colors[active] || '') : '';
+  var zLabel = active ? ((zones.find(function(z){return z.id===active;})||{}).label||'') : '';
+  if (nameEl) nameEl.textContent = active ? 'Picking for: ' + zLabel : 'Select a zone above';
+  grid.innerHTML = SM_COLORS.map(function(c) {
+    return '<div class="cd-color-swatch' + (curCol===c.id?' selected':'') + '" style="background:' + c.hex + '" title="' + c.name + '" onclick="cdSetColor(\'' + (active||'') + '\',\'' + c.id + '\')"></div>';
+  }).join('');
+}
+
+function renderCourtDesigner() {
+  if (!data.cdLayout) data.cdLayout = 'pickleball';
+  var layout = data.cdLayout;
+  var ld     = CD_LAYOUTS.find(function(l){ return l.id===layout; }) || CD_LAYOUTS[0];
+  var canvasW = 340;
+  var canvasH = Math.round(canvasW * ld.hRatio);
+  canvasH = Math.max(canvasH, 180);
+
+  var html = '<div class="cd-wrap">';
+  html += '<div class="sub-heading">🎨 Court Color Designer</div>';
+  html += '<p style="font-size:0.83rem;color:var(--gray);margin-bottom:14px">Choose a layout, click a color zone, then pick your Sportmaster color.</p>';
+
+  html += '<div class="cd-layout-grid">';
+  CD_LAYOUTS.forEach(function(l) {
+    html += '<div class="cd-layout-card' + (layout===l.id?' selected':'') + '" data-lid="' + l.id + '" onclick="cdSetLayout(\'' + l.id + '\')">'
+      + '<span class="cd-layout-icon">' + l.icon + '</span>' + l.label + '</div>';
+  });
+  html += '</div>';
+
+  html += '<div class="cd-main">';
+  html += '<div class="cd-canvas-wrap">'
+    + '<span class="cd-active-zone-label" id="cd-court-name">' + ld.label + '</span>'
+    + '<canvas id="cd-canvas" width="' + canvasW + '" height="' + canvasH + '" style="border-radius:6px;max-width:100%"></canvas>'
+    + '<button class="cd-save-btn" onclick="cdSaveDesign()">💾 Save Court Design</button>'
+    + '</div>';
+
+  html += '<div class="cd-panels">';
+  html += '<div class="cd-panel"><div class="cd-panel-title">Color Zones</div><div class="cd-zone-list" id="cd-zone-list"></div></div>';
+  html += '<div class="cd-panel"><div class="cd-panel-title">Sportmaster Colors</div>'
+    + '<div id="cd-palette-zone-name" style="font-size:0.73rem;color:var(--blue);font-weight:700;margin-bottom:8px;min-height:16px"></div>'
+    + '<div class="cd-color-grid" id="cd-palette-grid"></div>'
+    + '<div style="margin-top:6px;font-size:0.7rem;color:#94a3b8">Standard 17 + 12 ColorPlus Fusion blends</div>'
+    + '</div>';
+  html += '</div></div>';
+
+  if (data.cdSavedDesign) {
+    html += '<div style="margin-top:12px;padding:10px 14px;background:var(--blue-light);border:1.5px solid var(--blue);border-radius:8px;font-size:0.82rem">'
+      + '<strong style="color:var(--blue-dark)">✅ Design saved:</strong> ' + data.cdSavedDesign.summary + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function cdSaveDesign() {
+  var layout = data.cdLayout || 'pickleball';
+  var colors = cdGetColors();
+  var zones  = CD_ZONES[layout] || [];
+  var ld     = CD_LAYOUTS.find(function(l){ return l.id===layout; });
+  var parts  = zones.map(function(z) {
+    var c = SM_COLORS.find(function(x){ return x.id===(colors[z.id]||''); });
+    return z.label + ': ' + (c ? c.name : 'Default');
+  });
+  data.cdSavedDesign = { layout:layout, label:ld?ld.label:layout, colors:JSON.parse(JSON.stringify(colors)), summary:parts.join(' · ') };
+  var canvas = document.getElementById('cd-canvas');
+  if (canvas) data.cdImageDataUrl = canvas.toDataURL('image/png');
+  var badgeHtml = '<strong style="color:var(--blue-dark)">✅ Design saved:</strong> ' + parts.join(' · ');
+  var badge = document.querySelector('.cd-wrap > div[style*="blue-light"]');
+  if (badge) { badge.innerHTML = badgeHtml; }
+  else {
+    var b = document.createElement('div');
+    b.style.cssText = 'margin-top:12px;padding:10px 14px;background:var(--blue-light);border:1.5px solid var(--blue);border-radius:8px;font-size:0.82rem';
+    b.innerHTML = badgeHtml;
+    document.querySelector('.cd-wrap').appendChild(b);
+  }
+  alert('Court design saved! It will appear in the final report.');
+}
+
+function initCourtDesigner() {
+  if (!document.getElementById('cd-canvas')) return;
+  var layout = data.cdLayout || 'pickleball';
+  var ld     = CD_LAYOUTS.find(function(l){ return l.id===layout; }) || CD_LAYOUTS[0];
+  var canvas = document.getElementById('cd-canvas');
+  canvas.height = Math.round(canvas.width * ld.hRatio);
+  var zones = CD_ZONES[layout] || [];
+  if (!data.cdActiveZone && zones.length) data.cdActiveZone = zones[0].id;
+  renderCourtDesignerCanvas();
+  renderCourtDesignerZones();
+  renderCourtDesignerPalette();
+}
+
 
 // ─── INIT ────────────────────────────────────────────────
 renderStep();
